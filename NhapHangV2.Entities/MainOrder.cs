@@ -18,6 +18,16 @@ namespace NhapHangV2.Entities
         public int? UID { get; set; } = 0;
 
         /// <summary>
+        /// Đổi cân nặng trên View
+        /// </summary>
+        public bool? IsChangeTQVNWeight { get; set; } = false;
+
+        /// <summary>
+        /// Đổi phí vận chuyển trên View
+        /// </summary>
+        public bool? IsChangeFeeWeight { get; set; } = false;
+
+        /// <summary>
         /// ID Shop
         /// </summary>
         [StringLength(50)]

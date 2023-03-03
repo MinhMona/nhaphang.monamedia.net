@@ -104,20 +104,20 @@ namespace NhapHangV2.Service.Services
                 await unitOfWork.SaveAsync(); //Phải save lại để get từ thằng OrderShopTemp thì mới có data thay đổi mới được
 
                 //Cập nhật lại tiền ở giỏ hàng khi thay đổi tỷ giá
-                var orderShopTempIds = await unitOfWork.Repository<OrderShopTemp>().GetQueryable().Where(e => !e.Deleted && e.Active).Select(s => s.Id).ToListAsync();
-                if (orderShopTempIds.Any())
-                {
-                    foreach (var orderShopTempId in orderShopTempIds)
-                    {
-                        var orderShopTemp = await orderShopTempService.GetByIdAsync(orderShopTempId);
+                //var orderShopTempIds = await unitOfWork.Repository<OrderShopTemp>().GetQueryable().Where(e => !e.Deleted && e.Active).Select(s => s.Id).ToListAsync();
+                //if (orderShopTempIds.Any())
+                //{
+                //    foreach (var orderShopTempId in orderShopTempIds)
+                //    {
+                //        var orderShopTemp = await orderShopTempService.GetByIdAsync(orderShopTempId);
 
-                        //Cập nhật tiền
-                        orderShopTemp = await orderShopTempService.UpdatePrice(orderShopTemp);
+                //        //Cập nhật tiền
+                //        orderShopTemp = await orderShopTempService.UpdatePrice(orderShopTemp);
 
-                        unitOfWork.Repository<OrderShopTemp>().Update(orderShopTemp);
-                        await this.unitOfWork.SaveAsync(); //Save thử xem sao
-                    }
-                }
+                //        unitOfWork.Repository<OrderShopTemp>().Update(orderShopTemp);
+                //        await this.unitOfWork.SaveAsync(); //Save thử xem sao
+                //    }
+                //}
 
             }
 

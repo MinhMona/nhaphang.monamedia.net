@@ -16,13 +16,9 @@ namespace NhapHangV2.Interface.Services
     public interface IMainOrderService : IDomainService<MainOrder, MainOrderSearch>
     {
         Task<bool> UpdateStaff(MainOrder item);
-
         Task<bool> UpdateMainOrder(List<int> listId, int status, int userId);
-
         Task<bool> CreateOrder(List<MainOrder> listData, bool isAnother);
-
         Task<bool> Payment(int id, int paymentType, int paymentMethod, decimal amount, string note);
-
         Task<MainOrder> PriceAdjustment(MainOrder item);
         Task<AmountStatistic> GetTotalOrderPriceByUID(int UID);
         MainOrdersInfor GetMainOrdersInfor(int UID, int orderType);
@@ -34,5 +30,7 @@ namespace NhapHangV2.Interface.Services
         byte[] GetMainOrdersExcel(MainOrderSearch mainOrderSearch);
         CountAllOrder GetCountAllOrder(MainOrderSearch mainOrderSearch);
         PriceInMonth GetPriceInMonth(MainOrderSearch mainOrderSearch);
+        Task<bool> UpdateMainOrderWeight(int id, decimal weight);
+        Task<bool> UpdateMainOrderDelivery(int id, decimal deliveryPrice);
     }
 }

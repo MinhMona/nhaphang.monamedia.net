@@ -45,6 +45,28 @@ namespace NhapHangV2.API.Controllers.Catalogue
         }
 
         /// <summary>
+        /// Thêm bao lớn
+        /// </summary>
+        /// <param name="itemModel"></param>
+        /// <returns></returns>
+        /// <exception cref="AppException"></exception>
+        [HttpPost]
+        [AppAuthorize(new int[] { CoreContants.AddNew })]
+        public override async Task<AppDomainResult> AddItem([FromBody] BigPackageRequest itemModel)
+        {
+            if (!ModelState.IsValid)
+                throw new AppException(ModelState.GetErrorMessage());
+            var checkItem = await this.domainService.GetByIdAsync(itemModel.Id);
+            if (checkItem != null)
+                throw new AppException("Bao lớn đã tồn tại");
+            var item = mapper.Map<BigPackage>(itemModel);
+            bool success = await this.domainService.CreateAsync(item);
+            if (!success)
+                throw new AppException("Lỗi trong quá trình xử lý");
+            return new AppDomainResult() { ResultCode = (int)HttpStatusCode.OK, ResultMessage = "Thêm bao lớn thành công", Success = success };
+        }
+
+        /// <summary>
         /// Cập nhật thông tin item
         /// </summary>
         /// <param name="itemModel"></param>
@@ -191,7 +213,7 @@ namespace NhapHangV2.API.Controllers.Catalogue
                     var smallPackage = await smallPackageService.GetByIdAsync(item.Id);
                     if (smallPackage != null)
                     {
-                        smallPackage.Status = status;
+                        smallPackage.BigPackageId = null;
                         success = await smallPackageService.UpdateAsync(smallPackage);
                     }
                 }

@@ -2,6 +2,7 @@
 using NhapHangV2.Models.DomainModels;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using static NhapHangV2.Utilities.CoreContants;
 
@@ -125,5 +126,9 @@ namespace NhapHangV2.Models
         public decimal? PayableWeight { get; set; }
 
 
+        /// <summary>
+        /// Số dư tài khoản của khách
+        /// </summary>
+        public decimal? UserWallet { get; set; }
     }
 }

@@ -24,6 +24,11 @@ namespace NhapHangV2.Models
         public string MainOrderID { get; set; }
 
         /// <summary>
+        /// Tổng tiền còn lại của đơn mua hộ
+        /// </summary>
+        public decimal? OrderRemaining { get; set; }
+
+        /// <summary>
         /// Mã đơn ký gửi
         /// </summary>
         public string TransportationID { get; set; }

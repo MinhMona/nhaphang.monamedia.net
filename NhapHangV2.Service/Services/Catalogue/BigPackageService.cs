@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -40,17 +41,5 @@ namespace NhapHangV2.Service.Services.Catalogue
                 bigPackage.SmallPackages = smallPackage;
             return bigPackage;
         }
-
-        /// <summary>
-        /// Cập nhật thông tin người dùng
-        /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        //public override async Task<bool> UpdateAsync(BigPackage item)
-        //{
-        //    bool result = true;
-
-        //    return result;
-        //}
     }
 }

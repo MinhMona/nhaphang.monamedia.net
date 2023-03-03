@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +20,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Users = NhapHangV2.Entities.Users;
 
 namespace NhapHangV2.Service.Services
 {
@@ -474,8 +476,9 @@ namespace NhapHangV2.Service.Services
                     List<OrderTemp> orderTempsMustDelete = new List<OrderTemp>();
                     foreach (var item in orderShopTemps.Items.ToList())
                     {
+                        var config = await unitOfWork.Repository<Entities.Configurations>().GetQueryable().FirstOrDefaultAsync();
                         //Check item created after days
-                        int dayRemoveConfig = (await unitOfWork.Repository<NhapHangV2.Entities.Configurations>().GetQueryable().FirstOrDefaultAsync()).RemoveCartDay;
+                        int dayRemoveConfig = config.RemoveCartDay;
 
                         TimeSpan period = (DateTime.Now).Subtract(item.Created ?? DateTime.Now);
                         if (period.Days > dayRemoveConfig)
@@ -487,6 +490,21 @@ namespace NhapHangV2.Service.Services
                             unitOfWork.Repository<OrderShopTemp>().Delete(item);
                             orderShopTemps.Items.Remove(item);
                             orderShopTemps.TotalItem--;
+                        }
+                        else
+                        {
+                            decimal currency = config.Currency ?? 0;
+                            var user = (await unitOfWork.Repository<Users>().GetQueryable().FirstOrDefaultAsync(x => x.Id == LoginContext.Instance.CurrentUser.UserId));
+                            decimal userCurrency = user.Currency ?? 0;
+                            if (userCurrency > 0)
+                                currency = userCurrency;
+                            decimal priceVNDChange = (item.PriceCNY ?? 0) * currency;
+                            if (priceVNDChange != item.PriceVND)
+                            {
+                                item.PriceVND = priceVNDChange;
+                                item.FeeBuyPro = await this.CalculateFeeBuyPro(user, item.PriceVND, config);
+                                unitOfWork.Repository<OrderShopTemp>().Update(item);
+                            }
                         }
                     }
                     //Delete Ordertemps
@@ -521,6 +539,34 @@ namespace NhapHangV2.Service.Services
                 orderShopTemp.OrderTemps.Add(orderTemp);
             }
             return orderShopTemp;
+        }
+
+        private async Task<decimal> CalculateFeeBuyPro(Users user, decimal? priceVND, Entities.Configurations conf)
+        {
+            //Phí mua hàng
+            var userLevel = await unitOfWork.Repository<UserLevel>().GetQueryable().Where(x => x.Id == user.LevelId).FirstOrDefaultAsync();
+            var cKFeeBuyPro = userLevel == null ? 0 : userLevel.FeeBuyPro ?? 0;
+            decimal serviceFee = 0;
+            decimal feebpnotdc = 0;
+            var feeBuyPro = await unitOfWork.Repository<FeeBuyPro>().GetQueryable().Where(x => x.PriceFrom < priceVND && priceVND <= x.PriceTo).FirstOrDefaultAsync();
+            if (feeBuyPro != null)
+            {
+                decimal feePercent = feeBuyPro.FeePercent > 0 ? (feeBuyPro.FeePercent ?? 0) : 0;
+                serviceFee = feePercent / 100;
+            }
+
+            if (user.FeeBuyPro > 0)
+                feebpnotdc = priceVND * Convert.ToDecimal(user.FeeBuyPro) / 100 ?? 0;
+            else
+                feebpnotdc = priceVND * serviceFee ?? 0;
+
+            decimal subfeebp = feebpnotdc * (cKFeeBuyPro / 100);
+            decimal feebp = feebpnotdc - subfeebp;
+
+            //Phí mua hàng tối thiểu
+            feebp = feebp > (conf.FeeBuyProMin ?? 0) ? feebp : (conf.FeeBuyProMin ?? 0);
+
+            return feebp;
         }
     }
 }

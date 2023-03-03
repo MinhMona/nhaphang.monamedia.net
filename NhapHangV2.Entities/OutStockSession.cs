@@ -104,5 +104,13 @@ namespace NhapHangV2.Entities
         [NotMapped]
         public decimal? PayableWeight { get; set; } = decimal.Zero;
 
+
+        /// <summary>
+        /// Số dư tài khoản của khách
+        /// </summary>
+        /// 
+        [NotMapped]
+        public decimal? UserWallet { get; set; }
+
     }
 }

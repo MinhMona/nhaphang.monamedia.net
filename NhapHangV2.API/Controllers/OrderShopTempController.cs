@@ -440,12 +440,14 @@ namespace NhapHangV2.API.Controllers
                     //string note = orderShopTemp.Note;
                     string note = item.UserNote;
 
-                    int status = 0;
                     decimal deposit = 0;
                     decimal totalPriceVND = total;
                     decimal totalProductPrice = pricePro;
-                    decimal amountDeposit = lessDeposit > 0 ? (totalProductPrice * lessDeposit / 100) : totalPriceVND;
-                    //decimal amountDeposit = lessDeposit > 0 ? (totalPriceVND * lessDeposit / 100) : totalPriceVND;
+                    decimal totalForDeposit = pricePro + feebp;
+                    //Đặt cọc theo tiền hàng trên web
+                    //decimal amountDeposit = lessDeposit > 0 ? (totalProductPrice * lessDeposit / 100) : totalProductPrice;
+                    //Đặt cọc theo tiền hàng trên web + phí mua hàng
+                    decimal amountDeposit = lessDeposit > 0 ? (totalForDeposit * lessDeposit / 100) : totalForDeposit;
 
                     //Thông báo
 
@@ -529,7 +531,7 @@ namespace NhapHangV2.API.Controllers
                         DeliveryAddress = address,
                         ReceiverEmail = email,
                         ReceiverPhone = phone,
-                        Status = status,
+                        Status = (int)StatusOrderContants.ChuaDatCoc,
                         Deposit = deposit,
                         CurrentCNYVN = currency,
                         TotalPriceVND = Math.Round(totalPriceVND, 0),

@@ -75,5 +75,11 @@ namespace NhapHangV2.Entities
         /// </summary>
         [NotMapped]
         public decimal? MaxTotalPriceReceiveNotPayment { get; set; } = 0;
+
+        /// <summary>
+        /// Ngày hoàn thành của đơn mua hộ
+        /// </summary>
+        [NotMapped]
+        public DateTime? MainOrderCompleteDate { get; set; }
     }
 }

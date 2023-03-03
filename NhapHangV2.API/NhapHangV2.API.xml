@@ -207,6 +207,14 @@
             <param name="itemModel"></param>
             <returns></returns>
         </member>
+        <member name="M:NhapHangV2.API.Controllers.Catalogue.BigPackageController.AddItem(NhapHangV2.Request.Catalogue.BigPackageRequest)">
+            <summary>
+            Thêm bao lớn
+            </summary>
+            <param name="itemModel"></param>
+            <returns></returns>
+            <exception cref="T:NhapHangV2.Extensions.AppException"></exception>
+        </member>
         <member name="M:NhapHangV2.API.Controllers.Catalogue.BigPackageController.UpdateItem(NhapHangV2.Request.Catalogue.BigPackageRequest)">
             <summary>
             Cập nhật thông tin item
@@ -719,6 +727,21 @@
             </summary>
             <param name="itemModel"></param>
             <returns></returns>
+        </member>
+        <member name="M:NhapHangV2.API.Controllers.MainOrderController.UpdateMainOrderWeight(NhapHangV2.Request.MainOrderRequest)">
+            <summary>
+            Cập nhật cân nặng trong chi tiết đơn
+            </summary>
+            <param name="itemModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NhapHangV2.API.Controllers.MainOrderController.UpdateMainOrderDelivery(NhapHangV2.Request.MainOrderRequest)">
+            <summary>
+            Cập nhật phí vận chuyển
+            </summary>
+            <param name="itemModel"></param>
+            <returns></returns>
+            <exception cref="T:NhapHangV2.Extensions.AppException"></exception>
         </member>
         <member name="M:NhapHangV2.API.Controllers.MainOrderController.Commission(NhapHangV2.Request.MainOrderRequest,NhapHangV2.Entities.MainOrder,NhapHangV2.Entities.Users,NhapHangV2.Entities.Configurations,System.String)">
             <summary>

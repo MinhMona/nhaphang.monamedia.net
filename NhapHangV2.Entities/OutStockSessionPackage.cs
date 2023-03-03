@@ -61,5 +61,12 @@ namespace NhapHangV2.Entities
 
         [NotMapped]
         public SmallPackage SmallPackage { get; set; } = new SmallPackage();
+
+        /// <summary>
+        /// Tổng tiền còn lại của đơn mua hộ
+        /// </summary>
+        /// 
+        [NotMapped]
+        public decimal? OrderRemaining { get; set; }
     }
 }

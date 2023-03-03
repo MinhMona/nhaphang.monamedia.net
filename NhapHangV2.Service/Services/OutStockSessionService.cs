@@ -173,6 +173,7 @@ namespace NhapHangV2.Service.Services
             {
                 outStock.UserName = user.UserName;
                 outStock.UserPhone = user.Phone;
+                outStock.UserWallet = user.Wallet;
             }
             var outStockPackages = await unitOfWork.Repository<OutStockSessionPackage>().GetQueryable().Where(e => !e.Deleted && e.OutStockSessionId == outStock.Id).OrderByDescending(o => o.Id).ToListAsync();
             if (outStockPackages == null || !outStockPackages.Any())
@@ -199,22 +200,6 @@ namespace NhapHangV2.Service.Services
                                 if (smallPackage.IsPayment.Value)
                                     outStockPackage.IsPayment = true;
                             }
-                            //if (totalMustPay <= mainOrder.Deposit)
-                            //    outStockPackage.IsPayment = true;
-                            //else
-                            //{
-                            //    outStockPackage.TotalLeftPay = totalMustPay - mainOrder.Deposit;
-                            //    totalPaid += outStockPackage.TotalLeftPay;
-                            //    if (outStockPackage.TotalLeftPay <= 100)
-                            //        outStockPackage.IsPayment = true;
-                            //    else
-                            //    {
-                            //        mainOrder.Status = (int)StatusOrderContants.DaVeKhoVN;
-                            //        unitOfWork.Repository<MainOrder>().Update(mainOrder);
-                            //        await unitOfWork.SaveAsync();
-                            //        unitOfWork.Repository<MainOrder>().Detach(mainOrder);
-                            //    }
-                            //}
 
                             outStock.TotalWeight += smallPackage.Weight;
                             outStock.ExchangeWeight += smallPackage.Volume;
@@ -225,6 +210,7 @@ namespace NhapHangV2.Service.Services
                             outStockPackage.TotalLeftPay = smallPackage.TotalPrice;
                             outStockPackage.SmallPackage = smallPackage;
 
+                            outStockPackage.OrderRemaining = Math.Round((mainOrder.TotalPriceVND ?? 0) - (mainOrder.Deposit ?? 0), 0);
                             await unitOfWork.SaveAsync();
                             unitOfWork.Repository<MainOrder>().Detach(mainOrder);
                         }
@@ -434,6 +420,14 @@ namespace NhapHangV2.Service.Services
             unitOfWork.Repository<OutStockSessionPackage>().Delete(listDelete);
             if (item.OutStockSessionPackages.Count == listDelete.Count) //Nếu bằng nhau thì xóa luôn thằng cha
                 unitOfWork.Repository<OutStockSession>().Delete(item);
+            else
+            {
+                item.TotalPay = 0;
+                await unitOfWork.Repository<OutStockSession>().UpdateFieldsSaveAsync(item, new System.Linq.Expressions.Expression<Func<OutStockSession, object>>[]
+                {
+                    x=>x.TotalPay
+                });
+            }
             await unitOfWork.SaveAsync();
             return true;
         }
@@ -445,7 +439,8 @@ namespace NhapHangV2.Service.Services
             var user = await userService.GetByIdAsync(LoginContext.Instance.CurrentUser.UserId);
             if (user.UserGroupId == (int)PermissionTypes.Admin
                 || user.UserGroupId == (int)PermissionTypes.Manager
-                || user.UserGroupId == (int)PermissionTypes.VietNamWarehouseManager)
+                || user.UserGroupId == (int)PermissionTypes.VietNamWarehouseManager
+                || user.UserGroupId == (int)PermissionTypes.Accountant)
             {
                 var item = await this.GetByIdAsync(id);
                 if (item == null)

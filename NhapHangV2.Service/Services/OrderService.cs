@@ -196,7 +196,8 @@ namespace NhapHangV2.Service.Services
                         + (mainOrder.InsuranceMoney ?? 0);
 
                     //Tính lại tiền phải cọc
-                    mainOrder.AmountDeposit = lessDeposit > 0 ? ((mainOrder.PriceVND ?? 0) * lessDeposit / 100) : (mainOrder.PriceVND ?? 0);
+                    decimal totalForDeposit = (priceVND + feebp) ?? 0;
+                    mainOrder.AmountDeposit = lessDeposit > 0 ? (totalForDeposit * lessDeposit / 100) : totalForDeposit;
 
                     //Nếu đã đặt cọc thì phải trả phí lại cho người ta (Hoàn tiền - Giống MainOrderService)
                     if (mainOrder.Deposit > 0)

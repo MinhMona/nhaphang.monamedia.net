@@ -823,9 +823,11 @@ namespace NhapHangV2.Service.Services
                         {
                             unitOfWork.Repository<SmallPackage>().Update(smallPackage);
                             mainOrder.Status = (int)StatusOrderContants.DaVeKhoTQ;
+                            mainOrder.DateTQ = currentDate;
                             await unitOfWork.Repository<MainOrder>().UpdateFieldsSaveAsync(mainOrder, new Expression<Func<MainOrder, object>>[]
                             {
-                                x =>x.Status
+                                x =>x.Status,
+                                x =>x.DateTQ
                             });
                             unitOfWork.Repository<MainOrder>().Detach(mainOrder);
                             totalSuccess++;
@@ -884,6 +886,11 @@ namespace NhapHangV2.Service.Services
         public async Task<List<SmallPackage>> GetAllByMainOrderId(int mainOrderId)
         {
             return await unitOfWork.Repository<SmallPackage>().GetQueryable().Where(x => x.MainOrderId == mainOrderId).ToListAsync();
+        }
+
+        public async Task<List<SmallPackage>> GetInVietNamByMainOrderId(int mainOrderId)
+        {
+            return await unitOfWork.Repository<SmallPackage>().GetQueryable().Where(x => x.MainOrderId == mainOrderId && x.Status == (int)StatusSmallPackage.DaVeKhoVN).ToListAsync();
         }
 
         public async Task<List<SmallPackage>> GetAllByTransportationOrderId(int transportationOrderId)

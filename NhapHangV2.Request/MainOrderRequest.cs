@@ -96,6 +96,11 @@ namespace NhapHangV2.Request
         public decimal? FeeBuyPro { get; set; }
 
         /// <summary>
+        /// Phí mua hàng tệ
+        /// </summary>
+        public decimal? CKFeeBuyPro { get; set; } 
+
+        /// <summary>
         /// Phần trăm chiết khẩu phí mua hàng
         /// </summary>
         public decimal? FeeBuyProCK { get; set; }
@@ -220,5 +225,20 @@ namespace NhapHangV2.Request
         /// Đơn hàng TMĐT khác chờ báo giá
         /// </summary>
         public bool? IsCheckNotiPrice { get; set; }
+
+        /// <summary>
+        /// TQ - VN - Cân nặng
+        /// </summary>
+        public decimal? TQVNWeight { get; set; }
+
+        /// <summary>
+        /// Đổi cân nặng trên View
+        /// </summary>
+        public bool? IsChangeTQVNWeight { get; set; }
+
+        /// <summary>
+        /// Đổi phí vận chuyển trên View
+        /// </summary>
+        public bool? IsChangeFeeWeight { get; set; }
     }
 }

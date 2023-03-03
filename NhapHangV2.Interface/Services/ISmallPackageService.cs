@@ -27,6 +27,6 @@ namespace NhapHangV2.Interface.Services
 
         Task<List<SmallPackage>> GetAllByMainOrderId(int mainOrderId);
         Task<List<SmallPackage>> GetAllByTransportationOrderId(int transportationOrderId);
-
+        Task<List<SmallPackage>> GetInVietNamByMainOrderId(int mainOrderId);
     }
 }

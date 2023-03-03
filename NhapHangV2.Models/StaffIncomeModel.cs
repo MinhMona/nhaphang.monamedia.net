@@ -1,6 +1,7 @@
 ﻿using NhapHangV2.Models.DomainModels;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -87,5 +88,10 @@ namespace NhapHangV2.Models
         /// Tổng tiền chưa thanh toán
         /// </summary>
         public decimal? MaxTotalPriceReceiveNotPayment { get; set; }
+
+        /// <summary>
+        /// Ngày hoàn thành của đơn mua hộ
+        /// </summary>
+        public DateTime? MainOrderCompleteDate { get; set; }
     }
 }

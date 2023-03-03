@@ -18,6 +18,17 @@ namespace NhapHangV2.Models
         #endregion
 
         #region Tổng quan đơn hàng
+
+        /// <summary>
+        /// Đổi cân nặng trên View
+        /// </summary>
+        public bool? IsChangeTQVNWeight { get; set; }
+
+        /// <summary>
+        /// Đổi phí vận chuyển trên View
+        /// </summary>
+        public bool? IsChangeFeeWeight { get; set; }
+
         /// <summary>
         /// Trạng thái đơn hàng
         /// </summary>
