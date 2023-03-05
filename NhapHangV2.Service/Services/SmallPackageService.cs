@@ -272,7 +272,7 @@ namespace NhapHangV2.Service.Services
                 {
                     DateTime currentDate = DateTime.Now;
                     var user = await userService.GetByIdAsync(LoginContext.Instance.CurrentUser.UserId);
-                    var mainOrderUpdated = new MainOrder();
+                    var mainOrderUpdateds = new List<MainOrder>();
                     foreach (var item in items)
                     {
                         var mainOrder = new MainOrder();
@@ -383,7 +383,7 @@ namespace NhapHangV2.Service.Services
                             case (int)StatusSmallPackage.DaVeKhoTQ: //Kiểm hàng kho TQ
                                 item.DateInTQWarehouse = item.DateScanTQ = currentDate;
                                 item.StaffTQWarehouse = user.UserName;
-
+                                item.IsPayment = false;
                                 var warehouseFrom = await unitOfWork.CatalogueRepository<WarehouseFrom>().GetQueryable().Where(e => !e.Deleted && user.WarehouseFrom == e.Id).FirstOrDefaultAsync();
                                 if (warehouseFrom != null)
                                 {
@@ -464,7 +464,7 @@ namespace NhapHangV2.Service.Services
                                         }
                                     }
                                     mainOrderList.Add(mainOrder);
-                                    mainOrderUpdated = mainOrderList.LastOrDefault();
+                                    mainOrderUpdateds.Add(mainOrderList.LastOrDefault());
                                     if (historyOrderChanges.Any())
                                         await unitOfWork.Repository<HistoryOrderChange>().CreateAsync(historyOrderChanges);
                                     await sendNotificationService.SendNotification(notificationSettingTQ, notiTemplateUserTQ, mainOrder.Id.ToString(),
@@ -533,7 +533,7 @@ namespace NhapHangV2.Service.Services
 
                                 item.DateInLasteWareHouse = item.DateScanVN = currentDate;
                                 item.StaffVNWarehouse = user.UserName;
-
+                                item.IsPayment = false;
                                 if (item.DateInVNTemp == null)
                                     item.DateInVNTemp = currentDate;
 
@@ -619,7 +619,7 @@ namespace NhapHangV2.Service.Services
                                     }
                                     //Detach
                                     mainOrderList.Add(mainOrder);
-                                    mainOrderUpdated = mainOrderList.LastOrDefault();
+                                    mainOrderUpdateds.Add(mainOrderList.LastOrDefault());
                                     if (historyOrderChanges.Any())
                                         await unitOfWork.Repository<HistoryOrderChange>().CreateAsync(historyOrderChanges);
                                     await sendNotificationService.SendNotification(notificationSettingVN, notiTemplateUserVN, mainOrder.Id.ToString(), String.Format(Detail_MainOrder_Admin, mainOrder.Id), String.Format(Detail_MainOrder, mainOrder.Id), mainOrder.UID, string.Empty, string.Empty);
@@ -694,8 +694,12 @@ namespace NhapHangV2.Service.Services
                         unitOfWork.Repository<SmallPackage>().Update(item);
                         await unitOfWork.SaveAsync();
                     }
-                    unitOfWork.Repository<MainOrder>().Update(mainOrderUpdated);
-                    await unitOfWork.SaveAsync();
+                    foreach (var mainOrderUpdated in mainOrderUpdateds)
+                    {
+                        unitOfWork.Repository<MainOrder>().Update(mainOrderUpdated);
+                        await unitOfWork.SaveAsync();
+                        unitOfWork.Repository<MainOrder>().Detach(mainOrderUpdated);
+                    }
                     await dbContextTransaction.CommitAsync();
 
                     //Detach(tại sau khi Update có GetById thằng MainOrder, mà getby thì có cập nhật => Bug)

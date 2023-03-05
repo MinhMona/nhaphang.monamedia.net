@@ -583,6 +583,8 @@ namespace NhapHangV2.Service.Services
                 && e.ShippingTypeToWareHouseId == item.ShippingTypeId
                 && e.IsHelpMoving == true
                 && totalWeight >= e.WeightFrom && totalWeight < e.WeightTo).FirstOrDefaultAsync();
+            if (warehouseFee == null)
+                throw new KeyNotFoundException("Không tìm thấy bảng giá cân nặng");
             decimal? warehouseFeePrice = warehouseFee == null ? 0 : warehouseFee.Price;
             if (user.FeeTQVNPerWeight > 0)
             {
@@ -599,6 +601,8 @@ namespace NhapHangV2.Service.Services
                 && e.ShippingTypeToWareHouseId == item.ShippingTypeId
                 && e.IsHelpMoving == true
                 && (totalVolume >= e.VolumeFrom && totalVolume < e.VolumeTo));
+            if (volumeFee == null)
+                throw new KeyNotFoundException("Không tìm thấy bảng giá khối");
             decimal? volumeFeePrice = volumeFee == null ? 0 : volumeFee.Price;
             if (user.FeeTQVNPerVolume > 0)
             {

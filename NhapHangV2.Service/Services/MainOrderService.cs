@@ -1031,7 +1031,21 @@ namespace NhapHangV2.Service.Services
             }
 
             //Tính phí đơn hàng
-            Commission(item.StaffIncomes);
+            //Commission(item.StaffIncomes);
+            foreach (var staffIncome in item.StaffIncomes)
+            {
+                if (staffIncome.Deleted)
+                {
+                    //Xóa luôn
+                    unitOfWork.Repository<StaffIncome>().Delete(staffIncome);
+                    continue;
+                }
+
+                if (staffIncome.Id == 0)
+                    await unitOfWork.Repository<StaffIncome>().CreateAsync(staffIncome);
+                else
+                    unitOfWork.Repository<StaffIncome>().Update(staffIncome);
+            }
 
             //Lịch sử thay đổi của đơn hàng
             await unitOfWork.Repository<HistoryOrderChange>().CreateAsync(item.HistoryOrderChanges);
@@ -1308,8 +1322,20 @@ namespace NhapHangV2.Service.Services
         public async Task<bool> UpdateStaff(MainOrder item)
         {
             //Tính phí đơn hàng
-            Commission(item.StaffIncomes);
+            foreach (var staffIncome in item.StaffIncomes)
+            {
+                if (staffIncome.Deleted)
+                {
+                    //Xóa luôn
+                    unitOfWork.Repository<StaffIncome>().Delete(staffIncome);
+                    continue;
+                }
 
+                if (staffIncome.Id == 0)
+                    await unitOfWork.Repository<StaffIncome>().CreateAsync(staffIncome);
+                else
+                    unitOfWork.Repository<StaffIncome>().Update(staffIncome);
+            }
             //Lịch sử thay đổi của đơn hàng
             await unitOfWork.Repository<HistoryOrderChange>().CreateAsync(item.HistoryOrderChanges);
 

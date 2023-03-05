@@ -8,11 +8,11 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <NoWarn>1701;1702;1591</NoWarn>
-    <DocumentationFile>C:\MonaMedia\0_V2\ordertrungminhquang.com\NhapHangV2.BaseAPI\NhapHangV2.BaseAPI.xml</DocumentationFile>
+    <DocumentationFile>NhapHangV2.BaseAPI.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>C:\MonaMedia\0_V2\ordertrungminhquang.com\NhapHangV2.BaseAPI\NhapHangV2.BaseAPI.xml</DocumentationFile>
+    <DocumentationFile>NhapHangV2.BaseAPI.xml</DocumentationFile>
     <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
 

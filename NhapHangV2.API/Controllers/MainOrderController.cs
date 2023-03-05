@@ -725,7 +725,109 @@ namespace NhapHangV2.API.Controllers
                 }
                 item.HistoryOrderChanges = new List<HistoryOrderChange>();
 
-                List<StaffIncome> staffIncomes = await Commission(itemModel, item, user, configurations, "");
+                List<StaffIncome> staffIncomes = new List<StaffIncome>();
+                var staffIncomeSaler = new StaffIncome();
+                var staffIncomeOrderer = new StaffIncome();
+
+                decimal salePercent = Convert.ToDecimal(configurations.SalePercent);
+                decimal salePercentAf3M = Convert.ToDecimal(configurations.SalePercentAfter3Month);
+                decimal datHangPercent = Convert.ToDecimal(configurations.DatHangPercent);
+
+                //Saler
+                if (itemModel.SalerId != 0 && itemModel.SalerId != item.SalerId)
+                {
+                    var salerOld = await userService.GetByIdAsync(item.SalerId ?? 0);
+                    var salerNew = await userService.GetByIdAsync(itemModel.SalerId ?? 0);
+                    item.HistoryOrderChanges.Add(new HistoryOrderChange()
+                    {
+                        MainOrderId = item.Id,
+                        UID = user.Id,
+                        HistoryContent = String.Format("{0} đã đổi nhân viên saler của đơn hàng ID là: {1}, Từ: {2}, Sang: {3}.", user.UserName, item.Id, salerOld == null ? "Không xác định" : salerOld.UserName, salerNew == null ? "Không xác định" : salerNew.UserName),
+                        Type = 12 
+                    });
+                    if (salerOld != null)
+                    {
+                        //Xóa cái cũ
+                        var staffIncomeSalerOld = await staffIncomeService.GetSingleAsync(e => e.MainOrderId == item.Id && e.UID == salerOld.Id);
+                        if (staffIncomeSalerOld != null)
+                        {
+                            staffIncomeSalerOld.Deleted = true;
+                            staffIncomes.Add(staffIncomeSalerOld);
+                        }
+                    }
+
+                    //Thêm cái mới
+                    staffIncomeSaler.MainOrderId = item.Id;
+                    staffIncomeSaler.UID = salerNew.Id;
+                }
+                else
+                    staffIncomeSaler = await staffIncomeService.GetSingleAsync(e => e.MainOrderId == item.Id && e.UID == itemModel.SalerId);
+
+                if (staffIncomeSaler != null)
+                {
+                    //Tính
+                    var saler = await userService.GetByIdAsync(itemModel.SalerId ?? 0);
+                    int d = saler.Created.Value.Subtract(saler.Created.Value).Days;
+                    if (d > 90)
+                    {
+                        staffIncomeSaler.TotalPriceReceive = (item.FeeBuyPro ?? 0) * salePercentAf3M / 100;
+                        staffIncomeSaler.PercentReceive = salePercentAf3M;
+                    }
+                    else
+                    {
+                        staffIncomeSaler.TotalPriceReceive = (item.FeeBuyPro ?? 0) * salePercent / 100;
+                        staffIncomeSaler.PercentReceive = salePercent;
+                    }
+
+                    staffIncomeSaler.Status = (int?)StatusStaffIncome.Unpaid;
+                    staffIncomes.Add(staffIncomeSaler);
+                }
+
+                //Đặt hàng
+                if (itemModel.DatHangId != 0 && itemModel.DatHangId != item.DatHangId)
+                {
+                    var ordererOld = await userService.GetByIdAsync(item.DatHangId ?? 0);
+                    var ordererNew = await userService.GetByIdAsync(itemModel.DatHangId ?? 0);
+
+                    item.HistoryOrderChanges.Add(new HistoryOrderChange()
+                    {
+                        MainOrderId = item.Id,
+                        UID = user.Id,
+                        HistoryContent = String.Format("{0} đã đổi nhân viên đặt hàng của đơn hàng ID là: {1}, Từ: {2}, Sang: {3}.", user.UserName, item.Id, ordererOld == null ? "Không xác định" : ordererOld.UserName, ordererNew == null ? "Không xác định" : ordererNew.UserName),
+                        Type = 12 
+                    });
+
+
+                    if (ordererOld != null)
+                    {
+                        //Xóa cái cũ
+                        var staffIncomeOrdererOld = await staffIncomeService.GetSingleAsync(e => e.MainOrderId == item.Id && e.UID == ordererOld.Id);
+                        if (staffIncomeOrdererOld != null)
+                        {
+                            staffIncomeOrdererOld.Deleted = true;
+                            staffIncomes.Add(staffIncomeOrdererOld);
+                        }
+                    }
+
+                    //Thêm cái mới
+                    staffIncomeOrderer.MainOrderId = item.Id;
+                    staffIncomeOrderer.UID = ordererNew.Id;
+                }
+                else
+                    staffIncomeOrderer = await staffIncomeService.GetSingleAsync(e => e.MainOrderId == item.Id && e.UID == itemModel.DatHangId);
+
+                if (staffIncomeOrderer != null)
+                {
+                    //Tính hoa hồng
+                    staffIncomeOrderer.PercentReceive = datHangPercent;
+                    decimal? totalPriceLoi = ((item.PriceVND ?? 0) + (item.FeeShipCN ?? 0)) - (item.TotalPriceReal ?? 0) - (item.FeeShipCNReal ?? 0);
+
+                    staffIncomeOrderer.OrderTotalPrice = item.TotalPriceReal ?? 0;
+                    staffIncomeOrderer.Status = (int?)StatusStaffIncome.Unpaid;
+                    staffIncomeOrderer.TotalPriceReceive = (totalPriceLoi * (staffIncomeOrderer.PercentReceive ?? 0) / 100);
+
+                    staffIncomes.Add(staffIncomeOrderer);
+                }
                 item.SalerId = itemModel.SalerId;
                 item.DatHangId = itemModel.DatHangId;
                 item.StaffIncomes = staffIncomes;
@@ -1296,18 +1398,107 @@ namespace NhapHangV2.API.Controllers
                     }
 
                     //Tính phí hoa hồng
-                    List<StaffIncome> staffIncomes = await Commission(itemModel, item, user, configurations, updateSql);
-                    var countOldSmallpackage = item.SmallPackages.Count;
+                    //List<StaffIncome> staffIncomes = await Commission(itemModel, item, user, configurations, updateSql);
+
+                    List<StaffIncome> staffIncomes = new List<StaffIncome>();
+                    var staffIncomeSaler = new StaffIncome();
+                    var staffIncomeOrderer = new StaffIncome();
+
+                    decimal salePercent = Convert.ToDecimal(configurations.SalePercent);
+                    decimal salePercentAf3M = Convert.ToDecimal(configurations.SalePercentAfter3Month);
+                    decimal datHangPercent = Convert.ToDecimal(configurations.DatHangPercent);
+
+                    //Saler
+                    if (itemModel.SalerId != 0 && itemModel.SalerId != item.SalerId)
+                    {
+                        var salerOld = await userService.GetByIdAsync(item.SalerId ?? 0);
+                        var salerNew = await userService.GetByIdAsync(itemModel.SalerId ?? 0);
+
+                        string historyContentSalerId = String.Format("{0} đã đổi nhân viên saler của đơn hàng ID là: {1}, Từ: {2}, Sang: {3}.", user.UserName, item.Id, salerOld == null ? "Không xác định" : salerOld.UserName, salerNew == null ? "Không xác định" : salerNew.UserName);
+                        updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
+                            $"VALUES({item.Id},{user.Id},N'{historyContentSalerId}',11,'{DateTime.Now}','{user.UserName}',0,1)";
+
+                        if (salerOld != null)
+                        {
+                            //Xóa cái cũ
+                            var staffIncomeSalerOld = await staffIncomeService.GetSingleAsync(e => e.MainOrderId == item.Id && e.UID == salerOld.Id);
+                            if (staffIncomeSalerOld != null)
+                            {
+                                staffIncomeSalerOld.Deleted = true;
+                                staffIncomes.Add(staffIncomeSalerOld);
+                            }
+                        }
+
+                        //Thêm cái mới
+                        staffIncomeSaler.MainOrderId = item.Id;
+                        staffIncomeSaler.UID = salerNew.Id;
+                    }
+                    else
+                        staffIncomeSaler = await staffIncomeService.GetSingleAsync(e => e.MainOrderId == item.Id && e.UID == itemModel.SalerId);
+
+                    if (staffIncomeSaler != null)
+                    {
+                        //Tính
+                        var saler = await userService.GetByIdAsync(itemModel.SalerId ?? 0);
+                        int d = saler.Created.Value.Subtract(saler.Created.Value).Days;
+                        if (d > 90)
+                        {
+                            staffIncomeSaler.TotalPriceReceive = (itemModel.FeeBuyPro ?? 0) * salePercentAf3M / 100;
+                            staffIncomeSaler.PercentReceive = salePercentAf3M;
+                        }
+                        else
+                        {
+                            staffIncomeSaler.TotalPriceReceive = (itemModel.FeeBuyPro ?? 0) * salePercent / 100;
+                            staffIncomeSaler.PercentReceive = salePercent;
+                        }
+
+                        staffIncomeSaler.Status = (int?)StatusStaffIncome.Unpaid;
+                        staffIncomes.Add(staffIncomeSaler);
+                    }
+
+                    //Đặt hàng
+                    if (itemModel.DatHangId != 0 && itemModel.DatHangId != item.DatHangId)
+                    {
+                        var ordererOld = await userService.GetByIdAsync(item.DatHangId ?? 0);
+                        var ordererNew = await userService.GetByIdAsync(itemModel.DatHangId ?? 0);
+
+                        string historyContentSalerId = String.Format("{0} đã đổi nhân viên đặt hàng của đơn hàng ID là: {1}, Từ: {2}, Sang: {3}.", user.UserName, item.Id, ordererOld == null ? "Không xác định" : ordererOld.UserName, ordererNew == null ? "Không xác định" : ordererNew.UserName);
+                        updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
+                            $"VALUES({item.Id},{user.Id},N'{historyContentSalerId}',12,'{DateTime.Now}','{user.UserName}',0,1)";
+
+                        if (ordererOld != null)
+                        {
+                            //Xóa cái cũ
+                            var staffIncomeOrdererOld = await staffIncomeService.GetSingleAsync(e => e.MainOrderId == item.Id && e.UID == ordererOld.Id);
+                            if (staffIncomeOrdererOld != null)
+                            {
+                                staffIncomeOrdererOld.Deleted = true;
+                                staffIncomes.Add(staffIncomeOrdererOld);
+                            }
+                        }
+
+                        //Thêm cái mới
+                        staffIncomeOrderer.MainOrderId = item.Id;
+                        staffIncomeOrderer.UID = ordererNew.Id;
+                    }
+                    else
+                        staffIncomeOrderer = await staffIncomeService.GetSingleAsync(e => e.MainOrderId == item.Id && e.UID == itemModel.DatHangId);
+
+                    if (staffIncomeOrderer != null)
+                    {
+                        //Tính hoa hồng
+                        staffIncomeOrderer.PercentReceive = datHangPercent;
+                        decimal? totalPriceLoi = ((itemModel.PriceVND ?? 0) + (itemModel.FeeShipCN ?? 0)) - (itemModel.TotalPriceReal ?? 0) - (itemModel.FeeShipCNReal ?? 0);
+
+                        staffIncomeOrderer.OrderTotalPrice = item.TotalPriceReal ?? 0;
+                        staffIncomeOrderer.Status = (int?)StatusStaffIncome.Unpaid;
+                        staffIncomeOrderer.TotalPriceReceive = (totalPriceLoi * (staffIncomeOrderer.PercentReceive ?? 0) / 100);
+
+                        staffIncomes.Add(staffIncomeOrderer);
+                    }
                     mapper.Map(itemModel, item);
-                    //Đã thanh toán nhưng thêm mã vận đơn
-                    //if ((item.Status == (int)StatusOrderContants.KhachDaThanhToan || item.Status == (int)StatusOrderContants.DaHoanThanh)
-                    //    && (itemModel.SmallPackages.Count > countOldSmallpackage))
-                    //{
-                    //    item.Status = (int)StatusOrderContants.DaMuaHang;
-                    //}
+
                     item.StaffIncomes = staffIncomes;
-                    //item.TotalPriceVND = Math.Round((item.TotalPriceVND ?? 0), 0);
-                    //item.AmountDeposit = Math.Round((item.AmountDeposit ?? 0), 0);
                     success = await this.domainService.UpdateAsync(item);
 
                     if (success)
