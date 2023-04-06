@@ -136,33 +136,91 @@ namespace NhapHangV2.Service.Services
                     }
                     //orderShopTemp = await this.GetSingleAsync(x => !x.Deleted && x.UID == UID && x.ShopId == item.ShopId);
 
+                    //foreach (var OrderTemp in item.OrderTemps)
+                    //{
+                    //    OrderTemp.UID = UID;
+                    //    OrderTemp.OrderShopTempId = item.Id;
+
+                    //    if (OrderTemp.PricePromotion == null || OrderTemp.PricePromotion == 0) OrderTemp.PricePromotion = OrderTemp.PriceOrigin;
+
+                    //    //Kiểm tra xem có sản phẩm nào giống như vầy không
+                    //    var orderTempsByUID = await unitOfWork.Repository<OrderTemp>().GetQueryable().Where(x => !x.Deleted
+                    //    && x.UID == UID
+                    //    && x.ItemId == OrderTemp.ItemId && x.Brand == OrderTemp.Brand && x.CategoryId == OrderTemp.CategoryId && x.Property == OrderTemp.Property).ToListAsync();
+
+                    //    if (orderTempsByUID.Any())
+                    //    {
+                    //        foreach (var orderTempByUID in orderTempsByUID)
+                    //        {
+                    //            //Số lượng cũ
+                    //            var oldQuantity = orderTempByUID.Quantity;
+                    //            //Tăng số lượng
+                    //            orderTempByUID.Quantity += OrderTemp.Quantity;
+                    //            if (oldQuantity != orderTempByUID.Quantity)
+                    //            {
+                    //                unitOfWork.Repository<OrderTemp>().Update(orderTempByUID);
+                    //                await unitOfWork.SaveAsync();
+                    //                unitOfWork.Repository<OrderTemp>().Detach(orderTempByUID);
+                    //            }
+                    //        }
+                    //    }
+                    //    else
+                    //    {
+                    //        await unitOfWork.Repository<OrderTemp>().CreateAsync(OrderTemp);
+                    //        await unitOfWork.SaveAsync();
+                    //        unitOfWork.Repository<OrderTemp>().Detach(OrderTemp);
+                    //    }
+                    //    //À cái này để tính bước nhảy của order
+                    //    var orderTempStep = UpdatePriceInsert(UID, OrderTemp.StepPrice, OrderTemp.ItemId, OrderTemp);
+
+                    //    if (orderTempStep != null)
+                    //    {
+                    //        if (orderShopTemp != null) //Chưa có shop chưa đặt
+                    //        {
+                    //            var a = await unitOfWork.Repository<OrderTemp>().GetQueryable().Where(x => !x.Deleted
+                    //    && x.UID == UID
+                    //    && x.ItemId == OrderTemp.ItemId && x.Brand == OrderTemp.Brand && x.CategoryId == OrderTemp.CategoryId && x.Property == OrderTemp.Property && x.OrderShopTempId == orderShopTemp.Id).ToListAsync();
+                    //            foreach (var i in a)
+                    //            {
+                    //                i.PriceOrigin = i.PricePromotion = orderTempStep.PricePromotion;
+                    //                unitOfWork.Repository<OrderTemp>().Update(i);
+                    //                await unitOfWork.SaveAsync();
+                    //                unitOfWork.Repository<OrderTemp>().Detach(i);
+                    //            }
+                    //        }
+                    //        else
+                    //        {
+                    //            var i = await unitOfWork.Repository<OrderTemp>().GetQueryable().Where(x => !x.Deleted && x.UID == UID && x.ItemId == OrderTemp.ItemId).FirstOrDefaultAsync();
+                    //            i.PriceOrigin = i.PricePromotion = orderTempStep.PricePromotion;
+                    //            unitOfWork.Repository<OrderTemp>().Update(i);
+                    //            await unitOfWork.SaveAsync();
+                    //            unitOfWork.Repository<OrderTemp>().Detach(i);
+                    //        }
+                    //    }
+                    //}
+                    ////Cập nhật tiền
+                    //if (orderShopTemp != null) //Chưa có shop chưa đặt
+                    //{
+                    //    var existOrderTemp = await unitOfWork.Repository<OrderTemp>().GetQueryable().Where(x => !x.Deleted && x.UID == UID && x.OrderShopTempId == orderShopTemp.Id).ToListAsync();
+                    //    item.OrderTemps = existOrderTemp;
+                    //}
+                    //else
+                    //{
+                    //    item.OrderTemps = await unitOfWork.Repository<OrderTemp>().GetQueryable().Where(x => !x.Deleted && x.UID == UID && x.ShopId == item.ShopId).ToListAsync();
+                    //}
+
                     foreach (var OrderTemp in item.OrderTemps)
                     {
                         OrderTemp.UID = UID;
                         OrderTemp.OrderShopTempId = item.Id;
 
                         if (OrderTemp.PricePromotion == null || OrderTemp.PricePromotion == 0) OrderTemp.PricePromotion = OrderTemp.PriceOrigin;
-
                         //Kiểm tra xem có sản phẩm nào giống như vầy không
                         var orderTempsByUID = await unitOfWork.Repository<OrderTemp>().GetQueryable().Where(x => !x.Deleted
                         && x.UID == UID
-                        && x.ItemId == OrderTemp.ItemId && x.Brand == OrderTemp.Brand && x.CategoryId == OrderTemp.CategoryId && x.Property == OrderTemp.Property).ToListAsync();
-
-                        if (orderTempsByUID.Any())
-                        {
-                            foreach (var orderTempByUID in orderTempsByUID)
-                            {
-                                //Số lượng cũ
-                                var oldQuantity = orderTempByUID.Quantity;
-                                //Tăng số lượng
-                                orderTempByUID.Quantity += OrderTemp.Quantity;
-                                if (oldQuantity != orderTempByUID.Quantity)
-                                    unitOfWork.Repository<OrderTemp>().Update(orderTempByUID);
-                            }
-                        }
-                        else
+                        && x.ItemId == OrderTemp.ItemId && x.Brand == OrderTemp.Brand && x.CategoryId == OrderTemp.CategoryId && x.Property == OrderTemp.Property).CountAsync();
+                        if (orderTempsByUID <= 0)
                             await unitOfWork.Repository<OrderTemp>().CreateAsync(OrderTemp);
-
                         //À cái này để tính bước nhảy của order
                         //UpdatePriceInsert(UID, OrderTemp.StepPrice, OrderTemp.ItemId);
                     }
@@ -265,9 +323,10 @@ namespace NhapHangV2.Service.Services
             return true;
         }
 
-        protected void UpdatePriceInsert(int UID, string StepPrice, string item_id)
+        protected OrderTemp UpdatePriceInsert(int UID, string StepPrice, string item_id, OrderTemp orderTemp)
         {
             decimal price_update = 0;
+            //List<OrderTemp> orderTemps = new List<OrderTemp>();
             bool checkpricestep = true;
             if (!string.IsNullOrEmpty(StepPrice))
             {
@@ -306,16 +365,14 @@ namespace NhapHangV2.Service.Services
                 }
                 if (checkpricestep == false)
                 {
-                    var getproductbyid = unitOfWork.Repository<OrderTemp>().GetQueryable().Where(x => !x.Deleted && x.UID == UID && x.ItemId == item_id).ToList();
+                    //var getproductbyid = unitOfWork.Repository<OrderTemp>().GetQueryable().Where(x => !x.Deleted && x.UID == UID && x.ItemId == item_id).ToList();
+                    var getproductbyid = orderTemp;
                     List<decimal> fromPrice = new List<decimal>();
                     List<decimal> listPrice = new List<decimal>();
                     int countproduct = 0;
-                    if (getproductbyid.Count > 0)
+                    if (getproductbyid != null)
                     {
-                        foreach (var item in getproductbyid)
-                        {
-                            countproduct += item.Quantity ?? 0;
-                        }
+                        countproduct += getproductbyid.Quantity ?? 0;
                         if (items.Length - 1 > 0)
                         {
                             //4-11:20|12-35:18|36-99999999:17|
@@ -343,15 +400,14 @@ namespace NhapHangV2.Service.Services
                     {
                         price_update = fromPrice.Count == 0 ? 0 : listPrice[0];
                     }
+
                     if (price_update > 0)
                     {
-                        foreach (var productU in getproductbyid)
-                        {
-                            productU.PriceOrigin = productU.PricePromotion = price_update;
-                        }
+                        orderTemp.PriceOrigin = orderTemp.PricePromotion = price_update;
                     }
                 }
             }
+            return orderTemp;
         }
 
         public async Task<OrderShopTemp> UpdatePrice(OrderShopTemp item)

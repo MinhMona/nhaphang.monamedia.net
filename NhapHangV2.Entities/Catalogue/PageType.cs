@@ -11,6 +11,10 @@ namespace NhapHangV2.Entities.Catalogue
     public class PageType : AppDomainCatalogue
     {
         /// <summary>
+        /// Title của chuyên mục
+        /// </summary>
+        public string Title { get; set; } = string.Empty;
+        /// <summary>
         /// OG Url
         /// </summary>
         public string OGUrl { get; set; } = string.Empty;

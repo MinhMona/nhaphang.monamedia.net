@@ -72,8 +72,8 @@ namespace NhapHangV2.Service.Services
                 foreach (var userInGroup in userInGroups)
                 {
                     int? idUser = 0;
-                    if (userInGroup.UserGroupId == (int)PermissionTypes.Orderer 
-                        || userInGroup.UserGroupId == (int)PermissionTypes.Admin 
+                    if (userInGroup.UserGroupId == (int)PermissionTypes.Orderer
+                        || userInGroup.UserGroupId == (int)PermissionTypes.Admin
                         || userInGroup.UserGroupId == (int)PermissionTypes.Manager)
                         idUser = mainOrder.DatHangId;
                     if (userInGroup.UserGroupId == (int)PermissionTypes.Saler
@@ -99,36 +99,34 @@ namespace NhapHangV2.Service.Services
                     user.Wallet = wallet;
 
                     //Detach
-                    if (!userIds.Contains(user.Id))
+
+                    unitOfWork.Repository<Users>().Update(user);
+                    await unitOfWork.SaveAsync();
+                    unitOfWork.Repository<Users>().Detach(user);
+                    //Lịch sử ví tiền VNĐ
+                    int? mainOrderId = 0;
+                    if (staffIncome.MainOrderId > 0)
+                        mainOrderId = staffIncome.MainOrderId;
+                    if (staffIncome.TransportationOrderId > 0)
+                        mainOrderId = staffIncome.TransportationOrderId;
+                    if (staffIncome.PayHelpOrderId > 0)
+                        mainOrderId = staffIncome.PayHelpOrderId;
+
+                    await unitOfWork.Repository<HistoryPayWallet>().CreateAsync(new HistoryPayWallet
                     {
-                        unitOfWork.Repository<Users>().Update(user);
+                        UID = user.Id,
+                        MainOrderId = mainOrderId,
+                        MoneyLeft = wallet,
+                        Amount = staffIncome.TotalPriceReceive,
+                        Type = (int)DauCongVaTru.Cong,
+                        TradeType = (int)HistoryPayWalletContents.HoaHong,
+                        Content = string.Format("{0} đã nhận được hoa hồng của đơn hàng: {1}.", user.UserName, mainOrderId),
+                        Deleted = false,
+                        Active = true,
+                        Created = currentDate,
+                        CreatedBy = userName
+                    });
 
-                        //Lịch sử ví tiền VNĐ
-                        int? mainOrderId = 0;
-                        if (staffIncome.MainOrderId > 0)
-                            mainOrderId = staffIncome.MainOrderId;
-                        if (staffIncome.TransportationOrderId > 0)
-                            mainOrderId = staffIncome.TransportationOrderId;
-                        if (staffIncome.PayHelpOrderId > 0)
-                            mainOrderId = staffIncome.PayHelpOrderId;
-
-                        await unitOfWork.Repository<HistoryPayWallet>().CreateAsync(new HistoryPayWallet
-                        {
-                            UID = user.Id,
-                            MainOrderId = mainOrderId,
-                            MoneyLeft = wallet,
-                            Amount = staffIncome.TotalPriceReceive,
-                            Type = (int)DauCongVaTru.Cong,
-                            TradeType = (int)HistoryPayWalletContents.HoaHong,
-                            Content = string.Format("{0} đã nhận được hoa hồng của đơn hàng: {1}.", user.UserName, mainOrderId),
-                            Deleted = false,
-                            Active = true,
-                            Created = currentDate,
-                            CreatedBy = userName
-                        });
-                    }
-
-                    userIds.Add(user.Id);
 
                     //Thay đổi trạng thái thanh toán
                     staffIncome.Updated = currentDate;

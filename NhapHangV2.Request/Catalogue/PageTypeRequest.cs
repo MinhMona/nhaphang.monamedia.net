@@ -10,6 +10,10 @@ namespace NhapHangV2.Request.Catalogue
     public class PageTypeRequest : AppDomainCatalogueRequest
     {
         /// <summary>
+        /// Title của chuyên mục
+        /// </summary>
+        public string? Title { get; set; }
+        /// <summary>
         /// OG Url
         /// </summary>
         public string? OGUrl { get; set; }

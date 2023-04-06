@@ -209,6 +209,7 @@ namespace NhapHangV2.Service.Services
                                     CreatedBy = users.UserName,
                                     Created = currentDate
                                 });
+                                wallet -= amountDeposit;
 
                                 //Thêm lịch sử thanh toán mua hộ
                                 await unitOfWork.Repository<PayOrderHistory>().CreateAsync(new PayOrderHistory()
@@ -289,6 +290,7 @@ namespace NhapHangV2.Service.Services
                                     CreatedBy = users.UserName,
                                     Created = currentDate
                                 });
+                                wallet -= moneyLeft;
 
                                 //Thêm lịch sử đơn hàng thay đổi
                                 await unitOfWork.Repository<HistoryOrderChange>().CreateAsync(new HistoryOrderChange()
@@ -788,6 +790,8 @@ namespace NhapHangV2.Service.Services
         {
             //Bên SmallPackage cũng có tính toán nữa đó
             DateTime currentDate = DateTime.Now;
+            var oldMainOrderStatus = (await unitOfWork.Repository<MainOrder>().GetQueryable().Where(e => e.Id == item.Id).FirstOrDefaultAsync()).Status;
+
             var configurations = await configurationsService.GetSingleAsync();
             var userMainOrder = await unitOfWork.Repository<Users>().GetQueryable().Where(e => e.Id == item.UID).FirstOrDefaultAsync();
             var user = await unitOfWork.Repository<Users>().GetQueryable().Where(e => e.Id == LoginContext.Instance.CurrentUser.UserId).FirstOrDefaultAsync();
@@ -967,8 +971,8 @@ namespace NhapHangV2.Service.Services
             switch (item.Status)
             {
                 case (int)StatusOrderContants.DaDatCoc:
-                    item.DepositDate = currentDate;
-                    break;
+                    if (oldMainOrderStatus != item.Status)
+                        item.DepositDate = currentDate; break;
                 case (int)StatusOrderContants.DaMuaHang:
                     item.DateBuy = currentDate;
 
@@ -982,7 +986,8 @@ namespace NhapHangV2.Service.Services
                     await sendNotificationService.SendNotification(notifcationSetting, notiTemplate, item.Id.ToString(), "", string.Format(Detail_MainOrder, item.Id), item.UID, subject, emailContent);
                     break;
                 case (int)StatusOrderContants.DaVeKhoTQ:
-                    item.DateTQ = currentDate;
+                    if (oldMainOrderStatus != item.Status)
+                        item.DateTQ = currentDate;
                     //Thông báo
                     //Đơn hàng đã đến kho TQ
                     var notiTemplateTQ = await notificationTemplateService.GetByIdAsync(20);
@@ -993,7 +998,8 @@ namespace NhapHangV2.Service.Services
                     await sendNotificationService.SendNotification(notiicationSettingTQ, notiTemplateTQ, item.Id.ToString(), string.Format(Detail_MainOrder_Admin, item.Id), string.Format(Detail_MainOrder, item.Id), item.UID, subjectTQ, emailContentTQ);
                     break;
                 case (int)StatusOrderContants.DaVeKhoVN:
-                    item.DateVN = currentDate;
+                    if (oldMainOrderStatus != item.Status)
+                        item.DateVN = currentDate;
                     //Thông báo
                     //Đơn hàng đã đến kho VN
                     var notiTemplateVN = await notificationTemplateService.GetByIdAsync(19);
@@ -1004,6 +1010,8 @@ namespace NhapHangV2.Service.Services
                     await sendNotificationService.SendNotification(notiicationSettingVN, notiTemplateVN, item.Id.ToString(), string.Format(Detail_MainOrder_Admin, item.Id), string.Format(Detail_MainOrder, item.Id), item.UID, subjectVN, emailContentVN);
                     break;
                 case (int)StatusOrderContants.KhachDaThanhToan:
+                    if (oldMainOrderStatus != item.Status)
+                        item.PayDate = currentDate;
                     var smallPackagePaid = item.SmallPackages;
                     if (smallPackagePaid.Count > 0)
                     {
@@ -1015,7 +1023,8 @@ namespace NhapHangV2.Service.Services
                     }
                     break;
                 case (int)StatusOrderContants.DaHoanThanh:
-                    item.CompleteDate = currentDate;
+                    if (oldMainOrderStatus != item.Status)
+                        item.CompleteDate = currentDate;
                     var smallPackageUpdates = item.SmallPackages;
                     if (smallPackageUpdates.Count > 0)
                     {

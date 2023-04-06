@@ -125,16 +125,17 @@ namespace NhapHangV2.Service.Services
             return true;
         }
 
-        public async Task<decimal> GetCurrency(int UID)
+        public async Task<decimal> GetCurrency(int? UID)
         {
             decimal configCurrency = 0;
-
             var config = await this.GetSingleAsync();
             if (config != null)
                 configCurrency = config.Currency ?? 0;
-            var user = await userService.GetByIdAsync(UID);
-
-            return (user.Currency != null && user.Currency > 0) ? (user.Currency ?? 0) : configCurrency;
+            decimal userCurrency = 0;
+            var user = await userService.GetByIdAsync(UID ?? 0);
+            if (user != null)
+                userCurrency = user.Currency ?? 0;
+            return userCurrency > 0 ? userCurrency : configCurrency;
         }
     }
 }

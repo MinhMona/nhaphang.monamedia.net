@@ -363,6 +363,48 @@ namespace NhapHangV2.Service.Services
         }
 
         /// <summary>
+        /// Kiểm tra user đăng nhập
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        public async Task<Users> VerifyForApp(string userName, string password)
+        {
+            var user = await Queryable
+                .Where(e => !e.Deleted
+                && (e.UserName == userName
+                || e.Phone == userName
+                || e.Email == userName
+                )
+                )
+                .FirstOrDefaultAsync();
+            if (user != null)
+            {
+                if (user.Status == (int)CoreContants.StatusUser.Locked)
+                {
+                    throw new Exception("Tài khoản đã bị khóa");
+                }
+                if (user.Status == (int)CoreContants.StatusUser.NotActive)
+                {
+                    throw new Exception("Tài khoản chưa được kích hoạt");
+                }
+                if (!user.IsAdmin && !user.IsCheckOTP)
+                {
+                    throw new Exception("Người dùng chưa xác thực OTP");
+                }
+                if (user.Password == SecurityUtilities.HashSHA1(password))
+                {
+                    return user;
+                }
+                else
+                    throw new AppException("Tên đăng nhập hoặc mật khẩu không chính xác");
+
+            }
+            else
+                throw new AppException("Tên đăng nhập hoặc mật khẩu không chính xác");
+        }
+
+        /// <summary>
         /// Kiểm tra pass word cũ đã giống chưa
         /// </summary>
         /// <param name="userId"></param>

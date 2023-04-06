@@ -1125,6 +1125,20 @@
             <param name="baseSearch"></param>
             <returns></returns>
         </member>
+        <member name="M:NhapHangV2.API.Controllers.Report.MainOrderReportController.ExportReport(NhapHangV2.Entities.Search.Report.MainOrderReportSearch)">
+            <summary>
+            Xuất báo cáo
+            </summary>
+            <param name="baseSearch"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NhapHangV2.API.Controllers.Report.MainOrderReportController.GetTemplateFilePath2(System.String)">
+            <summary>
+            Lấy đường dẫn file template
+            </summary>
+            <param name="fileTemplateName"></param>
+            <returns></returns>
+        </member>
         <member name="M:NhapHangV2.API.Controllers.ShippingTypeToWareHouseController.AddItem(NhapHangV2.Request.Catalogue.ShippingTypeToWareHouseRequest)">
             <summary>
             Thêm mới item

@@ -92,7 +92,7 @@ namespace NhapHangV2.Request
 
         //public bool? is_translate { get; set; }
 
-        //public string? pricestep { get; set; }
+        public string? pricestep { get; set; }
 
     }
 }

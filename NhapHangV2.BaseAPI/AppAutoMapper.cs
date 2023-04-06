@@ -317,7 +317,7 @@ namespace NhapHangV2.Models.AutoMapper
                 //.ForMember(dst => dst.Tool, src => src.MapFrom(i => i.tool))
                 //.ForMember(dst => dst.Version, src => src.MapFrom(i => i.version))
                 //.ForMember(dst => dst.IsTranslate, src => src.MapFrom(i => i.is_translate))
-                //.ForMember(dst => dst.StepPrice, src => src.MapFrom(i => i.pricestep))
+                .ForMember(dst => dst.StepPrice, src => src.MapFrom(i => i.pricestep))
                 .ReverseMap();
 
             //CreateMap<OrderTempRequest, OrderTemp>()

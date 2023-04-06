@@ -11,6 +11,13 @@
             <param name="loginModel"></param>
             <returns></returns>
         </member>
+        <member name="M:NhapHangV2.BaseAPI.Controllers.Auth.AuthController.LoginForAppAsync(NhapHangV2.Request.Auth.Login)">
+            <summary>
+            Đăng nhập hệ thống
+            </summary>
+            <param name="loginModel"></param>
+            <returns></returns>
+        </member>
         <member name="M:NhapHangV2.BaseAPI.Controllers.Auth.AuthController.SendOTP(System.String,System.String)">
             <summary>
             Kiểm tra mã OTP đăng nhập hệ thống
@@ -75,13 +82,11 @@
             <param name="changePasswordModel"></param>
             <returns></returns>
         </member>
-        <member name="M:NhapHangV2.BaseAPI.Controllers.Auth.AuthController.ForgotPassword(System.String)">
+        <member name="M:NhapHangV2.BaseAPI.Controllers.Auth.AuthController.ForgotPassword(NhapHangV2.Request.Auth.Register)">
             <summary>
             Quên mật khẩu
-            <para>Gửi mật khẩu mới qua Email nếu username là email</para>
-            <para>Gửi mật khẩu mới qua SMS nếu username là phone</para>
             </summary>
-            <param name="userName"></param>
+            <param name="itemModel"></param>
             <returns></returns>
         </member>
         <member name="M:NhapHangV2.BaseAPI.Controllers.Auth.AuthController.Logout">

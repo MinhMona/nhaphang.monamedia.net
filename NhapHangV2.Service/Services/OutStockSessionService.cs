@@ -460,6 +460,7 @@ namespace NhapHangV2.Service.Services
 
                         //Cập nhật
                         smallPackage.Status = (int)StatusSmallPackage.DaGiao;
+                        smallPackage.StaffVNOutWarehouse = user.UserName;
                         smallPackage.DateOutWarehouse = mainOrder.CompleteDate = currentDate;
 
                         unitOfWork.Repository<SmallPackage>().Update(smallPackage);
@@ -477,6 +478,7 @@ namespace NhapHangV2.Service.Services
                             transportationOrders.Add(transOrder);
                         //Cập nhật
                         smallPackage.Status = (int)StatusSmallPackage.DaGiao;
+                        smallPackage.StaffVNOutWarehouse = user.UserName;
                         smallPackage.DateOutWarehouse = transOrder.DateExport = currentDate;
 
                         unitOfWork.Repository<SmallPackage>().Update(smallPackage);

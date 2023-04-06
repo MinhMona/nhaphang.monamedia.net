@@ -64,6 +64,12 @@ namespace NhapHangV2.API
 
             services.AddCors(options =>
             {
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.AllowAnyOrigin()
+                           .AllowAnyHeader()
+                           .AllowAnyMethod();
+                });
                 options.AddPolicy(MyAllowSpecificOrigins,
                 builder =>
                 {

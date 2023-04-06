@@ -64,10 +64,10 @@ namespace NhapHangV2.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("currency")]
-        [AppAuthorize(new int[] { CoreContants.View })]
+        [AllowAnonymous]
         public async Task<AppDomainResult> GetCurrencyHeplBuy()
         {
-            int UID = LoginContext.Instance.CurrentUser.UserId;
+            int? UID = LoginContext.Instance.CurrentUser != null ? LoginContext.Instance.CurrentUser.UserId : null;
             var currency = await configurationsService.GetCurrency(UID);
             return new AppDomainResult()
             {
@@ -97,13 +97,13 @@ namespace NhapHangV2.API.Controllers
                     var messageUserCheck = await this.domainService.GetExistItemMessage(item);
                     if (!string.IsNullOrEmpty(messageUserCheck))
                         throw new KeyNotFoundException(messageUserCheck);
-                    
+
                     success = await this.domainService.CreateAsync(item);
                     if (success)
                     {
                         appDomainResult.ResultCode = (int)HttpStatusCode.OK;
                     }
-                    
+
                     appDomainResult.Success = success;
                 }
                 else
@@ -136,13 +136,13 @@ namespace NhapHangV2.API.Controllers
                     var messageUserCheck = await this.domainService.GetExistItemMessage(item);
                     if (!string.IsNullOrEmpty(messageUserCheck))
                         throw new KeyNotFoundException(messageUserCheck);
-                    
+
                     success = await this.domainService.UpdateAsync(item);
                     if (success)
                     {
                         appDomainResult.ResultCode = (int)HttpStatusCode.OK;
                     }
-                    
+
                     appDomainResult.Success = success;
                     await hubContext.Clients.All.ChangeTemp(true);
                 }
