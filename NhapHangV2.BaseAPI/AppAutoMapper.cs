@@ -320,39 +320,22 @@ namespace NhapHangV2.Models.AutoMapper
                 .ForMember(dst => dst.StepPrice, src => src.MapFrom(i => i.pricestep))
                 .ReverseMap();
 
-            //CreateMap<OrderTempRequest, OrderTemp>()
-            //    .ForMember(dst => dst.TitleOrigin, src => src.MapFrom(i => i.title_origin))
-            //    .ForMember(dst => dst.TitleTranslated, src => src.MapFrom(i => i.title_translated))
-            //    .ForMember(dst => dst.PriceOrigin, src => src.MapFrom(i => i.price_origin))
-            //    .ForMember(dst => dst.PricePromotion, src => src.MapFrom(i => i.price_promotion))
-            //    .ForMember(dst => dst.PropertyTranslated, src => src.MapFrom(i => i.property_translated))
-            //    .ForMember(dst => dst.Property, src => src.MapFrom(i => i.property))
-            //    .ForMember(dst => dst.ShopId, src => src.MapFrom(i => i.shop_id))
-            //    .ForMember(dst => dst.ShopName, src => src.MapFrom(i => i.shop_name))
-            //    .ForMember(dst => dst.SellerId, src => src.MapFrom(i => i.seller_id))
-            //    .ForMember(dst => dst.Wangwang, src => src.MapFrom(i => i.wangwang))
-            //    .ForMember(dst => dst.Quantity, src => src.MapFrom(i => i.quantity))
-            //    .ForMember(dst => dst.Stock, src => src.MapFrom(i => i.stock))
-            //    .ForMember(dst => dst.LocationSale, src => src.MapFrom(i => i.location_sale))
-            //    .ForMember(dst => dst.Site, src => src.MapFrom(i => i.site))
-            //    .ForMember(dst => dst.ItemId, src => src.MapFrom(i => i.item_id))
-            //    .ForMember(dst => dst.LinkOrigin, src => src.MapFrom(i => i.link_origin))
-            //    .ForMember(dst => dst.Weight, src => src.MapFrom(i => i.weight))
-            //    .ForMember(dst => dst.Brand, src => src.MapFrom(i => i.brand))
-            //    .ForMember(dst => dst.CategoryName, src => src.MapFrom(i => i.category_name))
-            //    .ForMember(dst => dst.CategoryId, src => src.MapFrom(i => i.category_id))
-            //    .ForMember(dst => dst.Tool, src => src.MapFrom(i => i.tool))
-            //    .ForMember(dst => dst.Version, src => src.MapFrom(i => i.version))
-            //    .ForMember(dst => dst.IsTranslate, src => src.MapFrom(i => i.is_translate))
-            //    .ForMember(dst => dst.StepPrice, src => src.MapFrom(i => i.pricestep))
-            //    .ForMember(dst => dst.ImageOrigin, src => src.MapFrom(i => i.image_origin))
-            //    .ReverseMap();
+            CreateMap<OrderTempRequestNew, OrderTemp>()
+                .ForMember(dst => dst.TitleOrigin, src => src.MapFrom(i => i.Title))
+                .ForMember(dst => dst.PriceOrigin, src => src.MapFrom(i => i.PriceOrigin))
+                .ForMember(dst => dst.PricePromotion, src => src.MapFrom(i => i.PricePromotion))
+                .ForMember(dst => dst.Quantity, src => src.MapFrom(i => i.Quantity))
+                .ForMember(dst => dst.Stock, src => src.MapFrom(i => i.Stock))
+                .ForMember(dst => dst.ItemId, src => src.MapFrom(i => i.ItemID))
+                .ForMember(dst => dst.Property, src => src.MapFrom(i => i.Properties))
+                .ForMember(dst => dst.ImageOrigin, src => src.MapFrom(i => i.Image))
+                .ReverseMap();
 
-            //CreateMap<OrderShopTempRequest, OrderShopTemp>()
-            //    .ForMember(dst => dst.ShopId, src => src.MapFrom(i => i.shop_id))
-            //    .ForMember(dst => dst.ShopName, src => src.MapFrom(i => i.shop_name))
-            //    .ForMember(dst => dst.Site, src => src.MapFrom(i => i.site))
-            //    .ReverseMap();
+            CreateMap<OrderShopTempRequestNew, OrderShopTemp>()
+                .ForMember(dst => dst.ShopId, src => src.MapFrom(i => i.ShopId))
+                .ForMember(dst => dst.ShopName, src => src.MapFrom(i => i.ShopName))
+                .ForMember(dst => dst.Site, src => src.MapFrom(i => i.Site))
+                .ReverseMap();
             #endregion
 
             #region Add same OrderShopTemp from MainOrder

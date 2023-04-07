@@ -587,6 +587,54 @@ namespace NhapHangV2.API.Controllers
         /// </summary>
         /// <param name="itemModel"></param>
         /// <returns></returns>
+        [HttpPost("new")]
+        [AppAuthorize(new int[] { CoreContants.AddNew })]
+        public async Task<AppDomainResult> AddItemNew([FromBody] OrderShopTempRequestNew itemModel)
+        {
+            AppDomainResult appDomainResult = new AppDomainResult();
+            bool success = false;
+            if (ModelState.IsValid)
+            {
+                //if(itemModel.Orders.Count <=0)
+                //    throw new KeyNotFoundException("Số lượng sản phẩm nhỏ hơn 0");
+                var item = mapper.Map<OrderShopTemp>(itemModel);
+                item.OrderTemps = mapper.Map<List<OrderTemp>>(itemModel.Orders);
+                foreach (var order in item.OrderTemps)
+                {
+                    order.ShopId = item.ShopId;
+                    order.ShopName = item.ShopName;
+                    order.Site = item.Site;
+                    order.Tool = itemModel.Tool;
+                    order.Version = itemModel.Version;
+                    order.MinimumQuantity = itemModel.MinimumQuantity ?? 0;
+                    order.StepPrice = itemModel.StepPrice;
+                    order.LinkOrigin = itemModel.Link;
+                }
+                if (item != null)
+                {
+                    success = await orderShopTempService.CreateAsync(item);
+                    if (success)
+                    {
+                        appDomainResult.ResultCode = (int)HttpStatusCode.OK;
+                    }
+                    else
+                        throw new Exception("Lỗi trong quá trình xử lý");
+                    appDomainResult.Success = success;
+                }
+                else
+                    throw new KeyNotFoundException("Item không tồn tại");
+            }
+            else
+            {
+                throw new AppException(ModelState.GetErrorMessage());
+            }
+            return appDomainResult;
+        }
+        /// <summary>
+        /// Đặt hàng qua Extension
+        /// </summary>
+        /// <param name="itemModel"></param>
+        /// <returns></returns>
         [HttpPost]
         [AppAuthorize(new int[] { CoreContants.AddNew })]
         public override async Task<AppDomainResult> AddItem([FromBody] OrderShopTempRequest itemModel)

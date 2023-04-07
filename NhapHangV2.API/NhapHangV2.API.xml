@@ -917,6 +917,13 @@
             <param name="model"></param>
             <returns></returns>
         </member>
+        <member name="M:NhapHangV2.API.Controllers.OrderShopTempController.AddItemNew(NhapHangV2.Request.OrderShopTempRequestNew)">
+            <summary>
+            Đặt hàng qua Extension
+            </summary>
+            <param name="itemModel"></param>
+            <returns></returns>
+        </member>
         <member name="M:NhapHangV2.API.Controllers.OrderShopTempController.AddItem(NhapHangV2.Request.OrderShopTempRequest)">
             <summary>
             Đặt hàng qua Extension
