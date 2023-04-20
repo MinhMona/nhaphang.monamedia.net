@@ -263,7 +263,7 @@ namespace NhapHangV2.Service.Services
                     if (orderShopTemp != null) //Chưa có shop chưa đặt
                     {
                         var existOrderTemp = await unitOfWork.Repository<OrderTemp>().GetQueryable().Where(x => !x.Deleted && x.UID == UID && x.OrderShopTempId == orderShopTemp.Id).ToListAsync();
-                        existOrderTemp.Add(item.OrderTemps.FirstOrDefault());
+                        //existOrderTemp.Add(item.OrderTemps.FirstOrDefault());
                         item.OrderTemps = existOrderTemp;
                     }
                     item = await UpdatePrice(item);
@@ -447,8 +447,9 @@ namespace NhapHangV2.Service.Services
         public async Task<OrderShopTemp> UpdatePrice(OrderShopTemp item)
         {
             var user = await unitOfWork.Repository<Users>().GetQueryable().Where(x => x.Id == item.UID).FirstOrDefaultAsync();
+            var existOrderTemp = await unitOfWork.Repository<OrderTemp>().GetQueryable().Where(x => !x.Deleted && x.UID == item.UID && x.OrderShopTempId == item.Id).ToListAsync();
 
-            var orderTemps = item.OrderTemps;
+            var orderTemps = existOrderTemp;
             var conf = await unitOfWork.Repository<Entities.Configurations>()
                 .GetQueryable()
                 .OrderByDescending(x => x.Id)

@@ -37,11 +37,13 @@ namespace NhapHangV2.API.Controllers
         protected readonly IConfiguration configuration;
         protected readonly IPageService pageService;
         protected readonly IPageTypeService pageTypeService;
+        protected readonly IWebHostEnvironment env;
         public PageController(IServiceProvider serviceProvider, ILogger<PageController> logger, IWebHostEnvironment env, IConfiguration configuration, IPageTypeService pageTypeService, IMapper mapper)
         {
             this.mapper = mapper;
             this.configuration = configuration;
             this.pageTypeService = pageTypeService;
+            this.env = env;
             pageService = serviceProvider.GetRequiredService<IPageService>();
         }
 
@@ -116,6 +118,35 @@ namespace NhapHangV2.API.Controllers
             bool success = false;
             if (ModelState.IsValid)
             {
+                int imgIndex = -1;
+                do
+                {
+                    imgIndex = itemModel.PageContent.IndexOf("src=", imgIndex + 1);
+                    if (imgIndex < 0)
+                    {
+                        break;
+                    }
+                    imgIndex += 5;
+                    int imgStartIndex = imgIndex;
+                    imgIndex = itemModel.PageContent.IndexOf(',', imgIndex);
+                    imgIndex++;
+                    int imgEndIndex = itemModel.PageContent.IndexOf('"', imgIndex);
+                    try
+                    {
+                        string content = itemModel.PageContent.Substring(imgIndex, imgEndIndex - imgIndex);
+                        string fileUploadPath = Path.Combine(env.ContentRootPath, CoreContants.UPLOAD_FOLDER_NAME, CoreContants.UPLOAD_FOLDER_NAME);
+                        string path = Path.Combine(fileUploadPath, Guid.NewGuid().ToString() + ".PNG");
+                        FileUtilities.SaveToPath(path, Convert.FromBase64String(content));
+                        var currentLinkSite = $"{Extensions.HttpContext.Current.Request.Scheme}://{Extensions.HttpContext.Current.Request.Host}/{CoreContants.UPLOAD_FOLDER_NAME}/{CoreContants.UPLOAD_FOLDER_NAME}";
+                        var fileUrl = Path.Combine(currentLinkSite, Path.GetFileName(path));
+                        content = itemModel.PageContent.Substring(imgStartIndex, imgEndIndex - imgStartIndex);
+                        itemModel.PageContent = itemModel.PageContent.Replace(content, fileUrl);
+                    }
+                    catch
+                    {
+                        imgIndex++;
+                    }
+                } while (true);
                 itemModel.Code = AppUtilities.RemoveUnicode(itemModel.Title).ToLower().Replace(" ", "-");
                 var pageType = await pageTypeService.GetByIdAsync(Convert.ToInt32(itemModel.PageTypeId));
                 itemModel.Code = pageType.Code + "/" + itemModel.Code;
@@ -159,6 +190,35 @@ namespace NhapHangV2.API.Controllers
             bool success = false;
             if (ModelState.IsValid)
             {
+                int imgIndex = -1;
+                do
+                {
+                    imgIndex = itemModel.PageContent.IndexOf("src=", imgIndex + 1);
+                    if (imgIndex < 0)
+                    {
+                        break;
+                    }
+                    imgIndex += 5;
+                    int imgStartIndex = imgIndex;
+                    imgIndex = itemModel.PageContent.IndexOf(',', imgIndex);
+                    imgIndex++;
+                    int imgEndIndex = itemModel.PageContent.IndexOf('"', imgIndex);
+                    try
+                    {
+                        string content = itemModel.PageContent.Substring(imgIndex, imgEndIndex - imgIndex);
+                        string fileUploadPath = Path.Combine(env.ContentRootPath, CoreContants.UPLOAD_FOLDER_NAME, CoreContants.UPLOAD_FOLDER_NAME);
+                        string path = Path.Combine(fileUploadPath, Guid.NewGuid().ToString() + ".PNG");
+                        FileUtilities.SaveToPath(path, Convert.FromBase64String(content));
+                        var currentLinkSite = $"{Extensions.HttpContext.Current.Request.Scheme}://{Extensions.HttpContext.Current.Request.Host}/{CoreContants.UPLOAD_FOLDER_NAME}/{CoreContants.UPLOAD_FOLDER_NAME}";
+                        var fileUrl = Path.Combine(currentLinkSite, Path.GetFileName(path));
+                        content = itemModel.PageContent.Substring(imgStartIndex, imgEndIndex - imgStartIndex);
+                        itemModel.PageContent = itemModel.PageContent.Replace(content, fileUrl);
+                    }
+                    catch
+                    {
+                        imgIndex++;
+                    }
+                } while (true);
                 itemModel.Code = AppUtilities.RemoveUnicode(itemModel.Title).ToLower().Replace(" ", "-");
                 var pageType = await pageTypeService.GetByIdAsync(Convert.ToInt32(itemModel.PageTypeId));
                 itemModel.Code = pageType.Code + "/" + itemModel.Code;

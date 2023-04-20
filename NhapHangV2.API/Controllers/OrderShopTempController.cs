@@ -609,6 +609,9 @@ namespace NhapHangV2.API.Controllers
                     order.MinimumQuantity = itemModel.MinimumQuantity ?? 0;
                     order.StepPrice = itemModel.StepPrice;
                     order.LinkOrigin = itemModel.Link;
+                    order.ItemId = itemModel.ItemID;
+                    order.Wangwang = itemModel.Wangwang;
+                    order.SellerId = itemModel.SalerId;
                 }
                 if (item != null)
                 {

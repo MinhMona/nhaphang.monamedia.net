@@ -40,7 +40,10 @@ namespace NhapHangV2.Service.Services.Catalogue
             var item = await Queryable.Where(e => e.Code == code && !e.Deleted).AsNoTracking().FirstOrDefaultAsync();
             if (item == null)
                 return null;
-            var page = await unitOfWork.Repository<Entities.Page>().GetQueryable().Select(x => new Entities.Page() { IMG = x.IMG, Code = x.Code, Title = x.Title, Summary = x.Summary, Id = x.Id, IsHidden = x.IsHidden, Active = x.Active }).Where(e => e.PageTypeId == item.Id && !e.Deleted).OrderByDescending(o => o.Id).ToListAsync();
+            var page = await unitOfWork.Repository<Entities.Page>().GetQueryable()
+                .Where(e => e.PageTypeId == item.Id && !e.Deleted && e.Active)
+                .Select(x => new Entities.Page() { IMG = x.IMG, Code = x.Code, Title = x.Title, Summary = x.Summary, Id = x.Id, IsHidden = x.IsHidden, Active = x.Active, Created = x.Created, CreatedBy = x.CreatedBy })
+                .OrderByDescending(o => o.Id).ToListAsync();
             if (page.Any())
                 item.Pages = page;
             return item;

@@ -326,7 +326,6 @@ namespace NhapHangV2.Models.AutoMapper
                 .ForMember(dst => dst.PricePromotion, src => src.MapFrom(i => i.PricePromotion))
                 .ForMember(dst => dst.Quantity, src => src.MapFrom(i => i.Quantity))
                 .ForMember(dst => dst.Stock, src => src.MapFrom(i => i.Stock))
-                .ForMember(dst => dst.ItemId, src => src.MapFrom(i => i.ItemID))
                 .ForMember(dst => dst.Property, src => src.MapFrom(i => i.Properties))
                 .ForMember(dst => dst.ImageOrigin, src => src.MapFrom(i => i.Image))
                 .ReverseMap();

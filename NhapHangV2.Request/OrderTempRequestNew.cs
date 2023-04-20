@@ -41,11 +41,6 @@ namespace NhapHangV2.Request
         public int? Stock { get; set; }
 
         /// <summary>
-        /// Id của sản phẩm trên website
-        /// </summary>
-        public string? ItemID { get; set; }
-
-        /// <summary>
         /// Ảnh sản phẩm
         /// </summary>
         public string? Image { get; set; }

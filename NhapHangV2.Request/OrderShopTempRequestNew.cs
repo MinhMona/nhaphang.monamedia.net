@@ -55,6 +55,21 @@ namespace NhapHangV2.Request
         public string? Link { get; set; }
 
         /// <summary>
+        /// Id của sản phẩm trên website
+        /// </summary>
+        public string? ItemID { get; set; }
+
+        /// <summary>
+        /// Id của sản phẩm trên website
+        /// </summary>
+        public string? Wangwang { get; set; }
+
+        /// <summary>
+        /// Id của sản phẩm trên website
+        /// </summary>
+        public string? SalerId { get; set; }
+
+        /// <summary>
         /// List sản phẩm
         /// </summary>
         public List<OrderTempRequestNew>? Orders { get; set; }
