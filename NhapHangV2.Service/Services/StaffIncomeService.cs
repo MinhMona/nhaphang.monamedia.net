@@ -75,7 +75,8 @@ namespace NhapHangV2.Service.Services
                     if (userInGroup.UserGroupId == (int)PermissionTypes.Orderer
                         || userInGroup.UserGroupId == (int)PermissionTypes.Admin
                         || userInGroup.UserGroupId == (int)PermissionTypes.Manager)
-                        idUser = mainOrder.DatHangId;
+                        if (staffIncome.MainOrderId > 0)
+                            idUser = mainOrder.DatHangId;
                     if (userInGroup.UserGroupId == (int)PermissionTypes.Saler
                         || userInGroup.UserGroupId == (int)PermissionTypes.Admin
                         || userInGroup.UserGroupId == (int)PermissionTypes.Manager)
