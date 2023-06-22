@@ -15,6 +15,7 @@ using Newtonsoft.Json.Serialization;
 using NhapHangV2.BaseAPI;
 using NhapHangV2.Extensions;
 using NhapHangV2.Models.AutoMapper;
+using NhapHangV2.Service.Services.BackgroundServices;
 using NhapHangV2.Utilities;
 using Serilog;
 using System;
@@ -160,7 +161,13 @@ namespace NhapHangV2.API
             //{
             //    Credential = GoogleCredential.FromFile(Configuration["Firebase:Admin"]),
             //}));
+            //BackgroundService
+            services.AddHostedService<RuntimeBackgroundService>();
+
         }
+
+        
+        
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, IServiceProvider serviceProvider)

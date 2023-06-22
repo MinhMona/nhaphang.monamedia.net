@@ -59,7 +59,7 @@ namespace NhapHangV2.Service.Repository
             entity.Created = DateTime.Now;
             if (string.IsNullOrEmpty(entity.CreatedBy))
             {
-                var User = LoginContext.Instance.CurrentUser;
+                var User = LoginContext.Instance?.CurrentUser;
                 if (User != null)
                 {
                     entity.CreatedBy = User.UserName;
@@ -76,7 +76,7 @@ namespace NhapHangV2.Service.Repository
                 entity.Created = DateTime.Now;
                 if (string.IsNullOrEmpty(entity.CreatedBy))
                 {
-                    var User = LoginContext.Instance.CurrentUser;
+                    var User = LoginContext.Instance?.CurrentUser;
                     if (User != null)
                     {
                         entity.CreatedBy = User.UserName;

@@ -33,7 +33,7 @@ namespace NhapHangV2.Extensions
         {
             get
             {
-                var user = (UserLoginModel)NhapHangV2.Extensions.HttpContext.Current.Items["User"];
+                var user = (UserLoginModel)NhapHangV2.Extensions.HttpContext.Current?.Items["User"];
                 if (user != null)
                     return user;
                 return null;
