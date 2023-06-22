@@ -6,6 +6,7 @@ using NhapHangV2.Interface.DbContext;
 using NhapHangV2.Interface.Repository;
 using NhapHangV2.Interface.Services;
 using NhapHangV2.Interface.Services.Auth;
+using NhapHangV2.Interface.Services.BackgroundServices;
 using NhapHangV2.Interface.Services.Catalogue;
 using NhapHangV2.Interface.Services.Configuration;
 using NhapHangV2.Interface.Services.Report;
@@ -14,6 +15,7 @@ using NhapHangV2.Service;
 using NhapHangV2.Service.Repository;
 using NhapHangV2.Service.Services;
 using NhapHangV2.Service.Services.Auth;
+using NhapHangV2.Service.Services.BackgroundServices;
 using NhapHangV2.Service.Services.Catalogue;
 using NhapHangV2.Service.Services.Configurations;
 using NhapHangV2.Service.Services.Report;
@@ -152,6 +154,7 @@ namespace NhapHangV2.BaseAPI
             services.AddScoped<IVolumeFeeService, VolumeFeeService>();
             services.AddScoped<IWithdrawService, WithdrawService>();
             services.AddScoped<IContactUsService, ContactUsService>();
+            services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
 
             #region ToolConfig
             services.AddScoped<IToolConfigService, ToolConfigService>();

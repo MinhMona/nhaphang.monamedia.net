@@ -18,95 +18,109 @@ using NhapHangV2.Interface.UnitOfWork;
 using AutoMapper;
 using NhapHangV2.Interface.DbContext;
 using System.Threading;
+using NhapHangV2.Interface.Services.BackgroundServices;
 
 namespace NhapHangV2.Service.Services.Configurations
 {
     public class SendNotificationService : ISendNotificationService
     {
-        protected readonly IHubContext<DomainHub, IDomainHub> hubContext;
-        protected readonly IUserInGroupService userInGroupService;
-        protected readonly IUserService userService;
-        protected readonly INotificationService notificationService;
-        protected readonly IEmailConfigurationService emailConfigurationService;
-        protected readonly IConfigurationsService configurationsService;
+        protected IHubContext<DomainHub, IDomainHub> hubContext;
+        protected IUserInGroupService userInGroupService;
+        protected IUserService userService;
+        protected INotificationService notificationService;
+        protected IEmailConfigurationService emailConfigurationService;
+        protected IConfigurationsService configurationsService;
+        protected readonly IServiceScopeFactory serviceScopeFactory;
+        protected readonly IBackgroundTaskQueue taskQueue;
+        protected readonly IServiceProvider serviceProvider;
 
-        public SendNotificationService(IServiceProvider serviceProvider)
+        public SendNotificationService(IServiceProvider serviceProvider, IServiceScopeFactory serviceScopeFactory, IBackgroundTaskQueue taskQueue)
         {
-            userInGroupService = serviceProvider.GetRequiredService<IUserInGroupService>();
-            userService = serviceProvider.GetRequiredService<IUserService>();
-            notificationService = serviceProvider.GetRequiredService<INotificationService>();
-            hubContext = serviceProvider.GetRequiredService<IHubContext<DomainHub, IDomainHub>>();
-            emailConfigurationService = serviceProvider.GetRequiredService<IEmailConfigurationService>();
-            configurationsService = serviceProvider.GetRequiredService<IConfigurationsService>();
-
+            this.serviceScopeFactory = serviceScopeFactory;
+            this.taskQueue = taskQueue;
+            this.serviceProvider = serviceProvider;
         }
         public async Task SendNotification(NotificationSetting notificationSetting,
             NotificationTemplate notiTemplate, string contentParam,
             string url, string urlUser, int? userId, string subject, string emailContent)
         {
-            if (notificationSetting.IsNotifyAdmin)
+            taskQueue.QueueBackgroundWorkItem(async token =>
             {
-                List<Notification> notisAdmin = await createListNotification(1, notiTemplate, "Admin", url, contentParam);
-                await SendNotis(notisAdmin, notificationSetting.IsNotifyAdmin, notificationSetting.IsEmailAdmin, subject, emailContent);
-                List<Notification> notisManager = await createListNotification(3, notiTemplate, "Quản lý", url, contentParam);
-                await SendNotis(notisManager, notificationSetting.IsNotifyAdmin, notificationSetting.IsEmailAdmin, subject, emailContent);
-            }
-
-            if (notificationSetting.IsNotifyOrderer)
-            {
-                List<Notification> notisOderer = await createListNotification(4, notiTemplate, "Đặt hàng", url, contentParam);
-                await SendNotis(notisOderer, notificationSetting.IsNotifyOrderer, false, subject, emailContent);
-            }
-
-            if (notificationSetting.IsNotifyWarehoueFrom)
-            {
-                List<Notification> notisTQ = await createListNotification(5, notiTemplate, "Kho TQ", url, contentParam);
-                await SendNotis(notisTQ, notificationSetting.IsNotifyWarehoueFrom, false, subject, emailContent);
-            }
-
-            if (notificationSetting.IsNotifyWarehoue)
-            {
-                List<Notification> notisVN = await createListNotification(6, notiTemplate, "Kho VN", url, contentParam);
-                await SendNotis(notisVN, notificationSetting.IsNotifyWarehoue, false, subject, emailContent);
-            }
-
-            if (notificationSetting.IsNotifySaler)
-            {
-                List<Notification> notisSaler = await createListNotification(7, notiTemplate, "Seller", url, contentParam);
-                await SendNotis(notisSaler, notificationSetting.IsNotifySaler, false, subject, emailContent);
-            }
-
-            if (notificationSetting.IsNotifyAccountant)
-            {
-                List<Notification> notisAccountant = await createListNotification(8, notiTemplate, "Kế toán", url, contentParam);
-                await SendNotis(notisAccountant, notificationSetting.IsNotifyAccountant, false, subject, emailContent);
-            }
-
-            if (notificationSetting.IsNotifyStorekeepers)
-            {
-                List<Notification> notisStorekepper = await createListNotification(9, notiTemplate, "Thủ kho", url, contentParam);
-                await SendNotis(notisStorekepper, notificationSetting.IsNotifyStorekeepers, false, subject, emailContent);
-            }
-
-            if (notificationSetting.IsNotifyUser)
-            {
-                #region Create cotification to user
-                Notification notisUser = new Notification();
-                if (userId != null)
+                using (var scope = serviceProvider.CreateScope())
                 {
-                    notisUser = new Notification()
+                    var scopedServices = scope.ServiceProvider;
+                    userInGroupService = scopedServices.GetRequiredService<IUserInGroupService>();
+                    userService = scopedServices.GetRequiredService<IUserService>();
+                    notificationService = scopedServices.GetRequiredService<INotificationService>();
+                    hubContext = scopedServices.GetRequiredService<IHubContext<DomainHub, IDomainHub>>();
+                    emailConfigurationService = scopedServices.GetRequiredService<IEmailConfigurationService>();
+                    configurationsService = scopedServices.GetRequiredService<IConfigurationsService>();
+                    if (notificationSetting.IsNotifyAdmin)
                     {
-                        NotificationTemplateId = notiTemplate.Id,
-                        Url = urlUser,
-                        NotificationContent = string.Format(notiTemplate.Content, contentParam),
-                        UserGroupId = (int)PermissionTypes.User,
-                        ToUserId = userId.Value,
-                        OfEmployee = false
-                    };
+                        List<Notification> notisAdmin = await createListNotification(1, notiTemplate, "Admin", url, contentParam);
+                        await SendNotis(notisAdmin, notificationSetting.IsNotifyAdmin, notificationSetting.IsEmailAdmin, subject, emailContent);
+                        List<Notification> notisManager = await createListNotification(3, notiTemplate, "Quản lý", url, contentParam);
+                        await SendNotis(notisManager, notificationSetting.IsNotifyAdmin, notificationSetting.IsEmailAdmin, subject, emailContent);
+                    }
+
+                    if (notificationSetting.IsNotifyOrderer)
+                    {
+                        List<Notification> notisOderer = await createListNotification(4, notiTemplate, "Đặt hàng", url, contentParam);
+                        await SendNotis(notisOderer, notificationSetting.IsNotifyOrderer, false, subject, emailContent);
+                    }
+
+                    if (notificationSetting.IsNotifyWarehoueFrom)
+                    {
+                        List<Notification> notisTQ = await createListNotification(5, notiTemplate, "Kho TQ", url, contentParam);
+                        await SendNotis(notisTQ, notificationSetting.IsNotifyWarehoueFrom, false, subject, emailContent);
+                    }
+
+                    if (notificationSetting.IsNotifyWarehoue)
+                    {
+                        List<Notification> notisVN = await createListNotification(6, notiTemplate, "Kho VN", url, contentParam);
+                        await SendNotis(notisVN, notificationSetting.IsNotifyWarehoue, false, subject, emailContent);
+                    }
+
+                    if (notificationSetting.IsNotifySaler)
+                    {
+                        List<Notification> notisSaler = await createListNotification(7, notiTemplate, "Seller", url, contentParam);
+                        await SendNotis(notisSaler, notificationSetting.IsNotifySaler, false, subject, emailContent);
+                    }
+
+                    if (notificationSetting.IsNotifyAccountant)
+                    {
+                        List<Notification> notisAccountant = await createListNotification(8, notiTemplate, "Kế toán", url, contentParam);
+                        await SendNotis(notisAccountant, notificationSetting.IsNotifyAccountant, false, subject, emailContent);
+                    }
+
+                    if (notificationSetting.IsNotifyStorekeepers)
+                    {
+                        List<Notification> notisStorekepper = await createListNotification(9, notiTemplate, "Thủ kho", url, contentParam);
+                        await SendNotis(notisStorekepper, notificationSetting.IsNotifyStorekeepers, false, subject, emailContent);
+                    }
+
+                    if (notificationSetting.IsNotifyUser)
+                    {
+                        #region Create cotification to user
+                        Notification notisUser = new Notification();
+                        if (userId != null)
+                        {
+                            notisUser = new Notification()
+                            {
+                                NotificationTemplateId = notiTemplate.Id,
+                                Url = urlUser,
+                                NotificationContent = string.Format(notiTemplate.Content, contentParam),
+                                UserGroupId = (int)PermissionTypes.User,
+                                ToUserId = userId.Value,
+                                OfEmployee = false
+                            };
+                        }
+                        #endregion
+                        await SendNotis(new List<Notification> { notisUser }, notificationSetting.IsNotifyUser, notificationSetting.IsEmailUser, subject, emailContent);
+                    }
                 }
-                #endregion
-                await SendNotis(new List<Notification> { notisUser }, notificationSetting.IsNotifyUser, notificationSetting.IsEmailUser, subject, emailContent);
-            }
+            });
+            
         }
 
         private async Task<List<Notification>> createListNotification(int roleId, NotificationTemplate notiTemplate, string prefix, string url, string contentParam)
