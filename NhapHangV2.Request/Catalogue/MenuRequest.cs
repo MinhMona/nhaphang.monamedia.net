@@ -10,6 +10,16 @@ namespace NhapHangV2.Request.Catalogue
     public class MenuRequest : AppDomainCatalogueRequest
     {
         /// <summary>
+        /// id bài viết
+        /// </summary>
+        public int? PageId { get; set; }
+
+        /// <summary>
+        /// id chuyên mục
+        /// </summary>
+        public int? PageTypeId { get; set; }
+
+        /// <summary>
         /// Link menu
         /// </summary>
         public string? Link { get; set; }

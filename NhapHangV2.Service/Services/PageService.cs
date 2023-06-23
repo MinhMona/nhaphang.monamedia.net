@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using NhapHangV2.Entities;
+using NhapHangV2.Entities.Catalogue;
 using NhapHangV2.Entities.DomainEntities;
 using NhapHangV2.Entities.Search;
+using NhapHangV2.Interface.DbContext;
 using NhapHangV2.Interface.Services;
 using NhapHangV2.Interface.UnitOfWork;
 using NhapHangV2.Service.Services.DomainServices;
@@ -16,8 +18,10 @@ namespace NhapHangV2.Service.Services
 {
     public class PageService : DomainService<Page, PageSearch>, IPageService
     {
-        public PageService(IAppUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
+        protected readonly IAppDbContext Context;
+        public PageService(IAppUnitOfWork unitOfWork, IMapper mapper, IAppDbContext context) : base(unitOfWork, mapper)
         {
+            this.Context = context;
         }
 
         protected override string GetStoreProcName()
@@ -31,6 +35,25 @@ namespace NhapHangV2.Service.Services
             if (item == null)
                 return null;
             return item;
+        }
+
+        public async Task<bool> UpdateMenuId(int id, int menuId)
+        {
+            using (var dbContextTransaction = Context.Database.BeginTransaction())
+            {
+                try
+                {
+                    unitOfWork.Repository<Page>().ExecuteNonQuery(string.Format("update Page set MenuId = {0} where id = {1}", menuId, id));
+                    await unitOfWork.SaveAsync();
+                    await dbContextTransaction.CommitAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    await dbContextTransaction.RollbackAsync();
+                    throw new Exception(ex.Message);
+                }
+            }
         }
     }
 }

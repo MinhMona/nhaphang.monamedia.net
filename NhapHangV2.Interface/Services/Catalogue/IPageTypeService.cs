@@ -12,5 +12,6 @@ namespace NhapHangV2.Interface.Services.Catalogue
     public interface IPageTypeService : IDomainService<PageType, CatalogueSearch>
     {
         Task<PageType> GetByCodeAsync(string code);
+        Task<bool> UpdateMenuId(int id, int menuId);
     }
 }
