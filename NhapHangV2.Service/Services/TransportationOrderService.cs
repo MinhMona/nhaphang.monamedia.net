@@ -645,10 +645,9 @@ namespace NhapHangV2.Service.Services
         {
             DateTime currentDate = DateTime.Now;
             decimal totalMustPay = 0;
-            string userName = LoginContext.Instance.CurrentUser.UserName;
-            var users = await unitOfWork.Repository<Users>().GetQueryable().Where(x => x.UserName == userName).FirstOrDefaultAsync();
+            var users = userService.GetById(userId);
             decimal wallet = users.Wallet ?? 0;
-
+            var username = LoginContext.Instance.CurrentUser.UserName;
             if (!listId.Any())
                 throw new KeyNotFoundException("Mã đơn ký gửi không tồn tại");
             var transportOrders = await this.GetAsync(x => !x.Deleted && x.Active && (listId.Contains(x.Id)));
@@ -674,7 +673,7 @@ namespace NhapHangV2.Service.Services
                         users.Wallet -= moneyLeft;
 
                         users.Updated = currentDate;
-                        users.UpdatedBy = userName;
+                        users.UpdatedBy = username;
                         //Tính tiền tích lũy
                         users = await userService.CreateUserTransactionMoney(users, moneyLeft);
                         unitOfWork.Repository<Users>().Update(users);
@@ -682,7 +681,7 @@ namespace NhapHangV2.Service.Services
                         item.Status = (int?)StatusGeneralTransportationOrder.DaThanhToan;
                         item.DateExport = currentDate;
                         item.Updated = currentDate;
-                        item.UpdatedBy = userName;
+                        item.UpdatedBy = username;
 
                         unitOfWork.Repository<TransportationOrder>().Update(item);
 
@@ -698,7 +697,7 @@ namespace NhapHangV2.Service.Services
                             TradeType = (int?)HistoryPayWalletContents.ThanhToanHoaDon,
                             Deleted = false,
                             Active = true,
-                            CreatedBy = users.UserName,
+                            CreatedBy = username,
                             Created = currentDate
                         });
 
