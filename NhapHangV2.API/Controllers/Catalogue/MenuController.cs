@@ -37,6 +37,9 @@ namespace NhapHangV2.API.Controllers.Catalogue
 
         protected readonly IMenuService menuService;
         protected readonly IConfigurationsService configurationsService;
+        protected readonly IPageService pageService;
+        protected readonly IPageTypeService pageTypeService;
+
         public MenuController(IServiceProvider serviceProvider, ILogger<MenuController> logger, IWebHostEnvironment env, IMapper mapper)
         {
             this.mapper = mapper;
@@ -44,6 +47,8 @@ namespace NhapHangV2.API.Controllers.Catalogue
 
             menuService = serviceProvider.GetRequiredService<IMenuService>();
             configurationsService = serviceProvider.GetRequiredService<IConfigurationsService>();
+            pageService = serviceProvider.GetRequiredService<IPageService>();
+            pageTypeService = serviceProvider.GetService<IPageTypeService>();
         }
 
         /// <summary>
@@ -98,7 +103,17 @@ namespace NhapHangV2.API.Controllers.Catalogue
                         throw new KeyNotFoundException(messageUserCheck);
                     success = await menuService.CreateAsync(item);
                     if (success)
+                    {
+                        if(itemModel.PageTypeId != null)
+                        {
+                            await pageTypeService.UpdateMenuId(itemModel.PageTypeId?? 0, item.Id);
+                        }
+                        if(itemModel.PageId != null)
+                        {
+                            await pageService.UpdateMenuId(itemModel.PageId ?? 0, item.Id);
+                        }
                         appDomainResult.ResultCode = (int)HttpStatusCode.OK;
+                    }
                     else
                         throw new Exception("Lỗi trong quá trình xử lý");
                     appDomainResult.Success = success;
@@ -137,7 +152,17 @@ namespace NhapHangV2.API.Controllers.Catalogue
                         throw new KeyNotFoundException(messageUserCheck);
                     success = await menuService.UpdateAsync(item);
                     if (success)
+                    {
+                        if (itemModel.PageTypeId != null)
+                        {
+                            await pageTypeService.UpdateMenuId(itemModel.PageTypeId ?? 0, item.Id);
+                        }
+                        if (itemModel.PageId != null)
+                        {
+                            await pageService.UpdateMenuId(itemModel.PageId ?? 0, item.Id);
+                        }
                         appDomainResult.ResultCode = (int)HttpStatusCode.OK;
+                    }
                     else
                         throw new Exception("Lỗi trong quá trình xử lý");
 

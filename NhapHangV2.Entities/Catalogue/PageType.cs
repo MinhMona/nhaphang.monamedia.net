@@ -85,6 +85,11 @@ namespace NhapHangV2.Entities.Catalogue
         public bool? SideBar { get; set; } = false;
 
         /// <summary>
+        /// menu id
+        /// </summary>
+        public int? MenuId { get; set; } = 0;
+
+        /// <summary>
         /// Danh sách bài viết
         /// </summary>
         [NotMapped]

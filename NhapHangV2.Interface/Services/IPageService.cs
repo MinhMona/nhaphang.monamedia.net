@@ -13,5 +13,6 @@ namespace NhapHangV2.Interface.Services
     public interface IPageService : IDomainService<Page, PageSearch>
     {
         Task<Page> GetByCodeAsync(string code);
+        Task<bool> UpdateMenuId(int id, int menuId);
     }
 }
