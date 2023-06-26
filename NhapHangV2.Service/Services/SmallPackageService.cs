@@ -284,7 +284,8 @@ namespace NhapHangV2.Service.Services
                         {
                             if (user.UserGroupId == (int)PermissionTypes.Admin
                                     || user.UserGroupId == (int)PermissionTypes.Manager
-                                    || user.UserGroupId == (int)PermissionTypes.VietNamWarehouseManager)
+                                    || user.UserGroupId == (int)PermissionTypes.VietNamWarehouseManager
+                                    || user.UserGroupId == (int)PermissionTypes.ChinaWarehouseManager)
                             {
 
                                 if ((item.MainOrderId != 0 && item.MainOrderId != null) || (item.TransportationOrderId != 0 && item.MainOrderId != null))
@@ -300,7 +301,11 @@ namespace NhapHangV2.Service.Services
                                             throw new KeyNotFoundException($"Không tìm thấy mã đơn hàng {item.AssignMainOrderId}");
                                         item.UID = mainOrder.UID;
                                         item.MainOrderId = mainOrder.Id;
-
+                                        var mainOrderCode = await unitOfWork.Repository<MainOrderCode>().GetQueryable().FirstOrDefaultAsync(x => x.MainOrderID == mainOrder.Id);
+                                        if (mainOrderCode != null)
+                                        {
+                                            item.MainOrderCodeId = mainOrderCode.Id;
+                                        }
                                         item.IsTemp = false;
                                         item.IsHelpMoving = false;
 

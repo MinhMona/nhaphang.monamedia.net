@@ -67,6 +67,115 @@ namespace NhapHangV2.Service.Services
             sMSEmailTemplateService = serviceProvider.GetRequiredService<ISMSEmailTemplateService>();
         }
 
+        public async Task<bool> UpdateCurrency(int id, decimal currency)
+        {
+            var currentUser = LoginContext.Instance.CurrentUser;
+            var currentDate = DateTime.Now;
+            var mainOrder = await unitOfWork.Repository<MainOrder>().GetQueryable().FirstOrDefaultAsync(x => x.Id == id);
+            if (mainOrder == null)
+            {
+                return false;
+            }
+            if (mainOrder.CurrentCNYVN == currency)
+            {
+                return true;
+            }
+            var userOrder = await unitOfWork.Repository<Users>().GetQueryable().FirstOrDefaultAsync(x => x.Id == mainOrder.UID);
+            if (userOrder == null)
+            {
+                return false;
+            }
+            decimal oldCurrency = mainOrder.CurrentCNYVN ?? 0;
+            mainOrder.CurrentCNYVN = currency;
+            var orders = await unitOfWork.Repository<Order>().GetQueryable().Where(x => x.MainOrderId == id).ToListAsync();
+            if (orders.Any())
+            {
+                foreach (var order in orders)
+                {
+                    order.CurrentCNYVN = currency;
+                    order.PriceVND = (order.PriceOrigin ?? 0) * (order.Quantity ?? 0) * currency;
+                    await unitOfWork.Repository<Order>().UpdateFieldsSaveAsync(order, new Expression<Func<Order, object>>[]
+                    {
+                        x => x.CurrentCNYVN,
+                        x => x.PriceVND,
+                        x => x.Updated,
+                        x => x.UpdatedBy
+                    });
+                }
+            }
+            mainOrder.PriceVND = currency * (mainOrder.PriceCNY ?? 0);
+            mainOrder.TotalPriceReal = currency * (mainOrder.TotalPriceRealCNY ?? 0);
+            mainOrder.FeeShipCN = currency * (mainOrder.FeeShipCNCNY ?? 0);
+            mainOrder.FeeShipCNReal = currency * (mainOrder.FeeShipCNRealCNY ?? 0);
+            mainOrder.CKFeeBuyPro = Math.Round((mainOrder.FeeBuyPro ?? 0) / currency, 2);
+            mainOrder.IsPackedPrice = currency * (mainOrder.IsPackedPriceCNY ?? 0);
+            mainOrder.IsCheckProductPrice = currency * (mainOrder.IsCheckProductPriceCNY ?? 0);
+
+            var userLevel = await unitOfWork.Repository<MainOrder>().GetQueryable().FirstOrDefaultAsync(x => x.Id == userOrder.LevelId);
+            decimal lessDeposit = userLevel == null ? 0 : (userLevel.LessDeposit) ?? 0;
+            decimal amountDeposit = lessDeposit > 0 ? ((mainOrder.PriceVND ?? 0) * lessDeposit / 100) : (mainOrder.PriceVND ?? 0);
+            mainOrder.AmountDeposit = amountDeposit;
+            mainOrder.TotalPriceVND = (mainOrder.PriceVND ?? 0) + (mainOrder.FeeShipCN ?? 0) + (mainOrder.FeeBuyPro ?? 0)
+                + (mainOrder.IsFastDeliveryPrice ?? 0) + (mainOrder.IsCheckProductPrice ?? 0) + (mainOrder.IsPackedPrice ?? 0)
+                + (mainOrder.InsuranceMoney ?? 0) + (mainOrder.Surcharge ?? 0) + (mainOrder.FeeWeight ?? 0);
+
+            if (mainOrder.Deposit > mainOrder.TotalPriceVND)
+            {
+                decimal refundAmount = (mainOrder.Deposit ?? 0) - (mainOrder.TotalPriceVND ?? 0);
+                decimal oldWallet = userOrder.Wallet ?? 0;
+                decimal newWallet = (userOrder.Wallet ?? 0) + refundAmount;
+                userOrder.Wallet = newWallet;
+                await unitOfWork.Repository<Users>().UpdateFieldsSaveAsync(userOrder, new Expression<Func<Users, object>>[]
+                {
+                    x => x.Wallet,
+                    x => x.Updated,
+                    x => x.UpdatedBy
+                });
+                await unitOfWork.Repository<HistoryPayWallet>().CreateAsync(new HistoryPayWallet()
+                {
+                    UID = userOrder.Id,
+                    MainOrderId = id,
+                    Amount = refundAmount,
+                    Content = $"{currentUser.UserName} đã hoàn tiền khi thay đổi tỷ giá đơn #{mainOrder.Id} số tiền {string.Format("{0:N0}", refundAmount)}.",
+                    MoneyLeft = newWallet,
+                    Type = (int?)DauCongVaTru.Cong,
+                    TradeType = (int?)HistoryPayWalletContents.NhanLaiTienDatCoc,
+                    Deleted = false,
+                    Active = true,
+                    CreatedBy = currentUser.UserName,
+                    Created = currentDate
+                });
+                mainOrder.Deposit = mainOrder.TotalPriceVND;
+            }
+
+            await unitOfWork.Repository<MainOrder>().UpdateFieldsSaveAsync(mainOrder, new Expression<Func<MainOrder, object>>[]
+            {
+                 x => x.CurrentCNYVN,
+                 x => x.PriceVND,
+                 x => x.TotalPriceReal,
+                 x => x.FeeShipCN,
+                 x => x.FeeShipCNReal,
+                 x => x.CKFeeBuyPro,
+                 x => x.IsPackedPrice,
+                 x => x.IsCheckProductPrice,
+                 x => x.AmountDeposit,
+                 x => x.Deposit,
+                 x => x.TotalPriceVND,
+                 x => x.Updated,
+                 x => x.UpdatedBy
+            });
+            await unitOfWork.Repository<HistoryOrderChange>().CreateAsync(new HistoryOrderChange()
+            {
+                MainOrderId = id,
+                UID = currentUser.UserId,
+                HistoryContent = $"{currentUser.UserName} đã đổi tỷ giá đơn #{id} từ {string.Format("{0:N0}", oldCurrency)} sang {string.Format("{0:N0}", currency)}",
+                Type = (int?)TypeHistoryOrderChange.TienDatCoc
+            });
+
+            await unitOfWork.SaveAsync();
+            return true;
+        }
+
         public override async Task<bool> DeleteAsync(int id)
         {
             var exists = Queryable

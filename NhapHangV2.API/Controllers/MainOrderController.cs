@@ -69,7 +69,21 @@ namespace NhapHangV2.API.Controllers
             warehouseService = serviceProvider.GetRequiredService<IWarehouseService>();
             feeCheckProductService = serviceProvider.GetRequiredService<IFeeCheckProductService>();
         }
-
+        [HttpPut("update-currency")]
+        [AppAuthorize(new int[] { CoreContants.Update })]
+        public async Task<AppDomainResult> UpdateCurrency(MainOrderRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                throw new AppException(ModelState.GetErrorMessage());
+            }
+            await mainOrderService.UpdateCurrency(request.Id, request.CurrentCNYVN ?? 0);
+            return new AppDomainResult
+            {
+                ResultCode = (int)HttpStatusCode.OK,
+                Success = true,
+            };
+        }
         ///<summary>
         ///Thông tin đơn hàng trang đơn hàng của user
         /// </summary>
