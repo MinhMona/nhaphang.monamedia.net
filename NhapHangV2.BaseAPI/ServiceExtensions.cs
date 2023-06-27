@@ -155,6 +155,7 @@ namespace NhapHangV2.BaseAPI
             services.AddScoped<IWithdrawService, WithdrawService>();
             services.AddScoped<IContactUsService, ContactUsService>();
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
+            services.AddScoped<ICrawlProductService, CrawlProductService>();
 
             #region ToolConfig
             services.AddScoped<IToolConfigService, ToolConfigService>();
