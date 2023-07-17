@@ -422,8 +422,8 @@ namespace NhapHangV2.Service.Services
             var payHelp = await Queryable.Where(e => e.Id == id && !e.Deleted).AsNoTracking().FirstOrDefaultAsync();
             if (payHelp == null) return null;
 
-            var configuration = await configurationsService.GetSingleAsync();
-            payHelp.CurrencyConfig = configuration.Currency;
+            //var configuration = await configurationsService.GetSingleAsync();
+            //payHelp.CurrencyConfig = configuration.Currency;
 
             var user = await userService.GetByIdAsync(payHelp.UID ?? 0);
             if (user != null)

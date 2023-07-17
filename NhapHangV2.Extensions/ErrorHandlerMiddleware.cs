@@ -45,7 +45,7 @@ namespace NhapHangV2.Extensions
                         context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                         break;
                     case UnauthorizedAccessException e: //401
-                        context.Response.StatusCode = (int)HttpStatusCode.OK;
+                        context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                         break;
                     case InvalidCastException e: //403
                         context.Response.StatusCode = (int)HttpStatusCode.Forbidden;

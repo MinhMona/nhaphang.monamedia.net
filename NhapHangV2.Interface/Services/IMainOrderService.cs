@@ -33,5 +33,6 @@ namespace NhapHangV2.Interface.Services
         Task<bool> UpdateMainOrderWeight(int id, decimal weight);
         Task<bool> UpdateMainOrderDelivery(int id, decimal deliveryPrice);
         Task<bool> UpdateCurrency(int id, decimal currency);
+        Task<PagedList<MainOrderTool>> GetPagedListOfOrderStaff(MainOrderToolSearch search);
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NhapHangV2.Entities;
 using NhapHangV2.Entities.Catalogue;
+using NhapHangV2.Entities.DomainEntities;
 using NhapHangV2.Entities.Search;
 using NhapHangV2.Entities.SQLEntities;
 using NhapHangV2.Extensions;
@@ -65,6 +66,19 @@ namespace NhapHangV2.Service.Services
             notificationTemplateService = serviceProvider.GetRequiredService<INotificationTemplateService>();
             sendNotificationService = serviceProvider.GetRequiredService<ISendNotificationService>();
             sMSEmailTemplateService = serviceProvider.GetRequiredService<ISMSEmailTemplateService>();
+        }
+        public async Task<PagedList<MainOrderTool>> GetPagedListOfOrderStaff(MainOrderToolSearch search)
+        {
+            PagedList<MainOrderTool> pagedList = new PagedList<MainOrderTool>();
+            List<SqlParameter> sqlParameters = new List<SqlParameter>();
+            sqlParameters.Add(new SqlParameter("@UID", search.UID));
+            sqlParameters.Add(new SqlParameter("@PageIndex", search.PageIndex));
+            sqlParameters.Add(new SqlParameter("@PageSize", search.PageSize));
+            sqlParameters.Add(new SqlParameter("@OrderBy", search.OrderBy));
+            pagedList = await this.unitOfWork.Repository<MainOrderTool>().ExcuteQueryPagingAsync("OrderOfStaff", sqlParameters.ToArray());
+            pagedList.PageIndex = search.PageIndex;
+            pagedList.PageSize = search.PageSize;
+            return pagedList;
         }
 
         public async Task<bool> UpdateCurrency(int id, decimal currency)

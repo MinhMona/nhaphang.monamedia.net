@@ -636,6 +636,11 @@
             <param name="baseSearch"></param>
             <returns></returns>
         </member>
+        <member name="M:NhapHangV2.API.Controllers.MainOrderController.GetMainOrderOfOrderStaff(NhapHangV2.Entities.SQLEntities.MainOrderToolSearch)">
+            <summary>
+            Thông tin đơn hàng trang đơn hàng của user
+             </summary>
+        </member>
         <member name="M:NhapHangV2.API.Controllers.MainOrderController.GetMainOrderInfor(System.Int32)">
             <summary>
             Thông tin đơn hàng trang đơn hàng của user
@@ -1158,6 +1163,13 @@
             Thêm mới item
             </summary>
             <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NhapHangV2.API.Controllers.SmallPackageController.CreateTool(System.Collections.Generic.List{NhapHangV2.Entities.SmallPackageToolRequest})">
+            <summary>
+            Create tool
+            </summary>
+            <param name="requests"></param>
             <returns></returns>
         </member>
         <member name="M:NhapHangV2.API.Controllers.SmallPackageController.Confirm(NhapHangV2.Request.ConfirmSmallPackageRequest)">
