@@ -24,6 +24,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using static NhapHangV2.Utilities.CoreContants;
+using SmallPackageToolRequest = NhapHangV2.Entities.SmallPackageToolRequest;
 
 namespace NhapHangV2.API.Controllers
 {
@@ -55,6 +56,30 @@ namespace NhapHangV2.API.Controllers
             transportationOrderService = serviceProvider.GetRequiredService<ITransportationOrderService>();
             this.hubContext = hubContext;
         }
+
+
+        /// <summary>
+        /// Create tool
+        /// </summary>
+        /// <param name="requests"></param>
+        /// <returns></returns>
+        [HttpPost("tool")]
+        [Authorize]
+        [AppAuthorize(new int[] { CoreContants.AddNew })]
+        public AppDomainResult CreateTool([FromBody] List<SmallPackageToolRequest> requests)
+        {
+            if (!ModelState.IsValid)
+            {
+                throw new AppException(ModelState.GetErrorMessage());
+            }
+            smallPackageService.CreateSmallPackageTool(requests);
+            return new AppDomainResult()
+            {
+                ResultCode = (int)HttpStatusCode.OK,
+                Success = true
+            };
+        }
+
 
         /// <summary>
         /// Xác nhận lệnh trôi nổi (User)

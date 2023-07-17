@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using BarcodeLib;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using Ganss.Excel;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,22 +17,16 @@ using NhapHangV2.Interface.UnitOfWork;
 using NhapHangV2.Request;
 using NhapHangV2.Service.Services.DomainServices;
 using NhapHangV2.Utilities;
-using NPOI.SS.Formula.Functions;
 using OfficeOpenXml;
-using QRCoder;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using static NhapHangV2.Utilities.CoreContants;
-using static System.Net.Mime.MediaTypeNames;
-using Image = System.Drawing.Image;
+using SmallPackageToolRequest = NhapHangV2.Entities.SmallPackageToolRequest;
 
 namespace NhapHangV2.Service.Services
 {
@@ -63,6 +55,41 @@ namespace NhapHangV2.Service.Services
             sendNotificationService = serviceProvider.GetRequiredService<ISendNotificationService>();
         }
 
+        public void CreateSmallPackageTool(List<SmallPackageToolRequest> requests)
+        {
+            try
+            {
+                var currentUser = LoginContext.Instance.CurrentUser;
+                var currentDate = DateTime.Now;
+                string sql = "";
+                int i = 0;
+                foreach (var request in requests)
+                {
+                    sql += $"DECLARE @UID{i} INT = (SELECT UID FROM MainOrder WHERE Id = {request.MainOrderId}) " +
+                        $"DECLARE @MVD{i} INT = (SELECT COUNT(Id) FROM SmallPackage WHERE OrderTransactionCode = '{request.OrdertransactionCode}') " +
+                        $"IF(@UID{i} > 0 AND @MVD{i} < 1) " +
+                        $"BEGIN " +
+                        $"INSERT INTO SmallPackage(MainOrderId, UID, OrderTransactionCode, FeeShip, " +
+                        $"Weight,Status,FloatingStatus,FloatingUserName,FloatingUserPhone,IsTemp,IsLost,IsHelpMoving, " +
+                        $"TotalPrice,StaffTQWarehouse,StaffVNWarehouse,StaffVNOutWarehouse,CurrentPlaceId, " +
+                        $"MainOrderCodeId,DonGia,PriceWeight,Created,CreatedBy,Deleted,Active,IsPayment,PriceVolume,VolumePayment) " +
+                        $"VALUES ({request.MainOrderId}, @UID{i}, N'{request.OrdertransactionCode}', 0, " +
+                        $"0,{(int)StatusSmallPackage.MoiDat},0,'','',0,0,0, " +
+                        $"0,'','','',0, " +
+                        $"{request.MainOrderCodeId}, 0,0,'{currentDate}',N'{currentUser.UserName}',0,1,0,0,0) " +
+                        $"INSERT INTO HistoryOrderChange(MainOrderId, UID, HistoryContent,Type,Created,CreatedBy,Deleted,Active) " +
+                        $"VALUES ({request.MainOrderId}, {currentUser.UserId}, N'{currentUser.UserName} đã thêm mã vận đơn {request.OrdertransactionCode} vào đơn hàng #{request.MainOrderId} bằng công cụ',11, '{currentDate}', N'{currentUser.UserName}',0,1) " +
+                        $"END ";
+                    i++;
+                }
+                unitOfWork.Repository<SmallPackage>().ExecuteNonQuery(sql);
+            }
+            catch
+            (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
         protected override string GetStoreProcName()
         {
             return "SmallPackage_GetPagingData";

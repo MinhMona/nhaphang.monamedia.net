@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using NhapHangV2.BaseAPI.Controllers;
 using NhapHangV2.Entities;
 using NhapHangV2.Entities.Search;
+using NhapHangV2.Entities.SQLEntities;
 using NhapHangV2.Extensions;
 using NhapHangV2.Interface.Services;
 using NhapHangV2.Interface.Services.Catalogue;
@@ -69,6 +70,22 @@ namespace NhapHangV2.API.Controllers
             warehouseService = serviceProvider.GetRequiredService<IWarehouseService>();
             feeCheckProductService = serviceProvider.GetRequiredService<IFeeCheckProductService>();
         }
+        ///<summary>
+        ///Thông tin đơn hàng trang đơn hàng của user
+        /// </summary>
+        [HttpGet("order-staff")]
+        [AppAuthorize(new int[] { CoreContants.View })]
+        public async Task<AppDomainResult> GetMainOrderOfOrderStaff([FromQuery]MainOrderToolSearch search)
+        {
+            var order = await mainOrderService.GetPagedListOfOrderStaff(search);
+            return new AppDomainResult
+            {
+                Data = order,
+                ResultCode = (int)HttpStatusCode.OK,
+                Success = true
+            };
+        }
+
         [HttpPut("update-currency")]
         [AppAuthorize(new int[] { CoreContants.Update })]
         public async Task<AppDomainResult> UpdateCurrency(MainOrderRequest request)
@@ -757,7 +774,7 @@ namespace NhapHangV2.API.Controllers
                         MainOrderId = item.Id,
                         UID = user.Id,
                         HistoryContent = String.Format("{0} đã đổi nhân viên saler của đơn hàng ID là: {1}, Từ: {2}, Sang: {3}.", user.UserName, item.Id, salerOld == null ? "Không xác định" : salerOld.UserName, salerNew == null ? "Không xác định" : salerNew.UserName),
-                        Type = 12 
+                        Type = 12
                     });
                     if (salerOld != null)
                     {
@@ -808,7 +825,7 @@ namespace NhapHangV2.API.Controllers
                         MainOrderId = item.Id,
                         UID = user.Id,
                         HistoryContent = String.Format("{0} đã đổi nhân viên đặt hàng của đơn hàng ID là: {1}, Từ: {2}, Sang: {3}.", user.UserName, item.Id, ordererOld == null ? "Không xác định" : ordererOld.UserName, ordererNew == null ? "Không xác định" : ordererNew.UserName),
-                        Type = 12 
+                        Type = 12
                     });
 
 
@@ -1399,12 +1416,16 @@ namespace NhapHangV2.API.Controllers
                     if (itemModel.Deposit > itemModel.TotalPriceVND)
                     {
                         decimal? rollBackAmount = itemModel.Deposit - itemModel.TotalPriceVND;
+                        decimal oldWallet = customer.Wallet ?? 0;
                         customer.Wallet += rollBackAmount;
 
                         string historyContentDeposit = String.Format("{0} đã đổi tiền đã trả của đơn hàng ID là: {1}, Từ: {2}, Sang: {3}. Số tiền trong ví bạn được đổi từ {4} sang {5} ",
-                            user.UserName, item.Id, item.Deposit, itemModel.TotalPriceVND, totalPriceVNDOld, customer.Wallet);
+                            user.UserName, item.Id, item.Deposit, itemModel.TotalPriceVND, oldWallet, customer.Wallet);
                         updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
                             $"VALUES({item.Id},{user.Id},N'{historyContentDeposit}',{(int?)TypeHistoryOrderChange.TienDatCoc},'{DateTime.Now}','{user.UserName}',0,1)";
+
+                        updateSql += $" INSERT INTO [dbo].[HistoryPayWallet] ([UID] ,[MainOrderId] ,[Amount] ,[Content] ,[MoneyLeft] ,[Type] ,[TradeType] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
+                            $" VALUES ({customer.Id}, {item.Id}, {rollBackAmount}, N'Hoàn tiền đơn hàng vì số tiền đã trả lớn hơn tổng tiền đơn hàng', {customer.Wallet}, 2,2,'{DateTime.Now}','{user.UserName}',0,1) ";
 
                         updateSql += $"UPDATE Users SET Wallet = {customer.Wallet} WHERE Id = {customer.Id}";
 
@@ -1423,7 +1444,7 @@ namespace NhapHangV2.API.Controllers
                     decimal datHangPercent = Convert.ToDecimal(configurations.DatHangPercent);
 
                     //Saler
-                    if (itemModel.SalerId != 0 && itemModel.SalerId != item.SalerId)
+                    if (itemModel.SalerId > 0 && itemModel.SalerId != item.SalerId)
                     {
                         var salerOld = await userService.GetByIdAsync(item.SalerId ?? 0);
                         var salerNew = await userService.GetByIdAsync(itemModel.SalerId ?? 0);
@@ -1471,7 +1492,7 @@ namespace NhapHangV2.API.Controllers
                     }
 
                     //Đặt hàng
-                    if (itemModel.DatHangId != 0 && itemModel.DatHangId != item.DatHangId)
+                    if (itemModel.DatHangId > 0 && itemModel.DatHangId != item.DatHangId)
                     {
                         var ordererOld = await userService.GetByIdAsync(item.DatHangId ?? 0);
                         var ordererNew = await userService.GetByIdAsync(itemModel.DatHangId ?? 0);

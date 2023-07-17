@@ -192,8 +192,6 @@ namespace NhapHangV2.Service.Services
                     if (!item.OneSignalPlayerID.Equals(existItem.OneSignalPlayerID) && existItem.OneSignalPlayerID != null)
                     {
                         var unsubscribeResult = await UnsubriseOneSignal(existItem.OneSignalPlayerID);
-                        if (unsubscribeResult == null)
-                            return false;
                     }
                 }
                 if (!item.IsResetPassword)
@@ -672,8 +670,16 @@ namespace NhapHangV2.Service.Services
             appConfig.BasePath = "https://onesignal.com/api/v1";
             appConfig.AccessToken = config.RestAPIKey;
             var api = new OneSignalApi.Api.DefaultApi(appConfig);
-            var result = await api.DeletePlayerAsync(config.OneSignalAppID, playerId);
-            return result.Success;
+            try
+            {
+                var result = await api.DeletePlayerAsync(config.OneSignalAppID, playerId);
+                return result.Success;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
         }
     }
 }

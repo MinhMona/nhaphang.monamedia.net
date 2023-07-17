@@ -120,7 +120,7 @@ namespace NhapHangV2.Service.Services.Configurations
                     }
                 }
             });
-            
+
         }
 
         private async Task<List<Notification>> createListNotification(int roleId, NotificationTemplate notiTemplate, string prefix, string url, string contentParam)
@@ -143,45 +143,52 @@ namespace NhapHangV2.Service.Services.Configurations
         }
         private async Task SendNotis(List<Notification> notis, bool isNoti, bool isEmail, string subject, string emailContent)
         {
-            var confi = await configurationsService.GetSingleAsync();
-            if (isNoti)
+            try
             {
-                var playerIds = new List<string>();
-                Guid appId = Guid.Parse(confi.OneSignalAppID);
-                string restAPIKey = confi.RestAPIKey;
-                foreach (var noti in notis)
+                var confi = await configurationsService.GetSingleAsync();
+                if (isNoti)
                 {
-                    await notificationService.CreateAsync(noti);
-                    await hubContext.Clients.Groups(new List<string>
+                    var playerIds = new List<string>();
+                    Guid appId = Guid.Parse(confi.OneSignalAppID);
+                    string restAPIKey = confi.RestAPIKey;
+                    foreach (var noti in notis)
+                    {
+                        await notificationService.CreateAsync(noti);
+                        await hubContext.Clients.Groups(new List<string>
                     {
                         string.Format("UserId_{0}", noti.ToUserId)
                     }).SendNotification(noti);
-                    var user = await userService.GetByIdAsync(noti.ToUserId);
-                    if (user != null)
-                    {
-                        playerIds.Add(user.OneSignalPlayerID);
-                        if (user.OneSignalPlayerID != null)
+                        var user = await userService.GetByIdAsync(noti.ToUserId);
+                        if (user != null)
                         {
-                            await OneSignalPushNotification(playerIds, $"{confi.WebsiteName}", noti, appId, restAPIKey);
+                            playerIds.Add(user.OneSignalPlayerID);
+                            if (user.OneSignalPlayerID != null)
+                            {
+                                await OneSignalPushNotification(playerIds, $"{confi.WebsiteName}", noti, appId, restAPIKey);
+                            }
+                        }
+                    }
+
+                }
+                if (isEmail)
+                {
+                    foreach (var noti in notis)
+                    {
+                        var user = await userService.GetByIdAsync(noti.ToUserId);
+                        if (user != null)
+                        {
+                            await emailConfigurationService.Send(subject, new string[] { user.Email }, null, null, new EmailContent()
+                            {
+                                IsHtml = true,
+                                Content = emailContent
+                            });
                         }
                     }
                 }
-
             }
-            if (isEmail)
+            catch (Exception)
             {
-                foreach (var noti in notis)
-                {
-                    var user = await userService.GetByIdAsync(noti.ToUserId);
-                    if (user != null)
-                    {
-                        await emailConfigurationService.Send(subject, new string[] { user.Email }, null, null, new EmailContent()
-                        {
-                            IsHtml = true,
-                            Content = emailContent
-                        });
-                    }
-                }
+
             }
         }
 

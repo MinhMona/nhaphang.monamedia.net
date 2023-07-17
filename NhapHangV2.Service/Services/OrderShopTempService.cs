@@ -329,7 +329,10 @@ namespace NhapHangV2.Service.Services
                         && x.UID == UID
                         && x.ItemId == OrderTemp.ItemId && x.Brand == OrderTemp.Brand && x.CategoryId == OrderTemp.CategoryId && x.Property == OrderTemp.Property).CountAsync();
                         if (orderTempsByUID <= 0)
+                        {
                             await unitOfWork.Repository<OrderTemp>().CreateAsync(OrderTemp);
+                            await unitOfWork.SaveAsync();
+                        }
                         //À cái này để tính bước nhảy của order
                         //UpdatePriceInsert(UID, OrderTemp.StepPrice, OrderTemp.ItemId);
                     }
