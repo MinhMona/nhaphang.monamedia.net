@@ -570,6 +570,18 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:NhapHangV2.API.Controllers.DashboardController.GetPercentTransOrder">
+            <summary>
+            tỉ lệ đơn ký gửi theo tuần
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:NhapHangV2.API.Controllers.DashboardController.GetPercentPayHelp">
+            <summary>
+            tỉ lệ đơn thanh toán hộ theo tuần
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:NhapHangV2.API.Controllers.ExportRequestTurnController.UpdateStatus(NhapHangV2.Request.FieldForUpdatedExportRequestTurnRequest)">
             <summary>
             Cập nhật các trạng thái như Thanh toán bằng ví, thanh toán trực tiếp, hủy

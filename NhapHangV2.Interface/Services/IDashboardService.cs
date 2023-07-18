@@ -14,5 +14,7 @@ namespace NhapHangV2.Interface.Services
         Task<List<Dashboard_GetItemInWeek>> GetItemInWeek();
 
         Task<List<Dashboard_GetPercentOrder>> GetPercentOrder();
+        Task<List<Dashboard_GetPercentOrder>> GetPercentPayHelp();
+        Task<List<Dashboard_GetPercentOrder>> GetPercentTransOrder();
     }
 }
