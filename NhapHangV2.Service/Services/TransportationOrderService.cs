@@ -634,7 +634,7 @@ namespace NhapHangV2.Service.Services
             if (user.Currency != null && user.Currency > 0)
                 item.TotalPriceCNY = item.TotalPriceVND / user.Currency;
             else
-                item.TotalPriceCNY = item.TotalPriceVND / config.AgentCurrency;
+                item.TotalPriceCNY = item.TotalPriceVND / item.Currency;
             item.FeeWeightPerKg = warehouseFeePrice;
             item.FeePerVolume = volumeFeePrice;
             item.DeliveryPrice = deliveryPrice ?? 0;

@@ -82,7 +82,37 @@ namespace NhapHangV2.API.Controllers
             };
         }
 
-        //Dashboard_GetPerCentOrder
+        /// <summary>
+        /// tỉ lệ đơn ký gửi theo tuần
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("get-percent-trans")]
+        public async Task<AppDomainResult> GetPercentTransOrder()
+        {
+            var dashBoard = await this.dashboardService.GetPercentTransOrder();
+            return new AppDomainResult()
+            {
+                Data = dashBoard,
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK
+            };
+        }
+
+        /// <summary>
+        /// tỉ lệ đơn thanh toán hộ theo tuần
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("get-percent-pay-help")]
+        public async Task<AppDomainResult> GetPercentPayHelp()
+        {
+            var dashBoard = await this.dashboardService.GetPercentPayHelp();
+            return new AppDomainResult()
+            {
+                Data = dashBoard,
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK
+            };
+        }
 
     }
 }
