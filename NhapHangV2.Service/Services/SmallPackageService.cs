@@ -26,6 +26,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using static NhapHangV2.Utilities.CoreContants;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 using SmallPackageToolRequest = NhapHangV2.Entities.SmallPackageToolRequest;
 
 namespace NhapHangV2.Service.Services
@@ -292,6 +293,7 @@ namespace NhapHangV2.Service.Services
         {
             var mainOrderList = new List<MainOrder>();
             var transportationOrderList = new List<TransportationOrder>();
+            var config = await unitOfWork.Repository<Entities.Configurations>().GetQueryable().FirstOrDefaultAsync(x => x.Id == 1);
 
             using (var dbContextTransaction = Context.Database.BeginTransaction())
             {
@@ -349,13 +351,17 @@ namespace NhapHangV2.Service.Services
 
                                         break;
                                     case 2: //Gán đơn cho khách ký gửi
-
+                                        var assignUser = await unitOfWork.Repository<Users>().GetQueryable().FirstOrDefaultAsync(x => x.Id == item.AssignUID);
+                                        if (assignUser == null)
+                                            break;
+                                        decimal? currencyTransportation = assignUser.Currency > 0 ? assignUser.Currency : config.AgentCurrency;
                                         transportationOrder.UID = item.AssignUID;
                                         transportationOrder.SmallPackageId = item.Id;
                                         transportationOrder.WareHouseFromId = item.WareHouseFromId;
                                         transportationOrder.WareHouseId = item.WareHouseId;
                                         transportationOrder.ShippingTypeId = item.ShippingTypeId;
                                         transportationOrder.OrderTransactionCode = item.OrderTransactionCode;
+                                        transportationOrder.Currency = currencyTransportation;
                                         switch (item.Status)
                                         {
                                             case (int)StatusSmallPackage.DaVeKhoTQ:
