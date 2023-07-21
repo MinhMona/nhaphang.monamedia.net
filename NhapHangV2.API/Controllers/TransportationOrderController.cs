@@ -583,7 +583,7 @@ namespace NhapHangV2.API.Controllers
                 totalVND += itemModel.CODFee ?? 0;
             }
             var config = await configurationsService.GetSingleAsync();
-            totalCNY = Math.Round((totalVND / config.Currency) ?? 0, 1);
+            totalCNY = Math.Round((totalVND / transportationOrder.Currency) ?? 0, 1);
             transportationOrder.TotalPriceVND = Math.Round(totalVND ?? 0, 0);
             transportationOrder.TotalPriceCNY = totalCNY ?? 0;
             return transportationOrder;
