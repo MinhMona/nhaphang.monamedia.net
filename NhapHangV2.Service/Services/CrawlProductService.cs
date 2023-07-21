@@ -26,7 +26,8 @@ namespace NhapHangV2.Service.Services
             {
                 var chromeOptions = new ChromeOptions();
                 chromeOptions.AddArgument("headless");
-                chromeDriver = new ChromeDriver("/", chromeOptions);
+                chromeOptions.PageLoadStrategy = PageLoadStrategy.Eager;
+                chromeDriver = new ChromeDriver(Environment.CurrentDirectory, chromeOptions);
                 INetwork networkInterceptor = chromeDriver.Manage().Network;
                 networkInterceptor.NetworkResponseReceived += NetworkInterceptor_NetworkResponseReceived;
                 networkInterceptor.StartMonitoring();
