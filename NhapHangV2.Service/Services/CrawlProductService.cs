@@ -9,6 +9,9 @@ using System.Threading;
 using NPOI.HPSF;
 using NhapHangV2.Interface.Services;
 using Newtonsoft.Json;
+using System.Diagnostics;
+using DocumentFormat.OpenXml.Bibliography;
+using OpenQA.Selenium.Support.UI;
 
 namespace NhapHangV2.Service.Services
 {
@@ -16,10 +19,8 @@ namespace NhapHangV2.Service.Services
     {
 
         private static ChromeDriver chromeDriver = null;
-        private static bool isDone = false;
-        private static bool lockDown = false;
         private static readonly long time = 1687241455541;
-        private static string result = "";
+        private static Dictionary<string, string> results = new Dictionary<string, string>();
         public CrawlProductService()
         {
             if (chromeDriver == null)
@@ -28,37 +29,32 @@ namespace NhapHangV2.Service.Services
                 chromeOptions.AddArgument("headless");
                 chromeOptions.PageLoadStrategy = PageLoadStrategy.Eager;
                 chromeDriver = new ChromeDriver(Environment.CurrentDirectory, chromeOptions);
-                INetwork networkInterceptor = chromeDriver.Manage().Network;
-                networkInterceptor.NetworkResponseReceived += NetworkInterceptor_NetworkResponseReceived;
-                networkInterceptor.StartMonitoring();
                 chromeDriver.Url = "https://user.lovbuy.com/item.php";
                 chromeDriver.Navigate();
             }
         }
 
-        private static void NetworkInterceptor_NetworkResponseReceived(object sender, NetworkResponseReceivedEventArgs e)
+        private IWebElement  GetWebElement(IWebDriver driver, string requestId)
         {
-            if (e.ResponseUrl == "https://user.lovbuy.com/iteminfo.php")
+            try
             {
-                result = e.ResponseBody;
-                isDone = true;
+                IWebElement webElement = driver.FindElement(By.Id("mona_" + requestId));
+                return webElement;
+            }
+            catch
+            {
+                return null;
             }
         }
 
         public async Task<string> CrawlProduct(long id, string web)
         {
-            while (lockDown)
-            {
-                Thread.Sleep(100);
-            }
-            lockDown = true;
-            chromeDriver.ExecuteScript("var content=null; $.ajax({ url: \"iteminfo.php\", method: 'post', data: { t1:'" + ((id * 2) + (time * 3)) + "', t2: '" + time * 7 + "', t3: '" + web + "' }, error: function () {  }, success: function (data) {}});");
-            while (!isDone)
-            {
-                Thread.Sleep(100);
-            }
-            isDone = false;
-            lockDown = false;
+            var requestId = Guid.NewGuid().ToString().Replace('-','_');
+            chromeDriver.ExecuteScript("var content=null; $.ajax({ url: \"iteminfo.php\", method: 'post', data: { t1:'" + ((id * 2) + (time * 3)) + "', t2: '" + time * 7 + "', t3: '" + web + "' }, error: function () {  }, success: function (data) { $('body').append('<input id=\"mona_"+ requestId + "\" />'); console.log('"+ requestId+"'); $('#mona_"+ requestId +"').val(JSON.stringify(data)); }});");
+            WebDriverWait wait = new WebDriverWait(chromeDriver, TimeSpan.FromSeconds(10));
+            IWebElement resultElement = wait.Until(e => GetWebElement(e, requestId));
+            string result = resultElement.GetDomProperty("value");
+            chromeDriver.ExecuteScript("$('#mona_" + requestId + "').remove()");
             return result;
         }
     }
