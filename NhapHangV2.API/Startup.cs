@@ -162,6 +162,8 @@ namespace NhapHangV2.API
             //    Credential = GoogleCredential.FromFile(Configuration["Firebase:Admin"]),
             //}));
             //BackgroundService
+
+            services.AddMemoryCache();
             services.AddHostedService<RuntimeBackgroundService>();
 
         }

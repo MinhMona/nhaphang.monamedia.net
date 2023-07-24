@@ -1,9 +1,12 @@
 ﻿using DocumentFormat.OpenXml.Office2021.DocumentTasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using NhapHangV2.Interface.Services;
 using NhapHangV2.Models.Catalogue;
 using NhapHangV2.Request;
 using NhapHangV2.Utilities;
+using Polly.Caching;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Net;
@@ -18,10 +21,12 @@ namespace NhapHangV2.API.Controllers
     {
         private readonly ISearchService searchService;
         private readonly ICrawlProductService crawlProductService;
-        public SearchController(ISearchService searchService, ICrawlProductService crawlProductService)
+        private readonly IMemoryCache memoryCache;
+        public SearchController(ISearchService searchService, ICrawlProductService crawlProductService, IMemoryCache memoryCache)
         {
             this.searchService = searchService;
             this.crawlProductService = crawlProductService;
+            this.memoryCache = memoryCache;
         }
 
         [HttpPost]
@@ -34,7 +39,17 @@ namespace NhapHangV2.API.Controllers
         public async Task<AppDomainResult> CrawlProduct([FromQuery] long id, [FromQuery] string web)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
-            var result = await crawlProductService.CrawlProduct(id, web);
+            string result = string.Empty;
+            if (!memoryCache.TryGetValue(id + "_" + web, out result))
+            {
+                result = await crawlProductService.CrawlProduct(id, web);
+                var cacheEntryOptions = new MemoryCacheEntryOptions
+                {
+                    AbsoluteExpiration = DateTime.Now.AddMinutes(1),
+                    SlidingExpiration = TimeSpan.FromMinutes(2),
+                };
+                memoryCache.Set(id + "_" + web, result, cacheEntryOptions);
+            }
             if (!string.IsNullOrEmpty(result))
             {
                 appDomainResult = new AppDomainResult()
