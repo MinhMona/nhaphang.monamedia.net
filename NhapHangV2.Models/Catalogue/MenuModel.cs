@@ -33,5 +33,14 @@ namespace NhapHangV2.Models.Catalogue
         /// danh sach menu con
         /// </summary>
         public IList<MenuModel> Children { get; set; }
+
+        /// <summary>
+        /// Id chuyên mục
+        /// </summary>
+        public int? PageTypeId { get; set; }
+        /// <summary>
+        /// id bài viết
+        /// </summary>
+        public int? PageId { get; set; }
     }
 }

@@ -56,5 +56,40 @@ namespace NhapHangV2.Service.Services.Catalogue
             }
             return dataList;
         }
+
+        public async Task<IList<MenuModel>> GetListMenu(IList<MenuModel> menuList)
+        {
+            for (int i = 0; i < menuList.Count;)
+            {
+                if ((menuList[i].Parent == null || Convert.ToInt32(menuList[i].Parent) == 0) && !menuList[i].Deleted)
+                {
+                    var subMenus = await unitOfWork.Repository<Menu>().GetQueryable().Where(e => e.Parent == menuList[i].Id && !e.Deleted).Select(e => new MenuModel()
+                    {
+                        Active = e.Active,
+                        Code = e.Code,
+                        Created = e.Created,
+                        CreatedBy = e.CreatedBy,
+                        Deleted = e.Deleted,
+                        Description = e.Description,
+                        Id = e.Id,
+                        Link = e.Link,
+                        Name = e.Name,
+                        Position = e.Position,
+                        Parent = e.Parent,
+                        RowNumber = e.RowNumber,
+                        Type = e.Type,
+                        Updated = e.Updated,
+                        UpdatedBy = e.UpdatedBy
+                    }).ToListAsync();
+                    menuList[i].Children = subMenus;
+                    i++;
+                }
+                else
+                {
+                    menuList.RemoveAt(i);
+                }
+            }
+            return menuList;
+        }
     }
 }

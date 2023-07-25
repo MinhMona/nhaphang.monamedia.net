@@ -114,5 +114,7 @@ namespace NhapHangV2.Entities
         /// OG Twitter IMG
         /// </summary>
         public string OGTwitterIMG { get; set; } = string.Empty;
+
+        public int? MenuId { get; set; } = 0;
     }
 }

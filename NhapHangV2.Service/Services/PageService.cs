@@ -39,21 +39,17 @@ namespace NhapHangV2.Service.Services
 
         public async Task<bool> UpdateMenuId(int id, int menuId)
         {
-            using (var dbContextTransaction = Context.Database.BeginTransaction())
+            try
             {
-                try
-                {
-                    unitOfWork.Repository<Page>().ExecuteNonQuery(string.Format("update Page set MenuId = {0} where id = {1}", menuId, id));
-                    await unitOfWork.SaveAsync();
-                    await dbContextTransaction.CommitAsync();
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    await dbContextTransaction.RollbackAsync();
-                    throw new Exception(ex.Message);
-                }
+                unitOfWork.Repository<Page>().ExecuteNonQuery(string.Format("update Page set MenuId = {0} where id = {1}", menuId, id));
+                await unitOfWork.SaveAsync();
+                return true;
             }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            
         }
     }
 }

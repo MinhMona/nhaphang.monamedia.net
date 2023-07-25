@@ -30,5 +30,13 @@ namespace NhapHangV2.Entities.Catalogue
         /// Vị trí
         /// </summary>
         public int? Position { get; set; } = 0;
+        /// <summary>
+        /// Id chuyên mục
+        /// </summary>
+        public int? PageTypeId { get; set; } = 0;
+        /// <summary>
+        /// id bài viết
+        /// </summary>
+        public int? PageId { get; set; } = 0;
     }
 }
