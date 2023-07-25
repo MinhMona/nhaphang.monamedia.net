@@ -114,5 +114,7 @@ namespace NhapHangV2.Models
         /// OG Twitter IMG
         /// </summary>
         public string OGTwitterIMG { get; set; }
+
+        public int? MenuId { get; set; }
     }
 }

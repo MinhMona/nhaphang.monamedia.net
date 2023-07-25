@@ -14,5 +14,6 @@ namespace NhapHangV2.Interface.Services.Catalogue
     public interface IMenuService : ICatalogueService<Menu, CatalogueSearch>
     {
         Task<PagedList<MenuModel>> GetSubMenu(PagedList<MenuModel> dataList);
+        Task<IList<MenuModel>> GetListMenu(IList<MenuModel> menuList);
     }
 }

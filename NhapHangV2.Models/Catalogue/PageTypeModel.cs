@@ -93,5 +93,7 @@ namespace NhapHangV2.Models.Catalogue
         /// </summary>
         public string PagesJson { get; set; }
 
+        public int? MenuId { get; set; }
+
     }
 }
