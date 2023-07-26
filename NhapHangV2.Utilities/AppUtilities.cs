@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace NhapHangV2.Utilities
 {
@@ -28,6 +29,8 @@ namespace NhapHangV2.Utilities
                 text = text.Replace(arr1[i], arr2[i]);
                 text = text.Replace(arr1[i].ToUpper(), arr2[i].ToUpper());
             }
+            string pattern = "[^a-zA-Z0-9 ]";
+            text = Regex.Replace(text, pattern, "");
             return text;
         }
         public static bool CheckUnicode(string text)
