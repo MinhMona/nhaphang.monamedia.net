@@ -1,0 +1,59 @@
+@mixin mid() {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+@mixin mid-flex() {
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    display: -o-flex;
+    display: flex;
+    -ms-align-items: center;
+    align-items: center;
+    -webkit-align-items: center;
+    justify-content: center;
+    -webkit-justify-content: center;
+}
+
+@mixin mid-flex-ctn() {
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    display: -o-flex;
+    display: flex;
+    -ms-align-items: center;
+    align-items: center;
+    -webkit-align-items: center;
+    justify-content: flex-start;
+    -webkit-justify-content: flex-start;
+    width: calc(100% + 3rem);
+    margin-left: -1.5rem;
+
+    @media (max-width: 1200px) {
+        width: calc(100% + 1.5rem);
+        margin-left: -0.75rem;
+    }
+}
+
+@mixin lc($value) {
+    display: -webkit-box;
+    -webkit-line-clamp: $value;
+    -webkit-box-orient: vertical;  
+    overflow: hidden;
+}
+
+@mixin max($value) {
+    @media screen and (max-width: $value) {
+        @content;
+    }
+}
+
+@mixin min($value) {
+    @media screen and (min-width: $value) {
+        @content;
+    }
+}
+  

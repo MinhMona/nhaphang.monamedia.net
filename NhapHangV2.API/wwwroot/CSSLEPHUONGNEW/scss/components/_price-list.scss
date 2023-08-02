@@ -1,0 +1,122 @@
+.price-list {
+    overflow: hidden;
+    
+    &-header {
+        width: calc(100% * (5 / 12));
+        margin-bottom: 7.2rem;
+    }
+
+    &-tt {
+        margin-bottom: 2.4rem;
+        letter-spacing: 0;
+        opacity: 1;
+    }
+
+    &-desc {
+        max-width: 46rem;
+    }
+
+    &-slider {
+        width: calc(100% * (8 / 12) + 3.2rem);
+        margin-left: -1.6rem;
+        padding: 1.6rem;
+        overflow: hidden;
+
+        &-box {
+            width: calc(100% + 0.8rem);
+            margin-left: -0.4rem;
+        }
+
+        .swiper-container {
+            overflow: visible;
+        }
+
+        &-flex {
+            align-items: stretch;
+        }
+
+        &-item {
+            width: calc(100% / 4);
+            padding: 0 0.4rem;
+            margin-bottom: 0.8rem;
+
+            &:nth-child(4n + 2) {
+                .price-list-slider-wrap {
+                    .num {
+                        background-color: $secColor;
+                    }
+                }
+            }
+            
+            &:nth-child(4n + 3) {
+                .price-list-slider-wrap {
+                    .num {
+                        background-color: #FF6D3F;
+                    }
+                }
+            }
+            
+            &:nth-child(4n + 4) {
+                .price-list-slider-wrap {
+                    .num {
+                        background-color: #00BFA1;
+                    }
+                }
+            }
+        }
+
+        &-wrap {
+            height: 100%;
+            border-radius: 0.8rem;
+            background: #FFF;
+            box-shadow: 1rem 1rem 1rem 0 rgba(0, 0, 0, 0.10);
+            padding: 1.5rem;
+            padding-bottom: 4rem;
+            position: relative;
+
+            .num {
+                margin-left: -1.5rem;
+                margin-bottom: 3.2rem;
+                border-radius: 0px 120px 120px 0px;
+                background: $primaryColor;
+                padding: 0.6rem 2.2rem;
+                width: max-content;
+                max-width: 100%;
+
+                color: #fff;
+                font-weight: 600;
+                line-height: 1.5;
+            }
+
+            .name {
+               font-weight: 600;
+               margin-bottom: 3.2rem;
+               line-height: 1.5;
+            }
+
+            .price-btnn {
+                position: absolute;
+                bottom: 1.2rem;
+                right: 1.6rem;
+            }
+        }
+    }
+
+    .vehicle-ab {
+        position: absolute;
+
+        &.air-plane {
+            width: calc(100% * (8 / 12));
+            top: 0;
+            right: 0;
+            transform: translate(calc(100% * (2 / 12)), -35%);
+        }
+
+        &.truck {
+            width: calc(100% * (6 / 12));
+            bottom: 0;
+            right: 0;
+            transform: translate(calc(100% * (4 / 12)), 15%);
+        }
+    }
+}

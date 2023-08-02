@@ -1,0 +1,214 @@
+.section-group {
+    padding-bottom: 12rem;
+    -webkit-mask-image: url("../assets/images/mask-ellipse-group.png");
+    mask-image: url("../assets/images/mask-ellipse-group.png");
+    -webkit-mask-size: calc(100% + 0rem) calc(100% + 30rem);
+    mask-size: calc(100% + 0rem) calc(100% + 30rem);
+    mask-position: bottom;
+    -webkit-mask-position: bottom;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    // background-color: $primaryColor;
+    background: linear-gradient(180deg, #FFF 0%, #419AE6 55.73%, #00569F 100%);
+    overflow: hidden;
+
+    .section:last-child {
+        padding-bottom: 0;
+    }
+}
+
+.lp-services {
+    .swiper-container {
+        overflow: visible;
+    }
+    
+    &-header {
+        margin-bottom: 5rem;
+        color: #fff;
+    }
+
+    &-tt {
+        color: #fff;
+        margin-bottom: 1.6rem;
+    }
+
+    &-desc {
+        max-width: 62rem;
+        margin: 0 auto;
+        color: #fff;
+    }
+
+    &-content {
+        margin-top: 7.2rem;
+    }
+
+    &-list {
+        align-items: stretch;
+
+        @include max(1300px) {
+            flex-wrap: nowrap;
+        }
+    }
+
+    &-item {
+        position: relative;
+        height: auto;
+
+        @include max(1300px) {
+            width: 30%;
+        }
+
+        &:nth-child(5n + 1) {
+            .shape {
+                background-color: #CCB500;
+            }
+
+            .num {
+                border-color: #CCB500;
+                color: #CCB500;
+            }
+
+            .lp-services-wrap::before {
+                border-color: #CCB500;
+            }
+        }
+
+        &:nth-child(5n + 2) {
+            .shape {
+                background-color: #FF9932;
+            }
+            
+            .num {
+                border-color: #FF9932;
+                color: #FF9932;
+            }
+
+            .lp-services-wrap::before {
+                border-color: #FF9932;
+            }
+        }
+
+        &:nth-child(5n + 3) {
+            .shape {
+                background-color: #FF6D3F;
+            }
+            
+            .num {
+                border-color: #FF6D3F;
+                color: #FF6D3F;
+            }
+
+            .lp-services-wrap::before {
+                border-color: #FF6D3F;
+            }
+        }
+
+        &:nth-child(5n + 4) {
+            .shape {
+                background-color: #00BFA1;
+            }
+            
+            .num {
+                border-color: #00BFA1;
+                color: #00BFA1;
+            }
+
+            .lp-services-wrap::before {
+                border-color: #00BFA1;
+            }
+        }
+
+        .shape {
+            position: absolute;
+            top: 50%;
+            right: 2.2rem;
+            width: calc(50% - 0rem);
+            height: calc(100% + 4.25rem);
+            transform: translateY(-50%);
+            pointer-events: none;
+            -webkit-mask-image: url("../assets/images/mask-shape.png");
+            mask-image: url("../assets/images/mask-shape.png");
+            -webkit-mask-size: calc(100%) calc(100% );
+            mask-size: calc(100% ) calc(100% );
+            mask-position: bottom;
+            -webkit-mask-position: bottom;
+            -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+            // background-color: #CCB500;
+        }
+    }
+
+    &-wrap {
+        width: calc(100% - 3.5rem);
+        height: 100%;
+        padding: 1.4rem;
+        border-radius: 2.4rem;
+        border: 0.5rem solid #c3c3c3;
+        position: relative;
+        z-index: 2;
+        background-color: #fff;
+        text-align: center;
+
+        display: flex;
+        flex-direction: column;
+        box-shadow: -1.5rem 1.5rem 4rem rgba(0,0,0,0.4);
+
+        &::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: calc(100% + 4.8rem);
+            height: calc(100% + 4.8rem);
+            transform: translate(-50%, -50%);
+            border-radius: 5.2rem;
+            border: 0.2rem dotted #CCB500;
+        }
+
+        .content {
+            flex: 1;
+            margin-bottom: 3.2rem;
+        }
+
+        .num {
+            margin: 0 auto;
+            margin-bottom: 3.2rem;
+            width: 6rem;
+            height: 6rem;
+            border-radius: 50%;
+            border: 0.2rem dotted #CCB500;
+            @include mid-flex();
+            @include fz-24;
+            font-weight: 500;
+        }
+
+        .name {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+        }
+
+        .desc {
+            @include lc(5);
+        }
+
+        .btnn {
+            @include mid-flex();
+        }
+
+        .btn {
+            padding: 0.8rem 1.8rem;
+            line-height: 1.5;
+        }
+    }
+}
+
+.bg-earth {
+    position: absolute;
+    width: 60%;
+    bottom: 0;
+    right: 0;
+    z-index: 1;
+    transform: translate(25%, 70%);
+    mix-blend-mode: color-dodge;
+}

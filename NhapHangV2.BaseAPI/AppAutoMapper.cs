@@ -208,6 +208,7 @@ namespace NhapHangV2.Models.AutoMapper
             CreateMap<MenuModel, Menu>().ReverseMap();
             CreateMap<MenuRequest, Menu>().ReverseMap();
             CreateMap<PagedList<MenuModel>, PagedList<Menu>>().ReverseMap();
+            //CreateMap<IList<MenuModel>, IList<Menu>>().ReverseMap();
 
             CreateMap<NotificationSettingModel, NotificationSetting>().ReverseMap();
             CreateMap<NotificationSettingRequest, NotificationSetting>().ReverseMap();

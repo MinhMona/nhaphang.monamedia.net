@@ -1,0 +1,30 @@
+.lp-partner {
+    &-header {
+        margin-bottom: 4.5rem;
+    }
+
+    &-list {
+        display: flex;
+        width: calc(100% + 1.6rem);
+        margin-left: -0.8rem;
+        flex-wrap: wrap;
+    }
+
+    &-item {
+        width: calc(100% / 5);
+        padding: 0 0.8rem;
+        margin-bottom: 1.6rem;
+    }
+
+    &-wrap {
+        padding: 1.6rem;
+        @include mid-flex();
+        border-radius: 0.4rem;
+        background: #FBFBFB;
+        box-shadow: 2.4rem 4rem 4rem 0 rgba(0, 0, 0, 0.08);
+
+        img {
+            object-fit: contain;
+        }
+    }
+}

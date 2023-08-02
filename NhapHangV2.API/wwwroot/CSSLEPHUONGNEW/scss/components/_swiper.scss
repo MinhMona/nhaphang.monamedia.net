@@ -1,0 +1,43 @@
+.swiper-container {
+    overflow: hidden;
+}
+
+.swiper-pagination, .swiper-pagination-bullets.swiper-pagination-horizontal {
+    bottom: 0;
+    transform: translateY(calc(100% + 4.2rem));
+}
+
+.swiper-pagination-bullet {
+    width: 3.2rem;
+    height: 0.4rem;
+    // background-color: #E3E6E8;
+    border-radius: 12rem;
+    transition: 0.3s;
+    opacity: 1;
+    position: relative;
+
+    &::before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url(../assets/images/swiper-pagination-nor.png) no-repeat;
+        background-size: 100% 100%;
+        background-position: center;
+        // transition: 0.1s;
+    }
+}
+
+.swiper-pagination-bullet-active {
+    // background-color: $secColor;
+    // position: relative;
+
+    &::before {
+        height: 1.2rem;
+        background: url(../assets/images/swiper-pagination-active.png) no-repeat;
+        background-size: 100% 100%;
+        background-position: center;
+    }
+}

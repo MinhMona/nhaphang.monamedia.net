@@ -1,0 +1,48 @@
+.tab {
+    &-item {
+        padding: 0.7rem;
+        cursor: pointer;
+
+        &.active .tab-wrap {
+            background-color: $primaryColor;
+            color: #fff;
+            border-color: $primaryColor;
+        }
+    }
+
+    &-wrap {
+        padding: 1.5rem 3rem;
+        border: 1px solid #808080;
+        border-radius: 29.5px;
+        font-size: 1.6rem;
+        font-weight: 500;
+        color: $primaryColor;
+        text-transform: uppercase;
+        line-height: 1;
+        transition: 0.3s;
+
+        @media(max-width: 1200px) {
+            font-size: 1.5rem;
+            padding: 1.4rem 3rem;
+            padding-bottom: 1.1rem;
+        }
+
+        &:hover {
+            @Media(min-width: 1201px) {
+                background-color: $primaryColor;
+                color: #fff;
+                border-color: $primaryColor;
+            }
+        }
+    }
+}
+
+.tab-panel {
+    display: none;
+    animation: zoomIn 0.4s linear forwards;
+    -webkit-animation: zoomIn 0.4s linear forwards;
+
+    &.active {
+        display: block;
+    }
+}

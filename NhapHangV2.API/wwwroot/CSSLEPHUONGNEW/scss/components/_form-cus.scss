@@ -1,0 +1,77 @@
+.form-cus {
+    .f-r {
+        margin-bottom: 2.4rem;
+
+        @media(max-width: 400px) {
+            margin-bottom: 1.8rem;
+        }
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    .f-c {
+        @media(max-width: 400px) {
+            width: 100%;
+            margin-bottom: 2.4rem;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+    }
+
+    &-ipt,
+    &-txtarea {
+        padding: 1.2rem 0;
+        border-bottom: 1px solid $textColor-3;
+        color: $textColor;
+        width: 100%;
+
+        &::placeholder {
+            color: $textColor-3;
+        }
+    }
+
+    &-txtarea {
+        min-height: 7.7rem;
+    }
+
+    .f-l {
+        display: block;
+        margin-bottom: 1.4rem;
+
+        @media(max-width: 400px) {
+            margin-bottom: 0.8rem;
+        }
+    }
+
+    .f-i {
+        width: 100%;
+        background-color: #fff;
+        border-radius: 0.4rem;
+        min-height: 4.8rem;
+        padding: 1.2rem 1.5rem;
+        border: 1px solid transparent;
+
+        &:focus {
+            border-color: $primaryColor;
+        }
+    }
+
+    .f-btn {
+        margin-top: 4.2rem;
+
+        .btn {
+            background-color: $primaryColor;
+            line-height: 1.5;
+
+            &:hover {
+                @include min(1201px) {
+                    background-color: $primaryColor;
+                }
+            }
+        }
+    }
+}

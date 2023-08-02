@@ -1,0 +1,181 @@
+.pagination {
+    margin-top: 6.4rem;
+
+    &-list {
+        align-items: center;
+        -webkit-align-items: center;
+
+        &.f-end {
+            @include max(1200px) {
+                justify-content: center;
+                -webkit-justify-content: center;
+            }
+        }
+    }
+
+    &-item {
+        letter-spacing: 0.025em;
+        
+        .page-numbers {
+            @include mid-flex();
+            width: 3rem;
+            height: 3rem;
+            border: 1px solid rgba(68, 68, 68, 0.15);
+            background-color: transparent;
+            border-radius: 0.5rem;
+            transition: 0.3s;
+            line-height: 1;
+            margin: 0.4rem 0.8rem;
+            font-weight: 600;
+            color: #fff;
+            opacity: 0.5;
+
+            @media(max-width: 768px) {
+                width: 3.2rem;
+                height: 3.2rem;
+            }
+
+            &:hover {
+                @media(min-width: 1201px) {
+                    color: #fff;
+                    opacity: 1;
+                    background-color: rgba(255, 255, 255, 0.2);
+                }
+            }
+
+            &.current {
+                pointer-events: none;
+                color: #fff;
+                opacity: 1;
+                background-color: rgba(255, 255, 255, 0.2);
+            }
+
+            &.none {
+                pointer-events: none;
+            }
+        }
+
+        .page-prev, .page-next {
+            display: block;
+            width: 4rem;
+            height: 4rem;
+            position: relative;
+            margin: 0.4rem 0.8rem;
+            border: 1px solid transparent;
+            border-radius: 0.5rem;
+            @include mid-flex();
+
+            @media(max-width: 768px) {
+                width: 7rem;
+                height: 3.2rem;
+                padding: 0.4rem 0.8rem;
+                padding-top: 0.6rem;
+                text-align: center !important;
+                @include mid-flex();
+                font-size: 1.5rem;
+                max-width: max-content;
+                min-width: 3.2rem;
+            }
+
+            &::before, &::after {
+                content: "";
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 1.4rem;
+                height: 1rem;
+                background-size: contain;
+                transition: 0.6s cubic-bezier(0.61, 0.22, 0.23, 1);
+                -webkit-transition: 0.6s cubic-bezier(0.61, 0.22, 0.23, 1);
+                -o-transition: .6s cubic-bezier(0.61, 0.22, 0.23, 1);
+                filter: brightness(0) invert(1);
+                -webkit-filter: brightness(0) invert(1);
+
+                // @media(max-width: 768px) {
+                //     display: none;
+                // }
+            }
+
+            &:hover {
+                border-color: rgba(255, 255, 255, 0.3);
+            }
+        }
+
+        .page-prev {
+            text-align: right;
+            &::before {
+                right: unset;
+                background: url("../assets/images/arrow-ani-left.png");
+                background-size: contain;
+                opacity: 0;
+                visibility: hidden;
+                transform: translate(50%, -50%) scale(0);
+                -webkit-transform: translate(50%, -50%) scale(0);
+                -o-transform: translate(50%, -50%) scale(0);
+            }
+
+            &::after {
+                right: unset;
+                background: url("../assets/images/arrow-ani-left.png");
+                background-size: contain;
+            }
+
+            &:hover {
+                &::before {
+                    opacity: 1;
+                    visibility: visible;
+                    transform: translate(0%, -50%) scale(1);
+                    -webkit-transform: translate(0%, -50%) scale(1);
+                    -o-transform: translate(0%, -50%) scale(1);
+                    transition: .6s cubic-bezier(0.61, 0.22, 0.23, 1);
+                    -webkit-transition: .6s cubic-bezier(0.61, 0.22, 0.23, 1);
+                    -o-transition: .6s cubic-bezier(0.61, 0.22, 0.23, 1);
+                }
+                &::after {
+                    transform: translate(-50%, -50%) scale(0);
+                    -webkit-transform: translate(-50%, -50%) scale(0);
+                    -o-transform: translate(-50%, -50%) scale(0);
+                    opacity: 0;
+                    visibility: hidden;
+                }
+            }
+        }
+
+        .page-next {
+            &::before {
+                background: url("../assets/images/arrow-ani.png") no-repeat;
+                background-size: contain;
+                opacity: 0;
+                visibility: hidden;
+                transform: translate(-50%, -50%) scale(0);
+                -webkit-transform: translate(-50%, -50%) scale(0);
+                -o-transform: translate(-50%, -50%) scale(0);
+            }
+
+            &::after {
+                background: url("../assets/images/arrow-ani.png") no-repeat;
+                background-size: contain;
+            }
+
+            &:hover {
+                &::before {
+                    opacity: 1;
+                    visibility: visible;
+                    transform: translate(0%, -50%) scale(1);
+                    -webkit-transform: translate(0%, -50%) scale(1);
+                    -o-transform: translate(0%, -50%) scale(1);
+                    transition: .6s cubic-bezier(0.61, 0.22, 0.23, 1);
+                    -webkit-transition: .6s cubic-bezier(0.61, 0.22, 0.23, 1);
+                    -o-transition: .6s cubic-bezier(0.61, 0.22, 0.23, 1);
+                }
+                &::after {
+                    transform: translate(50%, -50%) scale(0);
+                    -webkit-transform: translate(50%, -50%) scale(0);
+                    -o-transform: translate(50%, -50%) scale(0);
+                    opacity: 0;
+                    visibility: hidden;
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,87 @@
+.say-us {
+    & > .container {
+        z-index: 2;
+    }
+
+    &-header {
+        margin-bottom: 5.8rem;
+    }
+
+    &-box {
+        .swiper-container {
+            padding-bottom: 2rem;
+        }
+    }
+
+    &-item {
+        display: flex;
+        flex-direction: column;
+        gap: 3.2rem;
+
+        &-row {
+            width: 100%;    
+        }
+    }
+
+    &-wrap {
+        display: flex;
+        align-items: flex-start;
+        gap: 1.6rem;
+
+        &:hover {
+            @include min(1201px) {
+                .say-us-img img {
+                    transform: translate(-50%, -50%) scale(1.1);
+                }
+
+                .say-us-name {
+                    color: $secColor;
+                }
+            }
+        }
+    }
+
+    &-img {
+        width: calc(100% * (2 / 6));
+        flex-shrink: 0;
+        overflow: hidden;
+        border-radius: 0.8rem;
+        box-shadow: 1rem 1rem 1rem 0 rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        position: relative;
+        padding-top: 25.5%;
+
+        img {
+            @include mid();
+            width: 100%;
+            height: 100%;
+            vertical-align: middle;
+        }
+    }
+
+    &-logo {
+        max-width: 16rem;
+        margin-bottom: 1.2rem;
+    }
+
+    &-name {
+        font-weight: 600;
+        margin-bottom: 1rem;
+        transition: 0.3s;
+        @include lc(1);
+    }
+
+    &-desc {
+        font-size: 1.4rem;
+        color: $textColor-3;
+        @include lc(2);
+    }
+}
+
+.map-bg {
+    position: absolute;
+    top: 0;
+    transform: translateY(-50%);
+    width: 100%;
+    pointer-events: none;
+}

@@ -1,0 +1,110 @@
+.banner {
+    position: relative;
+    line-height: 1.5;
+    overflow: hidden;
+
+    &-tt, &-desc, &-btn {
+        overflow: hidden;
+    }
+
+    &-lephuong {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 4;
+        pointer-events: none;
+
+        &-img {
+            width: 100%;
+            height: 100%;
+
+            -webkit-mask-image: url("../assets/images/LE-PHUONG-LOGISTICS.png");
+            mask-image: url("../assets/images/LE-PHUONG-LOGISTICS.png");
+            -webkit-mask-size: 100% auto;
+            mask-size: 100% auto;
+            mask-position: bottom;
+            -webkit-mask-position: bottom;
+            -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+
+            img {
+                animation: ScaleIn 6s ease-in-out forwards;
+            }
+        }
+
+        &-mask {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+        }
+    }
+
+    &-content {
+        position: absolute;
+        z-index: 5;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 5.4rem 0;
+
+        .content {
+            width: calc(100% * (7 / 12));
+            color: #fff;
+            margin-left: auto;
+        }
+    }
+
+    &-tt {
+        @include fz-64;
+        font-weight: 700;
+        margin-bottom: 1.6rem;
+        padding: 0 2.5rem 0.2rem;
+        position: relative;
+
+        .title {
+            position: relative;
+            z-index: 2;
+        }
+
+        &::before {
+            content: "";
+            position: absolute;
+            bottom: 1.5rem;
+            left: 0;
+            width: 100%;
+            height: 30%;
+            border-radius: 12rem;
+            background: $secondsColor
+        }
+    }
+
+    &-desc {
+        width: calc(100% * (6 / 7));
+        margin-bottom: 3.2rem;
+        margin-left: auto;
+    }
+
+    &-btn {
+        width: calc(100% * (6 / 7));
+        margin-left: auto;
+    }
+
+    &-slide {
+        img {
+            vertical-align: middle;
+            animation: ScaleIn 6s ease-in-out forwards;
+        }
+    }
+}
+
+@keyframes ScaleIn {
+    0% {
+      transform: translateY(10%) scale(1.3);
+    }
+    100% {
+      transform: translateY(0%) scale(1);
+    }
+}

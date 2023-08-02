@@ -1,0 +1,24 @@
+.lp-feedback {
+    &-header {
+        margin-bottom: 5.4rem;
+    }
+
+    &-slider {
+        width: calc(100% + 2.4rem + 3.2rem);
+        margin-left: -2.8rem;
+        padding: 1.2rem;
+        overflow: hidden;
+
+        .swiper-container {
+            overflow: visible;
+        }
+    }
+
+    &-wrap {
+        img {
+            border-radius: 1.6rem;
+            border: 0.4rem solid #E3E3E8;
+            box-shadow: 0.6rem 0.6rem 1.4rem 0 rgba(0, 0, 0, 0.08);
+        }
+    }
+}

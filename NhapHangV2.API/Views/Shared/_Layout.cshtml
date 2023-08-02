@@ -1,0 +1,475 @@
+﻿@{
+
+    var config = Model.Configurations;
+    var user = Model.UserData;
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta property="og:title" content="@config.OGTitle" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="@config.OGImage" />
+    <meta property="og:description" content="@config.OGDescription" />
+    <meta name="title" content="@config.WebsiteName" />
+    <meta name="desciption" content="@config.OGDescription" />
+
+    <title>Home</title>
+    <link rel="shortcut icon" href="./CSSLEPHUONGNEW/assets/images/favicon/fav.png" type="image/x-icon" />
+    <link rel="stylesheet" href="./CSSLEPHUONGNEW/css/style.css" />
+    <link rel="stylesheet" href="./CSSLEPHUONGNEW/css/backdoor.css" />
+    <script src="./CSSLEPHUONGNEW/js/libs/jquery/jquery.min.js"></script>
+</head>
+
+<body class="">
+    <header class="hd">
+        <div class="container">
+            <div class="hd-ctn d-flex f-ctn">
+                <div class="hd-logo col col-4">
+                    <a href="/" class="songtra-logo">
+                        <img src="@config.LogoIMG" alt="">
+                    </a>
+                </div>
+
+                <div class="hd-controls col col-8">
+                    <div class="hd-controls-top d-flex">
+                        <div class="hd-controls-top-item d-flex">
+                            <div class="hd-controls-top-item-col d-flex">
+                                <div class="icon">
+                                    <img src="./CSSLEPHUONGNEW/assets/images/icon-money.png" alt="">
+                                </div>
+                                <div class="txt">
+                                    TỶ GIÁ:  @config.Currency
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hd-controls-top-item d-flex">
+                            <div class="hd-controls-top-item-col d-flex">
+                                <a href="tel:0966283368" class="txt">
+                                    @config.Hotline
+                                </a>
+                            </div>
+                        </div>
+                        <div class="hd-controls-top-item d-flex">
+                            <div class="hd-controls-top-item-col d-flex">
+                                <a href="#" class="txt">
+                                    Tra cứu đơn hàng
+                                </a>
+                            </div>
+                        </div>
+                        <div class="hd-controls-top-item d-flex">
+                            @{
+                                if (Model.Username == null) {
+                                    <div class="hd-controls-top-item-col d-flex">
+                                        <div class="icon">
+                                            <img src="./CSSLEPHUONGNEW/assets/images/icon-User.png" alt="">
+                                        </div>
+                                        <a href="#" class="txt">
+                                            Đăng nhập
+                                        </a>
+                                    </div>
+                                    <div class="hd-controls-top-item-col d-flex">
+                                        <a href="#" class="txt">
+                                            Đăng ký
+                                        </a>
+                                    </div>
+                                } else {
+                                    <div class="hd-controls-top-item-col d-flex logined logined-js">
+                                        <div class="icon">
+                                            <img src="./CSSLEPHUONGNEW/assets/images/icon-User.png" alt="">
+                                        </div>
+                                        <div class="txt openAccount">
+                                            @Model.Username
+                                        </div>
+
+                                        <div class="logined-pop">
+                                            <div class="logined-pop-wrap">
+                                                <div class="logined-pop-header">
+                                                    <div class="logined-pop-header-name">
+                                                        @user.LevelName
+                                                    </div>
+                                                </div>
+                                                <div class="logined-pop-body">
+                                                    <div class="logined-pop-body-item">
+                                                        <span class="logined-pop-body-item-row">
+                                                            <span class="logined-pop-body-item-col">
+                                                                Số dư:
+                                                            </span>
+                                                            <span class="logined-pop-body-item-col">
+                                                                @string.Format("{0:N0}", user.Wallet) vnđ
+                                                            </span>
+                                                        </span>
+                                                    </div>
+                                                    <a href="#" class="logined-pop-body-item">
+                                                        <span class="logined-pop-body-item-row">
+                                                            <span class="logined-pop-body-item-col">
+                                                                Quản trị
+                                                            </span>
+                                                            <span class="logined-pop-body-item-col">
+                                                                <img src="./CSSLEPHUONGNEW/assets/images/CaretDown.png" alt="" class="caret-down">
+                                                            </span>
+                                                        </span>
+                                                    </a>
+                                                    <a href="#" class="logined-pop-body-item">
+                                                        <span class="logined-pop-body-item-row">
+                                                            <span class="logined-pop-body-item-col">
+                                                                Giỏ hàng
+                                                            </span>
+                                                            <span class="logined-pop-body-item-col">
+                                                                <img src="./CSSLEPHUONGNEW/assets/images/CaretDown.png" alt="" class="caret-down">
+                                                            </span>
+                                                        </span>
+                                                    </a>
+                                                </div>
+                                                <div class="logined-pop-footer">
+                                                    <div class="logined-pop-footer-logout">
+                                                        <a href="#" class="logout-link">
+                                                            Đăng xuất
+                                                        </a>
+                                                    </div>
+                                                    @Html.TextBoxFor("Name", new {@class =" " })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+
+                    <div class="hd-menu hdMenu">
+                        <div class="hd-menu-logo">
+                            <a href="#" class="songtra-logo">
+                                <img src="@config.LogoIMG" alt="">
+                            </a>
+
+                            <div class="menu-close menuClose">
+                                <div class="menu-close-wrap">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="menu">
+                            
+                            <ul class="menu-list d-flex f-center">
+                                @{
+                                    var menuList = Model.MenuList;
+                                    foreach (var menu in menuList)
+                                    {
+                                        if ( (menu.Parent == null || menu.Parent == 0) &&  !menu.Deleted )
+                                        {
+                                            if (menu.Children.Count == 0)
+                                            {
+                                                <li class="menu-item"><a href="@menu.Link" class="menu-item-link">@menu.Name</a></li>
+                                            }
+                                            else
+                                            {
+                                                <li class="menu-item dropdown">
+                                                    <a href="@menu.Link" class="menu-item-link">@menu.Name</a>
+                                                    <img src="./CSSLEPHUONGNEW/assets/images/CaretDown.png" alt="" class="subBtn">
+                                                    <ul class="submenu">
+                                                        @{
+                                                            foreach (var subMenu in menu.Children)
+                                                            {
+                                                                <li class="submenu-item">
+                                                                    <a href="@subMenu.Link" class="submenu-item-link">@subMenu.Name</a>
+                                                                </li>
+                                                            }
+                                                        }
+                                                    </ul>
+                                                </li>
+                                            }
+                                        }
+                                    }
+                                }
+                               
+                            </ul>
+                        </div>
+
+                        <div class="hd-menu-info">
+                            <div class="hd-menu-info-item">
+                                <p class="title hl fw-700">Liên hệ</p>
+                                <div class="hot-line">
+                                    <p class="d-flex">Số điện thoại: <a href="tel:0969-535-052" class="hot-line-call fw-700 hl-pri"> 0969-535-052</a></p>
+                                    <p class="d-flex">Địa chỉ kho Nam Từ Liêm: <a href="tel:0969-535-052" class="hot-line-call fw-700 hl-pri"> Xuân Phương, Nam Từ Liêm, Hà Nội</a></p>
+                                    <p class="d-flex">Địa chỉ kho Hà Đông: <a href="tel:0969-535-052" class="hot-line-call fw-700 hl-pri"> Phường Vạn Phúc,Quận Hà đông, Hà Nội</a></p>
+                                </div>
+                            </div>
+
+                            <div class="hd-menu-info-item">
+                                <p class="title hl fw-700">Theo dõi chúng tôi tại:</p>
+                                <ul class="social-list d-flex">
+                                    <li class="social-item">
+                                        <a href="#">
+                                            <img src="./CSSLEPHUONGNEW/assets/images/icon-fb.png" alt="">
+                                        </a>
+                                    </li>
+                                    <li class="social-item">
+                                        <a href="#">
+                                            <img src="./CSSLEPHUONGNEW/assets/images/icon-yt.png" alt="">
+                                        </a>
+                                    </li>
+                                    <li class="social-item">
+                                        <a href="#">
+                                            <img src="./CSSLEPHUONGNEW/assets/images/icon-zl.png" alt="">
+                                        </a>
+                                    </li>
+                                    <li class="social-item">
+                                        <a href="#">
+                                            <img src="./CSSLEPHUONGNEW/assets/images/icon-tt.png" alt="">
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hd-bar hdBar">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="bg-page bgPage"></div>
+    </header>
+    <main class="main">
+            @RenderBody()
+    </main>
+
+    <footer class="ft">
+        <div class="container">
+            <div class="ft-top">
+                <div class="ft-ctn d-flex f-ctn">
+                    <div class="ft-col col col-4">
+                        <div class="ft-label">
+                            Thông tin liên hệ
+                        </div>
+                        <div class="ft-content">
+                            <ul class="ft-list">
+                                <li class="ft-item">
+                                    <a href="#" class="ft-item-link d-flex">
+                                        <span class="icon">
+                                            <img src="./CSSLEPHUONGNEW/assets/images/ft-icon-pin.png" alt="">
+                                        </span>
+                                        <span class="txt">
+                                            Tòa nhà A3 - Khu Đô Thị Xuân Phương Garden Nam Từ Liêm - Hà Nội
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="ft-item">
+                                    <a href="mailto:vanchuyenlephuong2019@gmail.com" class="ft-item-link d-flex">
+                                        <span class="icon">
+                                            <img src="./CSSLEPHUONGNEW/assets/images/ft-icon-email.png" alt="">
+                                        </span>
+                                        <span class="txt">
+                                            vanchuyenlephuong2019@gmail.com
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="ft-item">
+                                    <a href="tel:0966283368" class="ft-item-link d-flex">
+                                        <span class="icon">
+                                            <img src="./CSSLEPHUONGNEW/assets/images/ft-icon-email.png" alt="">
+                                        </span>
+                                        <span class="txt">
+                                            0966283368
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="ft-col col col-3">
+                        <div class="ft-label">
+                            Dịch vụ
+                        </div>
+                        <div class="ft-content">
+                            <ul class="ft-list">
+                                <li class="ft-item">
+                                    <a href="#" class="ft-item-link d-flex">
+                                        <span class="txt">
+                                            Đặt hàng Taobao
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="ft-item">
+                                    <a href="#" class="ft-item-link d-flex">
+                                        <span class="txt">
+                                            Đặt hàng 1688
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="ft-item">
+                                    <a href="#" class="ft-item-link d-flex">
+                                        <span class="txt">
+                                            Đặt hàng Tmall
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="ft-item">
+                                    <a href="#" class="ft-item-link d-flex">
+                                        <span class="txt">
+                                            Thanh toán hộ
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="ft-item">
+                                    <a href="#" class="ft-item-link d-flex">
+                                        <span class="txt">
+                                            Vận chuyển Trung Quốc
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="ft-col col col-2">
+                        <div class="ft-label">
+                            Liên  kết nhanh
+                        </div>
+                        <div class="ft-content">
+                            <ul class="ft-list">
+                                <li class="ft-item">
+                                    <a href="#" class="ft-item-link d-flex">
+                                        <span class="txt">
+                                            Tra Cước
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="ft-item">
+                                    <a href="#" class="ft-item-link d-flex">
+                                        <span class="txt">
+                                            Tuyển dụng
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="ft-item">
+                                    <a href="#" class="ft-item-link d-flex">
+                                        <span class="txt">
+                                            Hướng Dẫn
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="ft-item">
+                                    <a href="#" class="ft-item-link d-flex">
+                                        <span class="txt">
+                                            Chính Sách
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="ft-item">
+                                    <a href="#" class="ft-item-link d-flex">
+                                        <span class="txt">
+                                            Tin Tức
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="ft-col col col-3">
+                        <div class="ft-label">
+                            Fanpage
+                        </div>
+                        <div class="ft-content">
+                            <div class="ft-fanpage">
+                                <img src="./CSSLEPHUONGNEW/assets/images/ft-fanpage.jpg" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ft-mid">
+                <div class="ft-ctn d-flex f-ctn">
+                    <div class="ft-col col col-4">
+                        <div class="ft-content">
+                            <ul class="ft-list">
+                                <li class="ft-item">
+                                    <a href="#" class="ft-item-link d-flex">
+                                        <span class="icon">
+                                            <img src="./CSSLEPHUONGNEW/assets/images/ft-icon-pin.png" alt="">
+                                        </span>
+                                        <span class="txt">
+                                            <span class="hl-sec">Địa chỉ kho Nam Từ Liêm</span>: Xuân Phương, Nam Từ Liêm, Hà Nội
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="ft-col col col-5">
+                        <div class="ft-content">
+                            <ul class="ft-list">
+                                <li class="ft-item">
+                                    <a href="#" class="ft-item-link d-flex">
+                                        <span class="icon">
+                                            <img src="./CSSLEPHUONGNEW/assets/images/ft-icon-pin.png" alt="">
+                                        </span>
+                                        <span class="txt">
+                                            <span class="hl-sec">Địa chỉ kho Hà Đông</span>: Phường Vạn Phúc,Quận Hà đông, Hà Nội
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="ft-col col col-3">
+                        <div class="ft-content ft-social d-flex">
+                            <div class="ft-label">
+                                Liên  kết nhanh
+                            </div>
+
+                            <ul class="social-list d-flex">
+                                <li class="social-item"><a href="#" class="social-item-link"><img src="./CSSLEPHUONGNEW/assets/images/icon-fb.png" alt=""></a></li>
+                                <li class="social-item"><a href="#" class="social-item-link"><img src="./CSSLEPHUONGNEW/assets/images/icon-yt.png" alt=""></a></li>
+                                <li class="social-item"><a href="#" class="social-item-link"><img src="./CSSLEPHUONGNEW/assets/images/icon-zl.png" alt=""></a></li>
+                                <li class="social-item"><a href="#" class="social-item-link"><img src="./CSSLEPHUONGNEW/assets/images/icon-tt.png" alt=""></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ft-bottom">
+                <a href="#" class="ft-signature">
+                    <img src="./CSSLEPHUONGNEW/assets/images/Signature.svg" alt="">
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <div class="contact-fixed">
+        <ul class="contact-fixed-list">
+            <li class="contact-fixed-item"><a href="#" class="contact-fixed-link"><img src="./CSSLEPHUONGNEW/assets/images/icon-mess.png" alt=""></a></li>
+            <li class="contact-fixed-item"><a href="#" class="contact-fixed-link"><img src="./CSSLEPHUONGNEW/assets/images/icon-chatzl.png" alt=""></a></li>
+        </ul>
+    </div>
+
+    <div class="move-to-top moveToTop">
+        <img src="./CSSLEPHUONGNEW/assets/images/icon-move-top.png" alt="">
+    </div>
+
+    <div class="page-bg pageBG"></div>
+
+    <script src="./CSSLEPHUONGNEW/js/libs/swiper/swiper-bundle.min.js"></script>
+    <script src="./CSSLEPHUONGNEW/js/libs/magnific/jquery.magnific-popup.min.js"></script>
+    <script src="./CSSLEPHUONGNEW/js/libs/aos/aos.js"></script>
+    <script src="./CSSLEPHUONGNEW/js/libs/wow/wow.min.js"></script>
+    <script src="./CSSLEPHUONGNEW/js/libs/parallax/simpleParallax.min.js"></script>
+    <script src="./CSSLEPHUONGNEW/js/libs/smoothscroll/SmoothScroll.min.js"></script>
+    <script src="./CSSLEPHUONGNEW/js/libs/particles/particles.min.js"></script>
+    <script src="./CSSLEPHUONGNEW/js/libs/popper/popper.js"></script>
+    <script src="./CSSLEPHUONGNEW/js/libs/tippy/popper.min.js"></script>
+    <script src="./CSSLEPHUONGNEW/js/libs/tippy/tippy-bundle.umd.js"></script>
+    <script src="./CSSLEPHUONGNEW/js/main.js" type="module" defer></script>
+
+</body>
+
+</html>

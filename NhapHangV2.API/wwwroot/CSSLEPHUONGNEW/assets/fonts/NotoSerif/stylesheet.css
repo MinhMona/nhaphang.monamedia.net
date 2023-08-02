@@ -1,0 +1,48 @@
+@font-face {
+    font-family: 'Noto Serif';
+    src: url('NotoSerif-Italic.eot');
+    src: url('NotoSerif-Italic.eot?#iefix') format('embedded-opentype'),
+        url('NotoSerif-Italic.woff2') format('woff2'),
+        url('NotoSerif-Italic.woff') format('woff'),
+        url('NotoSerif-Italic.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Noto Serif';
+    src: url('NotoSerif-Bold.eot');
+    src: url('NotoSerif-Bold.eot?#iefix') format('embedded-opentype'),
+        url('NotoSerif-Bold.woff2') format('woff2'),
+        url('NotoSerif-Bold.woff') format('woff'),
+        url('NotoSerif-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Noto Serif';
+    src: url('NotoSerif-BoldItalic.eot');
+    src: url('NotoSerif-BoldItalic.eot?#iefix') format('embedded-opentype'),
+        url('NotoSerif-BoldItalic.woff2') format('woff2'),
+        url('NotoSerif-BoldItalic.woff') format('woff'),
+        url('NotoSerif-BoldItalic.ttf') format('truetype');
+    font-weight: bold;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Noto Serif';
+    src: url('NotoSerif.eot');
+    src: url('NotoSerif.eot?#iefix') format('embedded-opentype'),
+        url('NotoSerif.woff2') format('woff2'),
+        url('NotoSerif.woff') format('woff'),
+        url('NotoSerif.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+

@@ -36,11 +36,11 @@ namespace NhapHangV2.API.Controllers
         }
 
         [HttpGet]
-        public async Task<AppDomainResult> CrawlProduct([FromQuery] long id, [FromQuery] string web)
+        public async Task<AppDomainResult> CrawlProduct([FromQuery] long id, [FromQuery] string web, [FromQuery] bool isDev)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
             string result = string.Empty;
-            if (!memoryCache.TryGetValue(id + "_" + web, out result))
+            if (!memoryCache.TryGetValue(id + "_" + web, out result) || isDev)
             {
                 result = await crawlProductService.CrawlProduct(id, web);
                 var cacheEntryOptions = new MemoryCacheEntryOptions

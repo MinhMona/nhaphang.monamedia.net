@@ -1,0 +1,164 @@
+:root {
+    --service-commit-box: 7.2rem;
+    --service-commit-item: 6rem;
+}
+
+@include max(1450px) {
+    :root {
+        --service-commit-box: 4.2rem;
+        --service-commit-item: 4rem;
+    }
+}
+
+@include max(1400px) {
+    :root {
+        --service-commit-box: 2.4rem;
+        --service-commit-item: 1.2rem;
+    }
+}
+
+@include max(1300px) {
+    :root {
+        --service-commit-box: 0;
+        --service-commit-item: 1.2rem;
+    }
+}
+
+.service-commit {
+    &-header {
+        margin-bottom: 5.4rem;
+    }
+
+    &-tt {
+        margin-bottom: 2rem;
+    }
+
+    &-desc {
+        max-width: 83rem;
+        margin: 0 auto;
+    }
+
+    &-box {
+        width: calc(100% + (var(--service-commit-box) * 2));
+        margin-left: calc(var(--service-commit-box) * -1);
+    }
+
+    &-list {
+        width: calc(100% + var(--service-commit-item));
+        margin-left: calc((var(--service-commit-item) / 2) * -1);
+
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &-item {
+        width: calc(100% / 4 + 6rem);
+        padding: 0 calc(var(--service-commit-item) / 2);
+        position: relative;
+
+        &:nth-child(1) {
+            width: calc(100% / 4 + 7rem);
+            z-index: 5;
+
+            @include max(1450px) {
+                width: calc(100% / 4 + 6rem);
+            }
+
+            .service-commit-item-num {
+                width: calc(100% + 13.7rem);
+                height: calc(100% + 4.5rem);
+
+                @include max(1450px) {
+                    width: calc(100% + 13rem);
+                    height: calc(100% + 4.85rem);
+                }
+            }
+        }
+
+        &:nth-child(2) {
+            z-index: 4;
+
+            .service-commit-item-num {
+                width: calc(100% + 4.6rem);
+                height: calc(100% + 4.7rem);
+                left: -5rem;
+
+                @include max(1450px) {
+                    width: calc(100% + 4.6rem);
+                    height: calc(100% + 5.7rem); 
+                }
+            }
+        }
+
+        &:nth-child(3) {
+            z-index: 3;
+
+            .service-commit-item-num {
+                width: calc(100% + 13.7rem);
+                height: calc(100% + 4.5rem);
+                left: -14rem;
+
+                @include max(1450px) {
+                    height: calc(100% + 5.8rem); 
+                }
+            }
+        }
+
+        &:nth-child(4) {
+            z-index: 2;
+        }
+
+        &:nth-child(5) {
+            z-index: 1;
+        }
+
+        &-num {
+            pointer-events: none;
+            @include mid();
+            left: 0.4rem;
+            transform: translate(0, -50%);
+
+            @include max(1400px) {
+                display: none;
+            }
+
+            svg {
+                width: 100%;
+                height: 100%;
+            }
+        }
+    }
+
+    &-wrap {
+        height: 100%;
+        padding: 2.8rem 2.4rem;
+        border-radius: 4.8rem;
+        background: #fff;
+        box-shadow: 2.4rem 2.4rem 4rem 0 rgba(0, 0, 0, 0.08);
+        line-height: 1.5;
+
+        @include max(1450px) {
+            padding: 1.6rem;
+            border-radius: 2.4rem;
+        }
+
+        .icon {
+            width: 6.4rem;
+            height: 6.4rem;
+            margin: 0 auto;
+            margin-bottom: 1.6rem;
+        }
+
+        .name {
+            font-size: 1.8rem;
+            color: $secColor;
+            margin-bottom: 0.8rem;
+            @include lc(1);
+        }
+
+        .desc {
+            min-height: 7.2rem;
+            @include lc(3);
+        }
+    }
+}
