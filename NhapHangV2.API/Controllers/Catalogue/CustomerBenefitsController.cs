@@ -84,7 +84,6 @@ namespace NhapHangV2.API.Controllers.Catalogue
                 item.Created = DateTime.UtcNow.AddHours(7);
                 item.CreatedBy = LoginContext.Instance.CurrentUser.UserName;
                 item.Active = true;
-                
                 if (item != null)
                 {
                     //// Kiểm tra item có tồn tại chưa?

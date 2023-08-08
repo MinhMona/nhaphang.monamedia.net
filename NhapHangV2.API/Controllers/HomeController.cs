@@ -18,6 +18,10 @@ using System.IdentityModel.Tokens.Jwt;
 using Newtonsoft.Json;
 using System.Linq;
 using Newtonsoft.Json.Linq;
+using DocumentFormat.OpenXml.Office2010.Excel;
+using NhapHangV2.Request;
+using NhapHangV2.Service.Services;
+using RestSharp;
 
 namespace NhapHangV2.API.Controllers
 {
@@ -31,6 +35,9 @@ namespace NhapHangV2.API.Controllers
         protected readonly IStepService stepService;
         protected readonly IServiceService serviceService;
         protected readonly IUserService userService;
+        protected readonly ICustomerBenefitsService customerBenefitsService;
+        protected readonly ICustomerTalkService customerTalkService;
+        protected readonly ISearchService searchService;
         public HomeController(IServiceProvider serviceProvider, IMapper mapper)
         {
             configurationsService = serviceProvider.GetRequiredService<IConfigurationsService>();
@@ -40,6 +47,9 @@ namespace NhapHangV2.API.Controllers
             stepService = serviceProvider.GetRequiredService<IStepService>();
             serviceService = serviceProvider.GetRequiredService<IServiceService>();
             userService = serviceProvider.GetRequiredService<IUserService>();
+            customerBenefitsService = serviceProvider.GetRequiredService<ICustomerBenefitsService>();
+            customerTalkService = serviceProvider.GetRequiredService<ICustomerTalkService>();
+            searchService = serviceProvider.GetRequiredService<ISearchService>();
             this.mapper = mapper;
         }
 
@@ -50,8 +60,12 @@ namespace NhapHangV2.API.Controllers
             homeModel.Configurations = mapper.Map<ConfigurationsModel>(await configurationsService.GetByIdAsync(1));
             homeModel.MenuList = mapper.Map<IList<MenuModel>>(await menuService.GetAllAsync());
             homeModel.MenuList = await menuService.GetListMenu(homeModel.MenuList);
-            homeModel.StepList = mapper.Map<IList<StepModel>>(await stepService.GetAllAsync());
-            var token = Request.Cookies["tokenNHTQ-demo"]?.ToString();
+            homeModel.StepList = mapper.Map<IList<StepModel>>((await stepService.GetAllAsync()).OrderBy(x=> x.Position));
+            homeModel.ServiceList = mapper.Map<IList<ServiceModel>>((await serviceService.GetAllAsync()).OrderBy(x=> x.Position));
+            homeModel.CustomerBenefitsList = mapper.Map<IList<CustomerBenefitsModel>>((await customerBenefitsService.GetAllAsync()).Where(x=> x.ItemType ==2).OrderBy(x => x.Position).ToList());
+            homeModel.CustomerTalkList = mapper.Map<IList<CustomerTalk>>((await customerTalkService.GetAllAsync()).Where(x=> x.Active).ToList());
+            homeModel.TopNewsPage = mapper.Map<PageTypeModel>(await pageTypeService.GetByCodeAsync("tin-tuc"));
+            var token = Request?.Cookies["tokenNHTQ-demo"]?.ToString();
             if (token != null)
             {
                 var handler = new JwtSecurityTokenHandler();
@@ -62,19 +76,29 @@ namespace NhapHangV2.API.Controllers
                 homeModel.UserGroupId = Convert.ToInt32(userData["UserGroupId"].ToString());
                 homeModel.UserData = mapper.Map<UserModel>(await userService.GetByIdAsync(homeModel.UserId));
             }
+            homeModel.IsRenderPopup = Convert.ToBoolean((Request?.Cookies["isRender"]?.ToString()?? "true"));
             return View(homeModel);
         }
+
+        public IActionResult Logout() 
+        {
+            if (Request.Cookies["tokenNHTQ-demo"] != null)
+            {
+                Response.Cookies.Delete("tokenNHTQ-demo");
+            }
+            return RedirectToAction("Index");
+        } 
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Index(string id)
         {
-            Debug.Write(id);
             var homeModel = new HomeModel();
             homeModel.Configurations= mapper.Map<ConfigurationsModel>(await configurationsService.GetByIdAsync(1));
             homeModel.MenuList = mapper.Map<IList<MenuModel>>(await menuService.GetAllAsync());
             homeModel.MenuList = await menuService.GetListMenu(homeModel.MenuList);
             homeModel.Type = 2;
             homeModel.PageTypeContent = mapper.Map<PageTypeModel>(await pageTypeService.GetByCodeAsync(id));
+            homeModel.TopNewsPage = mapper.Map<PageTypeModel>(await pageTypeService.GetByCodeAsync("tin-tuc"));
             if (homeModel.PageTypeContent == null)
             {
                 homeModel.Type = 3;
@@ -83,9 +107,13 @@ namespace NhapHangV2.API.Controllers
                 {
                    homeModel.Type = 4;
                 }
+                else
+                {
+                    homeModel.PageTypeContent = mapper.Map<PageTypeModel>(await pageTypeService.GetByIdAsync(homeModel.PageContent.PageTypeId??0));
+                }
             }
 
-            var token = Request.Cookies["tokenNHTQ-demo"]?.ToString();
+            var token = Request?.Cookies["tokenNHTQ-demo"]?.ToString();
             if (token != null)
             {
                 var handler = new JwtSecurityTokenHandler();
@@ -98,6 +126,13 @@ namespace NhapHangV2.API.Controllers
             }
 
             return View(homeModel);
+        }
+
+        [HttpPost]
+        public IActionResult SearchProduct([FromForm]string keyWord, [FromForm] int site)
+        {
+            string url = searchService.SearchContent(site, keyWord).Data.ToString();
+            return Redirect(url);
         }
 
         public class HomeModel: Microsoft.AspNetCore.Mvc.RazorPages.PageModel
@@ -115,6 +150,11 @@ namespace NhapHangV2.API.Controllers
             public int UserId { get; set; }
             public int UserGroupId { get; set; }
             public UserModel UserData { get; set; }
+            public IList<ServiceModel> ServiceList { get; set; }
+            public IList<CustomerBenefitsModel> CustomerBenefitsList { get; set; }
+            public IList<CustomerTalk> CustomerTalkList { get; set; }
+            public PageTypeModel TopNewsPage { get; set; }
+            public bool IsRenderPopup { get; set; } 
         }
     }
 }

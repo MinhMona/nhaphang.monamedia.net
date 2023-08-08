@@ -1,1087 +1,1026 @@
 ﻿@{
+
+    var config = Model.Configurations;
     if(Model.Type == 1){
-        <div class="mask-ani show"></div>
-
-        <div id="trang-chu" class="banner">
-            <div class="banner-slide">
-                <div class="swiper-container">
-                    <div class="swiper-wrapper">
-                        <div class="swiper-slide">
-                            <img src="./CSSLEPHUONGNEW/assets/images/banner-lephuong.jpg" alt="" class="img-ani">
-
-                            <div class="banner-content">
-                                <div class="container">
-                                    <div class="content">
-                                        <div class="banner-tt">
-                                            <h1 class="title" data-aos="fade-up" data-aos-delay="1000">
-                                                Le Phuong Logistics
-                                            </h1>
-                                        </div>
-                                        <div class="banner-desc">
-                                            <p data-aos="fade-up" data-aos-delay="1000">
-                                                Lê Phương Logistics chuyên cung cấp các dịch vụ như Order Taobao, 1688, Tmall, Alibaba, đăt hàng qua Wechat, săn sales Zara, Hm, Bershka, Lining
-                                            </p>
-                                        </div>
-                                        <div class="banner-btn" data-aos="fade-up" data-aos-delay="1000">
-                                            <a href="#" class="btn">
-                                                <span class="icon">
-                                                    <img src="./CSSLEPHUONGNEW/assets/images/icon-order.png" alt="">
-                                                </span>
-                                                <span class="txt">
-                                                    Tạo đơn hàng
-                                                </span>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="swiper-pagination swiper-pagin d-flex f-center"></div>
+        <section class="sec sec-banner">
+            <div class="sec-banner-top">
+                <img src="./demo-nhtq/assets/images/banner-mountain-2.webp"
+                     alt=""
+                     class="sec-banner-mountain-2"
+                     data-aos="fade-left"
+                     data-aos-delay="100" />
+                <img src="./demo-nhtq/assets/images/banner-mountain-1.webp"
+                     alt=""
+                     class="sec-banner-mountain-1"
+                     data-aos="fade-right"
+                     data-aos-delay="200" />
+                <img src="./demo-nhtq/assets/images/banner-cloud.webp"
+                     alt=""
+                     class="sec-banner-cloud" />
+                <span class="sec-banner-brand"
+                      data-aos="fade-right"
+                      data-aos-delay="500">MONA SOFTWARE</span>
             </div>
 
-            <div class="banner-lephuong">
-                <div class="banner-lephuong-img">
-                    <img src="./CSSLEPHUONGNEW/assets/images/banner-lephuong.jpg" alt="">
-                </div>
-            </div>
-        </div>
-
-        <section id="gioi-thieu" class="section order-process mask-ellipse titleJS">
-            <div class="container">
-                <div class="order-process-tt sec-tt-ani add-active-js sec-tt txt-center sec-tt-ani">
-                    <h2>
-                        Quy trình đặt hàng
+            <div class="sec-banner-inner">
+                <div class="container">
+                    <span class="sec-banner-inner-top">
+                        <h3 data-aos="fade-up" data-aos-delay="100">
+                            WE ARE MONA SOFTWARE
+                        </h3>
+                        <h3 data-aos="fade-up" data-aos-delay="200">EXPORT SOLUTION</h3>
+                    </span>
+                    <h1 data-aos="fade-right" data-aos-delay="300">
+                        Hệ thống nhập hàng
+                    </h1>
+                    <h2 data-aos="fade-right" data-aos-delay="400">
+                        Trung Quốc Uy Tín
                     </h2>
                 </div>
-                <div class="order-process-content" data-aos="fade-up">
-                    <div class="order-process-list d-flex f-ctn">
-                        <div class="order-process-item col">
-                            <div class="order-process-wrap d-flex">
-                                <div class="icon">
-                                    <img src="./CSSLEPHUONGNEW/assets/images/iconshopping-list.png" alt="">
-                                </div>
-                                <div class="txt">
-                                    <div class="step">
-                                        Bước 1
-                                    </div>
-                                    <div class="name">
-                                        Đặt hàng
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="order-process-item col">
-                            <div class="order-process-wrap d-flex">
-                                <div class="icon">
-                                    <img src="./CSSLEPHUONGNEW/assets/images/icon-box.png" alt="">
-                                </div>
-                                <div class="txt">
-                                    <div class="step">
-                                        Bước 2
-                                    </div>
-                                    <div class="name">
-                                        Đóng gói hàng hoá
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="order-process-item col">
-                            <div class="order-process-wrap d-flex">
-                                <div class="icon">
-                                    <img src="./CSSLEPHUONGNEW/assets/images/icon-box.png" alt="">
-                                </div>
-                                <div class="txt">
-                                    <div class="step">
-                                        Bước 3
-                                    </div>
-                                    <div class="name">
-                                        Vận chuyển nội địa
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="order-process-item col">
-                            <div class="order-process-wrap d-flex">
-                                <div class="icon">
-                                    <img src="./CSSLEPHUONGNEW/assets/images/icon-box.png" alt="">
-                                </div>
-                                <div class="txt">
-                                    <div class="step">
-                                        Bước 4
-                                    </div>
-                                    <div class="name">
-                                        Kho Trung Quốc
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="order-process-item col">
-                            <div class="order-process-wrap d-flex">
-                                <div class="icon">
-                                    <img src="./CSSLEPHUONGNEW/assets/images/icon-box.png" alt="">
-                                </div>
-                                <div class="txt">
-                                    <div class="step">
-                                        Bước 5
-                                    </div>
-                                    <div class="name">
-                                        Vận chuyển Việt Nam
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
-            <div class="bg-earth">
-                <img src="./CSSLEPHUONGNEW/assets/images/global-earth.png" alt="">
+            <div class="sec-banner-bottom">
+                <img src="./demo-nhtq/assets/images/banner-2.webp"
+                     alt=""
+                     class="sec-banner-bottom-2"
+                     data-aos="zoom-in-up"
+                     data-aos-delay="300" />
+                <img src="./demo-nhtq/assets/images/banner-1.webp"
+                     alt=""
+                     class="sec-banner-bottom-1"
+                     data-aos="zoom-in-up" />
             </div>
         </section>
 
-        <section class="section order-app">
+        <section class="sec sec-video">
             <div class="container">
-                <div class="order-app-ctn d-flex f-ctn">
-                    <div class="order-app-col col col-7">
-                        <div class="order-app-img" data-aos="fade-left">
-                            <img src="./CSSLEPHUONGNEW/assets/images/Banner-Tool-2.png" alt="">
+                <div class="sec-video-text">
+                    <h3 class="sub-title" data-aos="fade-up" data-aos-delay="100">
+                        Siêu phẩm mới
+                    </h3>
+                    <h1 class="main-title" data-aos="fade-up" data-aos-delay="200">
+                        Big update 6.0
+                    </h1>
+                </div>
+
+                <div class="sec-video-inner">
+                    <div class="sec-video-iframe">
+                        <iframe width="560"
+                                height="315"
+                                src="https://www.youtube.com/embed/2eNbEkmtWrY"
+                                title="YouTube video player"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                allowfullscreen></iframe>
+                    </div>
+                    <img src="./demo-nhtq/assets/images/video-1.webp"
+                         alt=""
+                         class="sec-video-1"
+                         data-aos="zoom-in" />
+                    <img src="./demo-nhtq/assets/images/video-2.webp"
+                         alt=""
+                         class="sec-video-2"
+                         data-aos="zoom-in" />
+                    <img src="./demo-nhtq/assets/images/video-box-1.webp"
+                         alt=""
+                         class="sec-video-box-1" />
+                    <img src="./demo-nhtq/assets/images/video-box-2.webp"
+                         alt=""
+                         class="sec-video-box-2" />
+                    <img src="./demo-nhtq/assets/images/video-book-1.webp"
+                         alt=""
+                         class="sec-video-book-1"
+                         data-aos="zoom-in-up"
+                         data-aos-delay="100" />
+                    <img src="./demo-nhtq/assets/images/video-book-1.webp"
+                         alt=""
+                         class="sec-video-book-2"
+                         data-aos="zoom-in-up"
+                         data-aos-delay="300" />
+                </div>
+            </div>
+        </section>
+
+        <section class="sec sec-search">
+            <img src="./demo-nhtq/assets/images/search-cloud-1.webp"
+                 class="sec-search-image sec-search-cloud-1"
+                 alt="" />
+            <img src="./demo-nhtq/assets/images/search-cloud-2.webp"
+                 class="sec-search-image sec-search-cloud-2"
+                 alt="" />
+            <img src="./demo-nhtq/assets/images/search-cloud-3.webp"
+                 class="sec-search-image sec-search-cloud-3"
+                 alt="" />
+            <img src="./demo-nhtq/assets/images/search-left.webp"
+                 class="sec-search-image sec-search-left"
+                 alt=""
+                 data-aos="zoom-in-up" />
+            <img src="./demo-nhtq/assets/images/search-plane.webp"
+                 class="sec-search-image sec-search-plane"
+                 alt=""
+                 data-aos="zoom-in-left" />
+
+            <div class="container" style="position: relative">
+                <div class="sec-search-text">
+                    <h3 class="sub-title" data-aos="fade-up" data-aos-delay="100">
+                        NHANH CHÓNG & TIN CẬY
+                    </h3>
+                    <h1 class="main-title" data-aos="fade-up" data-aos-delay="200">
+                        Tra Cứu & Tìm Kiếm
+                    </h1>
+                    <!-- <p class="main-des">
+                      THEMONA là giải pháp nhập hàng tối ưu cho quý khách.
+                      Chúng tôi mang lại cho khách hàng nguồn hàng phong phú với mức giá
+                      cực rẻ.
+                    </p> -->
+                </div>
+
+                <div class="sec-search-wrapper">
+                    <div data-aos="zoom-in-left" data-aos-delay="200">
+                        <div class="sec-search-wrapper-label">Tra cứu mã vận đơn</div>
+                        <form action="" class="sec-search-wrapper-form">
+                            <div class="sec-search-wrapper-left">
+                                <input type="text"
+                                       name=""
+                                       id="transection-input"
+                                       placeholder="Tra cứu mã vận đơn"
+                                       class="sec-search-wrapper-input" />
+                            </div>
+                            <button class="btn sec-search-wrapper-button" id="transection-button">
+                                <img src="./demo-nhtq/assets/images/icon-search.webp" alt="" />
+                                <span>Tra cứu</span>
+                            </button>
+                        </form>
+                    </div>
+                    <div data-aos="zoom-in-left" data-aos-delay="300">
+                        <div class="sec-search-wrapper-label">Tìm kiếm sản phẩm</div>
+                        <form action="Home/SearchProduct" class="sec-search-wrapper-form" method="post">
+                            <div class="sec-search-wrapper-left">
+                                <div class="sec-search-wrapper-select">
+                                    <div class="sec-search-wrapper-select-show" >
+                                        <img src="./demo-nhtq/assets/images/1688.webp" id="imgSelectedSite"
+                                             alt=""
+                                             class="sec-search-wrapper-select-img" />
+                                        <img src="./demo-nhtq/assets/images/select-arrow.webp" alt="" />
+                                    </div>
+                                    <ul class="sec-search-wrapper-select-list">
+                                        <li class="sec-search-wrapper-select-item" onClick="SelectSite(3,'./demo-nhtq/assets/images/1688.webp')">
+                                            <img src="./demo-nhtq/assets/images/1688.webp"
+                                                 alt=""
+                                                 class="sec-search-wrapper-select-img" />
+                                        </li>
+                                        <li class="sec-search-wrapper-select-item" onClick="SelectSite(2, './demo-nhtq/assets/images/tmall.webp')">
+                                            <img src="./demo-nhtq/assets/images/tmall.webp"
+                                                 alt=""
+                                                 class="sec-search-wrapper-select-img" />
+                                        </li>
+                                        <li class="sec-search-wrapper-select-item" onClick="SelectSite(1, './demo-nhtq/assets/images/taobao.webp')">
+                                            <img src="./demo-nhtq/assets/images/taobao.webp"
+                                                 alt=""
+                                                 class="sec-search-wrapper-select-img" />
+                                        </li>
+                                    </ul>
+                                </div>
+                                <input type="hidden" name="site" id="hdfSite" value="3">
+                                <input type="text"
+                                       name="keyWord"
+                                       id="txtKeyWord"
+                                       placeholder="Tìm kiếm sản phẩm"
+                                       class="sec-search-wrapper-input" />
+                            </div>
+                            <button class="btn sec-search-wrapper-button" type="submit">
+                                <img src="./demo-nhtq/assets/images/icon-search.webp" alt="" />
+                                <span>Tìm kiếm</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    
+                </div>
+                <script>
+                    function SelectSite(site, img){
+                        var siteHidden =  document.getElementById('hdfSite');
+                        siteHidden.setAttribute('value', site);
+                        $('#imgSelectedSite').attr('src', img);
+                    }
+                </script>
+                <div class="sec-search-experience">
+                    <div class="sec-search-experience-cubi">
+                        <img src="./demo-nhtq/assets/images/search-step-outer.webp"
+                             alt=""
+                             class="sec-search-experience-cubi-outer" />
+                        <img src="./demo-nhtq/assets/images/search-step-line.webp"
+                             alt=""
+                             class="sec-search-experience-cubi-line" />
+                        <img src="./demo-nhtq/assets/images/search-step-place.webp"
+                             alt=""
+                             class="sec-search-experience-cubi-place" />
+                        <img src="./demo-nhtq/assets/images/search-step-inner.webp"
+                             alt=""
+                             class="sec-search-experience-cubi-inner" />
+                        <div class="sec-search-experience-cubi-main">
+                            <span class="sec-search-experience-cubi-count">8 +</span>
+                            <span class="sec-search-experience-cubi-text">Năm kinh nghiệm</span>
                         </div>
                     </div>
-                    <div class="order-app-col col col-5">
-                        <div class="order-app-content">
-                            <div class="order-app-tt add-active-js sec-tt">
-                                <h2>Công cụ đặt hàng</h2>
-                            </div>
-                            <div class="order-app-list" data-aos="fade-up">
-                                <div class="order-app-label">Đặt hàng trên trình duyệt</div>
-
-                                <div class="order-app-item d-flex f-ctn">
-                                    <div class="item col">
-                                        <a href="#" class="item-link d-flex">
-                                            <span class="icon">
-                                                <img src="./CSSLEPHUONGNEW/assets/images/icon-chrome.png" alt="">
-                                            </span>
-                                            <span class="name">Chrome</span>
-                                        </a>
-                                    </div>
-                                    <div class="item col">
-                                        <a href="#" class="item-link d-flex">
-                                            <span class="icon">
-                                                <img src="./CSSLEPHUONGNEW/assets/images/icon-cococ.png" alt="">
-                                            </span>
-                                            <span class="name">COCCOC</span>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="sec-search-experience-cubi">
+                        <img src="./demo-nhtq/assets/images/search-step-outer.webp"
+                             alt=""
+                             class="sec-search-experience-cubi-outer" />
+                        <img src="./demo-nhtq/assets/images/search-step-line.webp"
+                             alt=""
+                             class="sec-search-experience-cubi-line" />
+                        <img src="./demo-nhtq/assets/images/search-step-place.webp"
+                             alt=""
+                             class="sec-search-experience-cubi-place" />
+                        <img src="./demo-nhtq/assets/images/search-step-inner.webp"
+                             alt=""
+                             class="sec-search-experience-cubi-inner" />
+                        <div class="sec-search-experience-cubi-main">
+                            <span class="sec-search-experience-cubi-count">95% +</span>
+                            <span class="sec-search-experience-cubi-text">Thị phần Việt Nam</span>
+                        </div>
+                    </div>
+                    <div class="sec-search-experience-cubi">
+                        <img src="./demo-nhtq/assets/images/search-step-outer.webp"
+                             alt=""
+                             class="sec-search-experience-cubi-outer" />
+                        <img src="./demo-nhtq/assets/images/search-step-line.webp"
+                             alt=""
+                             class="sec-search-experience-cubi-line" />
+                        <img src="./demo-nhtq/assets/images/search-step-place.webp"
+                             alt=""
+                             class="sec-search-experience-cubi-place" />
+                        <img src="./demo-nhtq/assets/images/search-step-inner.webp"
+                             alt=""
+                             class="sec-search-experience-cubi-inner" />
+                        <div class="sec-search-experience-cubi-main">
+                            <span class="sec-search-experience-cubi-count">99% +</span>
+                            <span class="sec-search-experience-cubi-text">Nghiệp vụ ngành</span>
+                        </div>
+                    </div>
+                    <div class="sec-search-experience-cubi">
+                        <img src="./demo-nhtq/assets/images/search-step-outer.webp"
+                             alt=""
+                             class="sec-search-experience-cubi-outer" />
+                        <img src="./demo-nhtq/assets/images/search-step-line.webp"
+                             alt=""
+                             class="sec-search-experience-cubi-line" />
+                        <img src="./demo-nhtq/assets/images/search-step-place.webp"
+                             alt=""
+                             class="sec-search-experience-cubi-place" />
+                        <img src="./demo-nhtq/assets/images/search-step-inner.webp"
+                             alt=""
+                             class="sec-search-experience-cubi-inner" />
+                        <div class="sec-search-experience-cubi-main">
+                            <span class="sec-search-experience-cubi-count">536 +</span>
+                            <span class="sec-search-experience-cubi-text">Khách hàng</span>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <div class="section-group">
-            <section class="section we-activity">
-                <div class="container">
-                    <div class="we-activity-tt sec-tt sec-tt-ani add-active-js txt-center">
-                        <h2>
-                            Chúng tôi đã hoạt động
-                        </h2>
-
-                        <span class="title-ani title-ani-left">
-                            <div class="title-ani-wrap">
-                                <span class="title-ani-line"></span>
-                                <span class="title-ani-dot"></span>
-                            </div>
-                        </span>
-                        <span class="title-ani title-ani-right">
-                            <div class="title-ani-wrap">
-                                <span class="title-ani-line"></span>
-                                <span class="title-ani-dot"></span>
-                            </div>
-                        </span>
-                    </div>
-
-                    <div class="we-activity-img">
-                        <div class="img">
-                            <img src="./CSSLEPHUONGNEW/assets/images/Boxs.png" alt="">
-                        </div>
-
-                        <div class="we-activity-content">
-                            <div class="we-activity-list">
-                                <div class="we-activity-item">
-                                    <div class="num">
-                                        <div class="countNum">7353</div>
-                                        <div class="icon">+</div>
-                                    </div>
-                                    <div class="name">
-                                        Đơn thanh toán hộ
-                                    </div>
-                                </div>
-                                <div class="we-activity-item">
-                                    <div class="num">
-                                        <div class="countNum">2459</div>
-                                        <div class="icon">+</div>
-                                    </div>
-                                    <div class="name">
-                                        Đơn hàng mỗi ngày
-                                    </div>
-                                </div>
-                                <div class="we-activity-item">
-                                    <div class="num">
-                                        <div class="countNum">10,000</div>
-                                        <div class="icon">+</div>
-                                    </div>
-                                    <div class="name">
-                                        Dịch vụ đổi tệ
-                                    </div>
-                                </div>
-                                <div class="we-activity-item">
-                                    <div class="num">
-                                        <div class="countNum">5632</div>
-                                        <div class="icon">+</div>
-                                    </div>
-                                    <div class="name">
-                                        Đơn ký gửi
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section class="section lp-services section-bg">
-                <div class="container">
-                    <div class="lp-services-header txt-center">
-                        <div class="lp-services-tt sec-tt-ani add-active-js sec-tt">
-                            <h2>Dịch vụ</h2>
-
-                            <span class="title-ani title-ani-left">
-                                <div class="title-ani-wrap">
-                                    <span class="title-ani-line"></span>
-                                    <span class="title-ani-dot"></span>
-                                </div>
-                            </span>
-                            <span class="title-ani title-ani-right">
-                                <div class="title-ani-wrap">
-                                    <span class="title-ani-line"></span>
-                                    <span class="title-ani-dot"></span>
-                                </div>
-                            </span>
-                        </div>
-                        <div class="lp-services-desc sec-desc" data-aos="fade-up">
-                            <p>Lê Phương Logistics cung cấp đa dạng đường hàng với mục tiêu tối ưu hóa các phương án vận chuyển một cách hợp lý nhất có thể</p>
-                        </div>
-                    </div>
-
-                    <div class="lp-services-content swiper-general">
-                        <div class="swiper-container">
-                            <div class="lp-services-list swiper-wrapper d-flex f-ctn">
-                                <div class="lp-services-item swiper-slide col col-3">
-                                    <div class="lp-services-wrap">
-                                        <div class="num">
-                                            01
-                                        </div>
-                                        <div class="content">
-                                            <div class="name">
-                                                Dịch vụ đặt hàng
-                                            </div>
-                                            <div class="desc">
-                                                Lê Phương Logistics cung cấp dịch vụ đặt hàng trên tất cả các trang thương mại điện tử Trung Quốc như Taobao, 1688, Tmall,...
-                                            </div>
-                                        </div>
-                                        <div class="btnn">
-                                            <a href="#" class="btn">Xem chi tiết</a>
-                                        </div>
-
-                                    </div>
-                                    <div class="shape"></div>
-                                </div>
-                                <div class="lp-services-item swiper-slide col col-3">
-                                    <div class="lp-services-wrap">
-                                        <div class="num">
-                                            02
-                                        </div>
-                                        <div class="content">
-                                            <div class="name">
-                                                Dịch vụ ký gửi
-                                            </div>
-                                            <div class="desc">
-                                                Lê Phương Logistics cung cấp đa dạng đường hàng với mục tiêu tối ưu hóa các phương án vận chuyển một cách hợp lý nhất có thể. Hiện nay đường bộ là phương án công ty đang triển khai chính với các đường hàng chủ đạo như Thương Mại Điện Tử, Tiếu Ngạch và Chính Ngạch
-                                            </div>
-                                        </div>
-                                        <div class="btnn">
-                                            <a href="#" class="btn">Xem chi tiết</a>
-                                        </div>
-
-                                    </div>
-                                    <div class="shape"></div>
-                                </div>
-                                <div class="lp-services-item swiper-slide col col-3">
-                                    <div class="lp-services-wrap">
-                                        <div class="num">
-                                            03
-                                        </div>
-                                        <div class="content">
-                                            <div class="name">
-                                                Thanh toán hộ
-                                            </div>
-                                            <div class="desc">
-                                                Thanh toán hộ của Lê Phương Logistics sẽ giải quyết nỗi lo không thanh toán được đơn hàng, quá hạn mức thanh toán,... của bạn
-                                            </div>
-                                        </div>
-                                        <div class="btnn">
-                                            <a href="#" class="btn">Xem chi tiết</a>
-                                        </div>
-
-                                    </div>
-                                    <div class="shape"></div>
-                                </div>
-                                <div class="lp-services-item swiper-slide col col-3">
-                                    <div class="lp-services-wrap">
-                                        <div class="num">
-                                            04
-                                        </div>
-                                        <div class="content">
-                                            <div class="name">
-                                                Dịch vụ đổi tệ
-                                            </div>
-                                            <div class="desc">
-                                                Dịch vụ đổi tệ, chuyển tiền Việt Nam - Trung Quốc uy tín, an toàn và nhanh chóng
-                                            </div>
-                                        </div>
-                                        <div class="btnn">
-                                            <a href="#" class="btn">Xem chi tiết</a>
-                                        </div>
-
-                                    </div>
-                                    <div class="shape"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-earth">
-                    <img src="./CSSLEPHUONGNEW/assets/images/global-earth.png" alt="">
-                </div>
-            </section>
-        </div>
-
-        <section class="section price-list">
+        <section class="sec sec-service">
             <div class="container">
-                <div class="price-list-header">
-                    <div class="price-list-tt sec-tt" data-aos="fade-up">
-                        <h2>
-                            Bảng giá đặt hàng & vận chuyển quốc tế
-                        </h2>
-                    </div>
-                    <div class="price-list-desc sec-desc" data-aos="fade-up">
-                        <p>
-                            Lê Phương Logistics vận chuyển theo 3 line chính ngạch, thương mại điện tử và tiểu ngạch
-                        </p>
-                    </div>
-                </div>
-                <div class="price-list-slider">
-                    <div class="price-list-slider-box">
-                        <div class="swiper-container">
-                            <div class="swiper-wrapper price-list-slider-flex">
-                                <div class="swiper-slide price-list-slider-item" data-aos="fade-right" data-aos-delay="100">
-                                    <div class="price-list-slider-wrap">
-                                        <div class="num">
-                                            01
-                                        </div>
-                                        <div class="name">
-                                            Bảng giá đặt hàng Trung Quốc
-                                        </div>
-                                        <div class="price-btnn">
-                                            <a href="#" class="view-detail">
-                                                Xem chi tiết
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="swiper-slide price-list-slider-item" data-aos="fade-right" data-aos-delay="200">
-                                    <div class="price-list-slider-wrap">
-                                        <div class="num">
-                                            02
-                                        </div>
-                                        <div class="name">
-                                            Bản giá vận chuyển với khách order
-                                        </div>
-                                        <div class="price-btnn">
-                                            <a href="#" class="view-detail">
-                                                Xem chi tiết
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="swiper-slide price-list-slider-item" data-aos="fade-right" data-aos-delay="300">
-                                    <div class="price-list-slider-wrap">
-                                        <div class="num">
-                                            03
-                                        </div>
-                                        <div class="name">
-                                            Bản giá vận chuyển với khách ký gửi
-                                        </div>
-                                        <div class="price-btnn">
-                                            <a href="#" class="view-detail">
-                                                Xem chi tiết
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="swiper-slide price-list-slider-item" data-aos="fade-right" data-aos-delay="400">
-                                    <div class="price-list-slider-wrap">
-                                        <div class="num">
-                                            04
-                                        </div>
-                                        <div class="name">
-                                            Bản giá vận chuyển nội thành
-                                        </div>
-                                        <div class="price-btnn">
-                                            <a href="#" class="view-detail">
-                                                Xem chi tiết
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="sec-service-text">
+                    <h3 class="sub-title" data-aos="fade-up" data-aos-delay="100">
+                        giải pháp toàn cầu
+                    </h3>
+                    <h1 class="main-title" data-aos="fade-up" data-aos-delay="200">
+                        Bạn có nhu cầu
+                    </h1>
+                    <h2 class="sec-service-hightligh">Chúng tôi có Dịch Vụ</h2>
                 </div>
 
-                <div class="vehicle-ab air-plane">
-                    <img src="./CSSLEPHUONGNEW/assets/images/Air-Plane.png" alt="" data-aos="fade-left">
-                </div>
-                <div class="vehicle-ab truck">
-                    <img src="./CSSLEPHUONGNEW/assets/images/Truck.png" alt="" data-aos="fade-left">
+                <div class="sec-service-main">
+                    <div class="sec-service-left">
+                        <ul class="sec-service-list">
+                        @{int timeOut = 0;}
+                        @for(int i =0; i< 3;i++){
+                                timeOut += 100;
+                                <li class="sec-service-item"
+                                    data-aos="zoom-in-left"
+                                    data-aos-delay="@timeOut">
+                                    <img src="@Model.ServiceList[i].IMG" alt="" />
+                                    <div class="sec-service-main-text">
+                                        <h3>@Model.ServiceList[i].Name</h3>
+                                        <p>
+                                            @Model.ServiceList[i].Description
+                                        </p>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                    <img src="./demo-nhtq/assets/images/center-service.webp"
+                         alt=""
+                         class="sec-service-img"
+                         data-aos="zoom-in-up"
+                         data-aos-delay="100" />
+                    <div class="sec-service-right">
+                        <ul class="sec-service-list">
+                            @{
+                               timeOut = 200;
+                            }
+                            @for (int i = 3; i < 6; i++)
+                            {
+                                timeOut += 100;
+                                <li class="sec-service-item"
+                                    data-aos="zoom-in-right"
+                                    data-aos-delay="@timeOut">
+                                    <img src="@Model.ServiceList[i].IMG" alt="" />
+                                    <div class="sec-service-main-text">
+                                        <h3>@Model.ServiceList[i].Name</h3>
+                                        <p>
+                                            @Model.ServiceList[i].Description
+                                        </p>
+                                    </div>
+                                </li>
+                            }
+
+                        </ul>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <div class="section-group">
-            <section class="section service-commit">
-                <div class="container">
-                    <div class="service-commit-header txt-center">
-                        <div class="service-commit-tt sec-tt-ani add-active-js sec-tt">
-                            <h2>
-                                Cam kết dịch vụ đặt hàng
-                            </h2>
+        <section class="sec sec-benefits">
+            <div class="container">
+                <div class="sec-benefits-text">
+                    <h3 class="sub-title" data-aos="fade-up" data-aos-delay="100">
+                        BẠN SẼ CÓ TẤT CẢ
+                    </h3>
+                    <h1 class="main-title" data-aos="fade-up" data-aos-delay="200">
+                        Quyền lợi khách hàng
+                    </h1>
+                </div>
 
-                            <span class="title-ani title-ani-left">
-                                <div class="title-ani-wrap">
-                                    <span class="title-ani-line"></span>
-                                    <span class="title-ani-dot"></span>
-                                </div>
-                            </span>
-                            <span class="title-ani title-ani-right">
-                                <div class="title-ani-wrap">
-                                    <span class="title-ani-line"></span>
-                                    <span class="title-ani-dot"></span>
-                                </div>
-                            </span>
+                <div class="sec-benefits-wrapper">
+                    <div class="sec-benefits-midle">
+                        <div class="sec-benefits-midle-img">
+                            <img src="./demo-nhtq/assets/images/pnada-helicopter.webp" alt="" />
                         </div>
-                        <div class="service-commit-desc sec-desc" data-aos="fade-up">
-                            <p>
-                                Chúng tôi quan niệm rằng, chất lượng và dịch vụ là người bạn đồng hành của Lê Phương Logistics. Vì vậy, trong suốt hành trình 4 năm, chúng tôi luôn nỗ lực cải tiến chất lượng và dịch vụ đem đến sự hài lòng cho quý khách hàng.
+                        <div class="sec-benefits-midle-circle">
+                            <img src="./demo-nhtq/assets/images/benefits-cricle-behind.webp" alt="" />
+                        </div>
+                    </div>
+
+                    <div class="sec-benefits-list">
+                        <div class="sec-benefits-item" data-aos="zoom-in-left">
+                            <span class="sec-benefits-item-number">01</span>
+                            <span class="sec-benefits-item-title">
+                                <h3>@Model.CustomerBenefitsList[0].Name</h3>
+                                <span class="sec-benefits-item-title-dot"> </span>
+                            </span>
+                            <p class="sec-benefits-item-des">
+                                @Model.CustomerBenefitsList[0].Description
+                            </p>
+                        </div>
+                        <div class="sec-benefits-item" data-aos="zoom-in-right">
+                            <span class="sec-benefits-item-number">02</span>
+                            <span class="sec-benefits-item-title">
+                                <h3>@Model.CustomerBenefitsList[1].Name</h3>
+                                <span class="sec-benefits-item-title-dot"> </span>
+                            </span>
+                            <p class="sec-benefits-item-des">
+                                @Model.CustomerBenefitsList[1].Description
+                            </p>
+                        </div>
+                        <div class="sec-benefits-item" data-aos="zoom-in-left">
+                            <span class="sec-benefits-item-number">03</span>
+                            <span class="sec-benefits-item-title">
+                                <h3>@Model.CustomerBenefitsList[2].Name</h3>
+                                <span class="sec-benefits-item-title-dot"> </span>
+                            </span>
+                            <p class="sec-benefits-item-des">
+                                @Model.CustomerBenefitsList[2].Description
+                            </p>
+                        </div>
+                        <div class="sec-benefits-item" data-aos="zoom-in-right">
+                            <span class="sec-benefits-item-number">04</span>
+                            <span class="sec-benefits-item-title">
+                                <h3>@Model.CustomerBenefitsList[3].Name</h3>
+                                <span class="sec-benefits-item-title-dot"> </span>
+                            </span>
+                            <p class="sec-benefits-item-des">
+                                @Model.CustomerBenefitsList[3].Description
                             </p>
                         </div>
                     </div>
-
-                    <div class="service-commit-box" data-aos="fade-up">
-                        <div class="swiper-container">
-                            <div class="service-commit-list swiper-wrapper txt-center">
-                                <div class="service-commit-item swiper-slide">
-                                    <div class="service-commit-wrap">
-                                        <div class="icon">
-                                            <img src="./CSSLEPHUONGNEW/assets/images/service-commit-shield.png" alt="">
-                                        </div>
-                                        <div class="name" title="Cam kết bồi thường">
-                                            Cam kết bồi thường
-                                        </div>
-                                        <div class="desc">
-                                            Bồi thường 100% giá trị tiền hàng & phí mua hàng nếu Lê Phương Logistics đặt hàng sai hoặc đặt thiếu sản phẩm
-                                        </div>
-                                    </div>
-
-                                    <div class="service-commit-item-num">
-                                        <img src="./CSSLEPHUONGNEW/assets/images/service-commit-decor-1.svg" alt="">
-                                    </div>
-                                </div>
-                                <div class="service-commit-item swiper-slide">
-                                    <div class="service-commit-wrap">
-                                        <div class="icon">
-                                            <img src="./CSSLEPHUONGNEW/assets/images/service-commit-user.png" alt="">
-                                        </div>
-                                        <div class="name" title="Cam kết hỗ trợ">
-                                            Cam kết hỗ trợ
-                                        </div>
-                                        <div class="desc">
-                                            Đội ngũ nhân viên của chúng tôi sẽ hỗ trợ mọi vấn để của Quý khách 24/7
-                                        </div>
-                                    </div>
-
-                                    <div class="service-commit-item-num">
-                                        <img src="./CSSLEPHUONGNEW/assets/images/service-commit-decor-2.svg" alt="">
-                                    </div>
-                                </div>
-                                <div class="service-commit-item swiper-slide">
-                                    <div class="service-commit-wrap">
-                                        <div class="icon">
-                                            <img src="./CSSLEPHUONGNEW/assets/images/service-commit-box.png" alt="">
-                                        </div>
-                                        <div class="name" title="Thời gian vận chuyển">
-                                            Thời gian vận chuyển
-                                        </div>
-                                        <div class="desc">
-                                            Thời gian vận chuyển nhanh, ổn định từ 3 - 7 ngày
-                                        </div>
-                                    </div>
-
-                                    <div class="service-commit-item-num">
-                                        <img src="./CSSLEPHUONGNEW/assets/images/service-commit-decor-3.svg" alt="">
-                                    </div>
-                                </div>
-                                <div class="service-commit-item swiper-slide">
-                                    <div class="service-commit-wrap">
-                                        <div class="icon">
-                                            <img src="./CSSLEPHUONGNEW/assets/images/service-commit-shield.png" alt="">
-                                        </div>
-                                        <div class="name" title="Cam kết bồi thường">
-                                            Cam kết bồi thường
-                                        </div>
-                                        <div class="desc">
-                                            Bồi thường 100% giá trị tiền hàng & phí mua hàng nếu Lê Phương Logistics đặt hàng sai hoặc đặt thiếu sản phẩm
-                                        </div>
-                                    </div>
-
-                                    <div class="service-commit-item-num">
-                                        <img src="./CSSLEPHUONGNEW/assets/images/service-commit-decor-4.svg" alt="">
-                                    </div>
-                                </div>
-                                <div class="service-commit-item swiper-slide">
-                                    <div class="service-commit-wrap">
-                                        <div class="icon">
-                                            <img src="./CSSLEPHUONGNEW/assets/images/service-commit-user.png" alt="">
-                                        </div>
-                                        <div class="name" title="Cam kết hỗ trợ">
-                                            Cam kết hỗ trợ
-                                        </div>
-                                        <div class="desc">
-                                            Đội ngũ nhân viên của chúng tôi sẽ hỗ trợ mọi vấn để của Quý khách 24/7
-                                        </div>
-                                    </div>
-
-                                    <div class="service-commit-item-num">
-                                        <img src="./CSSLEPHUONGNEW/assets/images/service-commit-decor-5.svg" alt="">
-                                    </div>
-                                </div>
-                                <div class="service-commit-item swiper-slide">
-                                    <div class="service-commit-wrap">
-                                        <div class="icon">
-                                            <img src="./CSSLEPHUONGNEW/assets/images/service-commit-box.png" alt="">
-                                        </div>
-                                        <div class="name" title="Thời gian vận chuyển">
-                                            Thời gian vận chuyển
-                                        </div>
-                                        <div class="desc">
-                                            Thời gian vận chuyển nhanh, ổn định từ 3 - 7 ngày
-                                        </div>
-                                    </div>
-
-                                    <div class="service-commit-item-num">
-                                        <img src="./CSSLEPHUONGNEW/assets/images/service-commit-decor-6.svg" alt="">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <div class="register-form" data-aos="fade-up">
-                <div class="container">
-                    <div class="register-form-ctn">
-                        <div class="register-form-img">
-                            <div class="register-form-img-thumb">
-                                <img src="./CSSLEPHUONGNEW/assets/images/register-form-img.png" alt="">
-                            </div>
-
-                            <div class="decor-cir decor-cir-1 cir cir-2"></div>
-                            <div class="decor-cir decor-cir-2 cir cir-2"></div>
-                        </div>
-                        <div class="register-form-content">
-                            <div class="register-form-tt">
-                                Đăng ký nhận ngay mã giảm giá
-                            </div>
-
-                            <form action="#" class="form-cus">
-                                <div class="f-r d-flex f-ctn">
-                                    <div class="f-c col col-6">
-                                        <input type="text" placeholder="Họ và Tên" class="form-cus-ipt">
-                                    </div>
-                                    <div class="f-c col col-6">
-                                        <input type="text" placeholder="Số điện thoại" class="form-cus-ipt">
-                                    </div>
-                                </div>
-                                <div class="f-r d-flex f-ctn">
-                                    <div class="f-c col col-12">
-                                        <input type="email" placeholder="Email" class="form-cus-ipt">
-                                    </div>
-                                </div>
-                                <div class="f-r d-flex f-ctn">
-                                    <div class="f-c col col-12">
-                                        <textarea name="" id="" placeholder="Nội dung" class="form-cus-txtarea"></textarea>
-                                    </div>
-                                </div>
-                                <div class="f-r d-flex f-ctn">
-                                    <div class="f-c col col-12">
-                                        <input type="submit" value="Đăng ký ngay" class="btn">
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="register-form-line">
-                    <img src="./CSSLEPHUONGNEW/assets/images/form-line.png" alt="">
                 </div>
             </div>
 
-            <section class="section lp-news">
-                <div class="container">
-                    <div class="lp-news-header txt-center">
-                        <div class="lp-news-tt sec-tt-ani add-active-js sec-tt">
-                            <h2>Tin tức</h2>
+            <div class="sec-benefits-circle"></div>
+            <div class="sec-benefits-circle"></div>
+            <div class="sec-benefits-circle"></div>
+            <div class="sec-benefits-circle"></div>
+        </section>
 
-                            <span class="title-ani title-ani-left">
-                                <div class="title-ani-wrap">
-                                    <span class="title-ani-line"></span>
-                                    <span class="title-ani-dot"></span>
+        <section class="sec sec-register">
+            <div class="container">
+                <div class="sec-register-text">
+                    <h3 class="sub-title" data-aos="fade-up" data-aos-delay="100">
+                        hướng dẫn
+                    </h3>
+                    <h1 class="main-title" data-aos="fade-up" data-aos-delay="200">
+                        Đăng ký Sử Dụng
+                    </h1>
+                </div>
+
+                <div class="sec-register-wrapper">
+                    <div class="sec-register-step">
+                    @{timeOut = 0; int stepCount = 0;}
+                        @foreach (var item in Model.StepList){
+                            timeOut += 100;
+                            stepCount++;
+                            <div class="sec-register-step-item">
+                                <div class="sec-register-step-item-number"
+                                     data-aos="fade-down"
+                                     data-aos-delay="@timeOut">
+                                    <span>@stepCount</span>
                                 </div>
-                            </span>
-                            <span class="title-ani title-ani-right">
-                                <div class="title-ani-wrap">
-                                    <span class="title-ani-line"></span>
-                                    <span class="title-ani-dot"></span>
+                                <div class="sec-register-step-item-info"
+                                     data-aos="fade-up"
+                                     data-aos-delay="@timeOut">
+                                    <div class="sec-register-step-item-title">
+                                        @item.Name
+                                    </div>
+                                    <div class="sec-register-step-item-dot active"></div>
                                 </div>
-                            </span>
-                        </div>
+                            </div>
+                        }
+                        
+                        <div class="sec-register-step-line"></div>
+                        <div class="sec-register-step-lineactive"></div>
                     </div>
 
-                    <div class="lp-news-box swiper-general">
-                        <div class="swiper-container">
-                            <div class="lp-news-list swiper-wrapper">
-                                <div class="lp-news-item col col-4 swiper-slide" data-aos="fade-up" data-aos-delay="100">
-                                    <a href="#" class="lp-news-wrap">
-                                        <div class="lp-news-img">
-                                            <img src="./CSSLEPHUONGNEW/assets/images/lp-news-1.jpg" alt="">
-                                        </div>
-                                        <div class="lp-news-content">
-                                            <div class="lp-news-time">
-                                                20 Tháng 6, 2023
-                                            </div>
-                                            <div class="lp-news-name">
-                                                Có nên mua đế tản nhiệt laptop? Order đế tản nhiệt laptop Trung Quốc trên TMĐT
-                                            </div>
-                                        </div>
-                                    </a>
+                    <div class="sec-register-slide">
+                        <div class="sec-register-slide-count">Bước: <span>1</span></div>
+                        <div class="sec-register-slide-textWrapper swiper swiper-textWrapper"
+                             data-aos="zoom-in-right">
+                            <div class="swiper-wrapper">
+                                <!-- Slides -->
+                                @foreach(var item in Model.StepList){
+                                <div class="swiper-slide">
+                                    <div class="sec-register-slide-textWrapper-item">
+                                        <h2>@item.Name</h2>
+                                        <p>
+                                            @item.Description
+                                        </p>
+                                    </div>
                                 </div>
-                                <div class="lp-news-item col col-4 swiper-slide" data-aos="fade-up" data-aos-delay="200">
-                                    <a href="#" class="lp-news-wrap">
-                                        <div class="lp-news-img">
-                                            <img src="./CSSLEPHUONGNEW/assets/images/lp-news-2.jpg" alt="">
-                                        </div>
-                                        <div class="lp-news-content">
-                                            <div class="lp-news-time">
-                                                20 Tháng 6, 2023
-                                            </div>
-                                            <div class="lp-news-name">
-                                                Có nên mua đế tản nhiệt laptop? Order đế tản nhiệt laptop Trung Quốc trên TMĐT
-                                            </div>
-                                        </div>
-                                    </a>
+                                }
+                                
+                            </div>
+                            <div class="sec-register-slide-textWrapper-navigation">
+                                <div class="sec-register-slide-textWrapper-prev"
+                                     data-aos="fade-up"
+                                     data-aos-delay="200">
+                                    <img src="./demo-nhtq/assets/images/register-prev-icon.webp" alt="" />
                                 </div>
-                                <div class="lp-news-item col col-4 swiper-slide" data-aos="fade-up" data-aos-delay="300">
-                                    <a href="#" class="lp-news-wrap">
-                                        <div class="lp-news-img">
-                                            <img src="./CSSLEPHUONGNEW/assets/images/lp-news-3.jpg" alt="">
-                                        </div>
-                                        <div class="lp-news-content">
-                                            <div class="lp-news-time">
-                                                20 Tháng 6, 2023
-                                            </div>
-                                            <div class="lp-news-name">
-                                                Có nên mua đế tản nhiệt laptop? Order đế tản nhiệt laptop Trung Quốc trên TMĐT
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="lp-news-item col col-4 swiper-slide" data-aos="fade-up" data-aos-delay="400">
-                                    <a href="#" class="lp-news-wrap">
-                                        <div class="lp-news-img">
-                                            <img src="./CSSLEPHUONGNEW/assets/images/lp-news-1.jpg" alt="">
-                                        </div>
-                                        <div class="lp-news-content">
-                                            <div class="lp-news-time">
-                                                20 Tháng 6, 2023
-                                            </div>
-                                            <div class="lp-news-name">
-                                                Có nên mua đế tản nhiệt laptop? Order đế tản nhiệt laptop Trung Quốc trên TMĐT
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="lp-news-item col col-4 swiper-slide" data-aos="fade-up" data-aos-delay="500">
-                                    <a href="#" class="lp-news-wrap">
-                                        <div class="lp-news-img">
-                                            <img src="./CSSLEPHUONGNEW/assets/images/lp-news-2.jpg" alt="">
-                                        </div>
-                                        <div class="lp-news-content">
-                                            <div class="lp-news-time">
-                                                20 Tháng 6, 2023
-                                            </div>
-                                            <div class="lp-news-name">
-                                                Có nên mua đế tản nhiệt laptop? Order đế tản nhiệt laptop Trung Quốc trên TMĐT
-                                            </div>
-                                        </div>
-                                    </a>
+                                <div class="sec-register-slide-textWrapper-next"
+                                     data-aos="fade-up"
+                                     data-aos-delay="400">
+                                    <img src="./demo-nhtq/assets/images/register-next-icon.webp" alt="" />
                                 </div>
                             </div>
                         </div>
 
-                        <div class="swiper-pagination swiper-pagin d-flex f-center"></div>
+                        <div class="sec-register-slide-imageWrapper"
+                             data-aos="zoom-in-left">
+                            <img src="./demo-nhtq/assets/images/register-image-1.webp" alt="" />
+                        </div>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <div class="bg-earth">
-                <img src="./CSSLEPHUONGNEW/assets/images/global-earth.png" alt="">
+        <section class="sec sec-evalute">
+            <img src="./demo-nhtq/assets/images/cutomer-bg.webp"
+                 alt=""
+                 class="sec-evalute-bg" />
+            <img src="./demo-nhtq/assets/images/customer-box-top.webp"
+                 alt=""
+                 class="sec-evalute-box" />
+            <div class="sec-evalute-inner">
+                <div class="container">
+                    <div class="sec-evalute-text">
+                        <h3 class="sub-title" data-aos="fade-up" data-aos-delay="100">
+                            đánh giá
+                        </h3>
+                        <h1 class="main-title" data-aos="fade-up" data-aos-delay="200">
+                            khách hàng nói gì
+                        </h1>
+                    </div>
+
+                    <div class="sec-evalute-main">
+                        <div class="sec-evalute-main-left">
+                            <img src="./demo-nhtq/assets/images/customer-quote.webp"
+                                 alt=""
+                                 class="sec-evalute-main-left-quote" />
+                            <div class="swiper evalute-swiper" data-aos="fade-right">
+                                <div class="swiper-wrapper">
+                                    @foreach (var item in Model.CustomerTalkList){
+                                        <div class="swiper-slide">
+                                            <div class="evalute-swiper-slide">
+                                                <h3 class="evalute-swiper-username">@item.Name</h3>
+                                                <p class="evalute-swiper-des">
+                                                    @item.Description
+                                                </p>
+                                                <div class="evalute-swiper-info">
+                                                    <div class="evalute-swiper-info-user">
+                                                        <img src="@item.IMG"
+                                                             alt=""
+                                                             class="evalute-swiper-info-avatar" />
+                                                        <div class="evalute-swiper-info-name">
+                                                            <h4>@item.Name</h4>
+                                                            <h6>Khách hàng</h6>
+                                                        </div>
+                                                    </div>
+                                                    <div class="evalute-swiper-info-range">
+                                                        <img src="./demo-nhtq/assets/images/cutomer-star.webp"
+                                                             alt="" />
+                                                        <img src="./demo-nhtq/assets/images/cutomer-star.webp"
+                                                             alt="" />
+                                                        <img src="./demo-nhtq/assets/images/cutomer-star.webp"
+                                                             alt="" />
+                                                        <img src="./demo-nhtq/assets/images/cutomer-star.webp"
+                                                             alt="" />
+                                                        <img src="./demo-nhtq/assets/images/cutomer-star.webp"
+                                                             alt="" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    
+                                </div>
+                                <div class="swiper-pagination evalute-swiper-pagination"></div>
+                            </div>
+                        </div>
+                        <div class="sec-evalute-main-right">
+                            <div class="sec-evalute-main-right-grid"
+                                 data-aos="zoom-in-left">
+                                <div class="sec-evalute-main-right-img active">
+                                    <div style="
+                                background-image: url(@Model.CustomerTalkList[0].IMG);
+                          "></div>
+                                </div>
+                            </div>
+                            <div class="sec-evalute-main-right-grid"
+                                 data-aos="zoom-in-right">
+                                <div class="sec-evalute-main-right-img">
+                                    <div style="
+                                background-image: url(@Model.CustomerTalkList[1].IMG);
+                          "></div>
+                                </div>
+                            </div>
+                            <div class="sec-evalute-main-right-grid"
+                                 data-aos="zoom-in-left">
+                                <div class="sec-evalute-main-right-img">
+                                    <div style="
+                                background-image: url(@Model.CustomerTalkList[2].IMG);
+                          "></div>
+                                </div>
+                            </div>
+                            <div class="sec-evalute-main-right-grid"
+                                 data-aos="zoom-in-right">
+                                <div class="sec-evalute-main-right-img">
+                                    <div style="
+                                background-image: url(@Model.CustomerTalkList[3].IMG);
+                          "></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="sec sec-partner">
+            <div class="container">
+                <div class="sec-partner-text">
+                    <h3 class="sub-title" data-aos="fade-up" data-aos-delay="100">
+                        Đối tác & khách hàng
+                    </h3>
+                    <h1 class="main-title" data-aos="fade-up" data-aos-delay="200">
+                        đồng hành cùng phát triền
+                    </h1>
+                </div>
+                <div class="sec-partner-inner">
+                    <img src="./demo-nhtq/assets/images/partner-1.webp"
+                    alt=""
+                    data-aos="zoom-out"
+                    data-aos-delay="200" />
+                    <img src="./demo-nhtq/assets/images/partner-2.webp"
+                    alt=""
+                    data-aos="zoom-out"
+                    data-aos-delay="300" />
+                    <img src="./demo-nhtq/assets/images/partner-3.webp"
+                    alt=""
+                    data-aos="zoom-out"
+                    data-aos-delay="400" />
+                    <img src="./demo-nhtq/assets/images/partner-4.webp"
+                    alt=""
+                    data-aos="zoom-out"
+                    data-aos-delay="500" />
+                    <img src="./demo-nhtq/assets/images/partner-5.webp"
+                    alt=""
+                    data-aos="zoom-out"
+                    data-aos-delay="600" />
+                    <img src="./demo-nhtq/assets/images/partner-6.webp"
+                    alt=""
+                    data-aos="zoom-out"
+                    data-aos-delay="700" />
+                    <img src="./demo-nhtq/assets/images/partner-7.webp"
+                    alt=""
+                    data-aos="zoom-out"
+                    data-aos-delay="800" />
+                </div>
+            </div>
+        </section>
+
+        <section class="sec sec-news">
+            <div class="container">
+                <div class="sec-news-text">
+                    <h3 class="sub-title" data-aos="fade-up" data-aos-delay="100">
+                        kiến thức
+                    </h3>
+                    <h1 class="main-title" data-aos="fade-up" data-aos-delay="200">
+                        tin tức nổi bật
+                    </h1>
+                </div>
+                <div class="sec-news-inner">
+                    <div class="sec-news-inner-list swiper">
+                        <div class="swiper-wrapper">
+                        @{timeOut = 0;}
+                            @foreach (var item in Model.TopNewsPage.Pages){
+                                timeOut += 200;
+                                <div class="swiper-slide">
+                                    <a href="/@item.Code">
+                                        <div class="sec-news-inner-item"
+                                             data-aos="fade-up"
+                                             data-aos-delay="@timeOut">
+                                            <div class="sec-news-inner-item-img"
+                                                 style="background-image: url(@item.IMG)"></div>
+                                            <h4>Tin tức</h4>
+                                            <h2>
+                                                @item.Title
+                                            </h2>
+                                            <div class="sec-news-inner-item-time">
+                                                <img src="./demo-nhtq/assets/images/news-clock.webp"
+                                                     alt=""
+                                                     class="sec-news-inner-item-time-clock" />
+                                                <span class="sec-news-inner-item-time-date">@item.Created.ToString("dd/MM/yyyy")</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                                @if(timeOut >= 1000)
+                                {
+                                    break;
+                                }
+                            }
+                            
+                        </div>
+
+                        <div class="swiper-pagination sec-news-pagination"
+                             data-aos="zoom-out"></div>
+                    </div>
+
+                    <div class="sec-news-inner-button" data-aos="zoom-out">
+                        <a href="/tin-tuc"><button class="btn" type="button">Xem thêm</button></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        @if (!string.IsNullOrEmpty(config.NotiPopupTitle) && Model.IsRenderPopup)
+        {
+            <div class="popup open">
+                <div class="popup-overlay" style="background-size: cover;background-image: url(./demo-nhtq/assets/images/mona-security-footer-bg-2.webp);background-repeat: no-repeat;background-position-x: center;background-position-y: inherit;"></div>
+                <div class="popup-main" data-aos="fade-up" data-aos-delay="1000" style="display:flex; width:120rem !important;padding:15rem 0 10rem 0;transform: translate(-50%, -20%) !important;">
+                    <img src="./demo-nhtq/assets/images/panda-co.webp" style="position:absolute;width:20%;height:fit-content;z-index: 3;left: 49%;top: -5%;filter: drop-shadow(-4px 9px 10px rgba(0, 0, 0, 0.4901960784));" />
+                    <img src="./demo-nhtq/assets/images/video-box-2.webp"
+                        alt=""
+                        class="sec-video-box-2" style="height:fit-content;position:absolute;left:2% !important;bottom: 0 !important;" />
+                    <div class="popup-title" style="z-index:3;filter: drop-shadow(-4px 4px 4px rgba(0, 0, 0, 0.4901960784)); border-radius:8px;min-width:35%; font-size: 24px;top:20% !important;">
+                        @config.NotiPopupTitle
+                    </div>
+                    <div class="popup-email" style="z-index:3;right:10%;left:unset;border-radius:8px;bottom:12% !important;font-size: 18px;">
+                        @config.NotiPopupEmail
+                    </div>
+                    <div class="popup-wrapper" style="margin:auto; width:70% !important;padding: 4rem 4rem 4rem 4rem !important;min-height: 33vh;">
+                        <div class="popup-content">
+                            @Html.Raw(config.NotiPopup)
+                        </div>
+                        <!--<div class="popup-close">
+                            <button class="btn popup-button-exit" target-close="never">Đóng & không hiện lại</button>
+                            <button class="btn popup-button-close" target-close="once">Đóng</button>
+                        </div>-->
+                    </div>
+                    <button style="position:absolute;right: -81%;top: 24%;z-index: 6;width: 100%;bottom:unset;" target-close="once" class="popup-close">
+                        <div class="sec-search-experience-cubi" style="width: 10% !important;">
+                            <img src="./demo-nhtq/assets/images/search-step-outer.webp"
+                                 alt=""
+                                 class="sec-search-experience-cubi-outer" />
+                            <img src="./demo-nhtq/assets/images/search-step-inner.webp"
+                                 alt=""
+                                 class="sec-search-experience-cubi-inner" />
+                            <div class="sec-search-experience-cubi-main">
+                                <span class="sec-search-experience-cubi-text" style="font-family: 'Roboto';">ĐÓNG</span>
+                            </div>
+                        </div>
+                    </button>
+                    <style>
+                        .popup-close:hover {
+                            z-index: 7 !important
+                        }
+                    </style>
+                    <button style="position:absolute;right: -85%;top: 35%;z-index: 5;width: 100%;bottom:unset;" target-close="never" class="popup-close">
+                        <div class="sec-search-experience-cubi" style="width: 15% !important;">
+                            <img src="./demo-nhtq/assets/images/search-step-outer.webp"
+                                    alt=""
+                                    class="sec-search-experience-cubi-outer" />
+                            <img src="./demo-nhtq/assets/images/search-step-inner.webp"
+                                    alt=""
+                                 class="sec-search-experience-cubi-inner" style="filter: brightness(0) saturate(100%) invert(50%) sepia(94%) saturate(693%) hue-rotate(349deg) brightness(101%) contrast(92%);" />
+                            <div class="sec-search-experience-cubi-main">
+                                <span class="sec-search-experience-cubi-text" style="font-family: 'Roboto';">ĐÓNG KHÔNG HIỆN LẠI</span>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        }
+
+        <div class="popup iframe">
+            <div class="popup-overlay"></div>
+            <div class="popup-main">
+                <div class="popup-wrapper">
+                    <div class="popup-title">
+                        Tracking mvđ: <span>mvđ</span>
+                    </div>
+                    <div class="popup-content">
+                        <iframe src="" frameborder="0" width="100%"></iframe>
+                    </div>
+                    <div class="popup-email">
+                        @config.EmailContact
+                    </div>
+                    <div class="popup-close">
+                        <button class="btn popup-button-close" target-close="once">Đóng</button>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <section class="section lp-feedback">
-            <div class="container">
-                <div class="lp-feedback-header txt-center">
-                    <div class="lp-feedback-tt sec-tt-ani add-active-js sec-tt">
-                        <h2>Cảm nhận khách hàng</h2>
 
-                        <span class="title-ani title-ani-left">
-                            <div class="title-ani-wrap">
-                                <span class="title-ani-line"></span>
-                                <span class="title-ani-dot"></span>
-                            </div>
-                        </span>
-                        <span class="title-ani title-ani-right">
-                            <div class="title-ani-wrap">
-                                <span class="title-ani-line"></span>
-                                <span class="title-ani-dot"></span>
-                            </div>
-                        </span>
-                    </div>
-                </div>
+        <script>
+            const transectionInputElm = document.querySelector("#transection-input");
+            const transectionButtonElm = document.querySelector("#transection-button");
+            const closeBtnElm = document.querySelector(".popup.iframe .btn.popup-button-close");
+            const popupIframeElm = document.querySelector(".popup.iframe");
+            const titleElm = document.querySelector(".popup.iframe .popup-title span");
 
-                <div class="lp-feedback-slider">
-                    <div class="lp-feedback-box swiper-general">
-                        <div class="swiper-container">
-                            <div class="lp-feedback-list swiper-wrapper">
-                                <div class="lp-feedback-item col col-3 swiper-slide" data-aos="fade-up" data-aos-delay="100">
-                                    <div class="lp-feedback-wrap">
-                                        <img src="./CSSLEPHUONGNEW/assets/images/lp-feedback-1.jpg" alt="">
-                                    </div>
-                                </div>
-                                <div class="lp-feedback-item col col-3 swiper-slide" data-aos="fade-up" data-aos-delay="200">
-                                    <div class="lp-feedback-wrap">
-                                        <img src="./CSSLEPHUONGNEW/assets/images/lp-feedback-2.jpg" alt="">
-                                    </div>
-                                </div>
-                                <div class="lp-feedback-item col col-3 swiper-slide" data-aos="fade-up" data-aos-delay="300">
-                                    <div class="lp-feedback-wrap">
-                                        <img src="./CSSLEPHUONGNEW/assets/images/lp-feedback-3.jpg" alt="">
-                                    </div>
-                                </div>
-                                <div class="lp-feedback-item col col-3 swiper-slide" data-aos="fade-up" data-aos-delay="400">
-                                    <div class="lp-feedback-wrap">
-                                        <img src="./CSSLEPHUONGNEW/assets/images/lp-feedback-4.jpg" alt="">
-                                    </div>
-                                </div>
-                                <div class="lp-feedback-item col col-3 swiper-slide" data-aos="fade-up" data-aos-delay="500">
-                                    <div class="lp-feedback-wrap">
-                                        <img src="./CSSLEPHUONGNEW/assets/images/lp-feedback-1.jpg" alt="">
-                                    </div>
-                                </div>
-                                <div class="lp-feedback-item col col-3 swiper-slide" data-aos="fade-up" data-aos-delay="600">
-                                    <div class="lp-feedback-wrap">
-                                        <img src="./CSSLEPHUONGNEW/assets/images/lp-feedback-2.jpg" alt="">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            if (transectionButtonElm && transectionInputElm) {
+                transectionButtonElm.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    titleElm.innerHTML = transectionInputElm.value;
+                    const newHerf = `/tracking/code/?TransactionCode=${transectionInputElm.value}`
 
-                        <div class="swiper-pagination swiper-pagin d-flex f-center"></div>
-                    </div>
-                </div>
-            </div>
-        </section>
+                    if (popupIframeElm) {
+                        document.querySelector('body').classList.add('no-scroll')
+                        popupIframeElm.querySelector(".popup-content iframe").setAttribute('src', newHerf)
+                        popupIframeElm.classList.add('open');
+                    }
+                })
+            }
 
-        <section class="section say-us">
-            <div class="container">
-                <div class="say-us-header txt-center">
-                    <div class="say-us-tt sec-tt-ani add-active-js sec-tt">
-                        <h2>
-                            Báo chí nói gì về chúng tôi
-                        </h2>
+            if (closeBtnElm) {
+                closeBtnElm.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    popupIframeElm.classList.remove('open');
+                    document.querySelector('body').classList.remove('no-scroll')
 
-                        <span class="title-ani title-ani-left">
-                            <div class="title-ani-wrap">
-                                <span class="title-ani-line"></span>
-                                <span class="title-ani-dot"></span>
-                            </div>
-                        </span>
-                        <span class="title-ani title-ani-right">
-                            <div class="title-ani-wrap">
-                                <span class="title-ani-line"></span>
-                                <span class="title-ani-dot"></span>
-                            </div>
-                        </span>
-                    </div>
-                </div>
+                })
+            }
+        </script>
 
-                <div class="say-us-box swiper-general" data-aos="fade-up">
-                    <div class="swiper-container">
-                        <div class="say-us-list swiper-wrapper">
-                            <div class="say-us-item swiper-slide col col-6">
-                                <div class="say-us-item-row">
-                                    <a href="#" class="say-us-wrap" target="_blank">
-                                        <div class="say-us-img">
-                                            <img src="./CSSLEPHUONGNEW/assets/images/say-us-1.jpg" alt="">
-                                        </div>
-                                        <div class="say-us-txt">
-                                            <div class="say-us-logo">
-                                                <img src="./CSSLEPHUONGNEW/assets/images/say-us-logo-1.png" alt="">
-                                            </div>
-                                            <div class="say-us-name">
-                                                Đặt hàng từ Trung Quốc cùng Lê Phương Logistic
-                                            </div>
-                                            <div class="say-us-desc">
-                                                Lorem ipsum dolor sit amet consectetur. Adipiscing aenean phasellus blandit neque amet...
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="say-us-item-row">
-                                    <a href="#" class="say-us-wrap" target="_blank">
-                                        <div class="say-us-img">
-                                            <img src="./CSSLEPHUONGNEW/assets/images/say-us-3.jpg" alt="">
-                                        </div>
-                                        <div class="say-us-txt">
-                                            <div class="say-us-logo">
-                                                <img src="./CSSLEPHUONGNEW/assets/images/say-us-logo-3.png" alt="">
-                                            </div>
-                                            <div class="say-us-name">
-                                                Đặt hàng từ Trung Quốc cùng Lê Phương Logistic
-                                            </div>
-                                            <div class="say-us-desc">
-                                                Lorem ipsum dolor sit amet consectetur. Adipiscing aenean phasellus blandit neque amet...
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="say-us-item swiper-slide col col-6">
-                                <div class="say-us-item-row">
-                                    <a href="#" class="say-us-wrap" target="_blank">
-                                        <div class="say-us-img">
-                                            <img src="./CSSLEPHUONGNEW/assets/images/say-us-2.jpg" alt="">
-                                        </div>
-                                        <div class="say-us-txt">
-                                            <div class="say-us-logo">
-                                                <img src="./CSSLEPHUONGNEW/assets/images/say-us-logo-2.png" alt="">
-                                            </div>
-                                            <div class="say-us-name">
-                                                Đặt hàng từ Trung Quốc cùng Lê Phương Logistic
-                                            </div>
-                                            <div class="say-us-desc">
-                                                Lorem ipsum dolor sit amet consectetur. Adipiscing aenean phasellus blandit neque amet...
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="say-us-item-row">
-                                    <a href="#" class="say-us-wrap" target="_blank">
-                                        <div class="say-us-img">
-                                            <img src="./CSSLEPHUONGNEW/assets/images/say-us-4.jpg" alt="">
-                                        </div>
-                                        <div class="say-us-txt">
-                                            <div class="say-us-logo">
-                                                <img src="./CSSLEPHUONGNEW/assets/images/say-us-logo-4.png" alt="">
-                                            </div>
-                                            <div class="say-us-name">
-                                                Đặt hàng từ Trung Quốc cùng Lê Phương Logistic
-                                            </div>
-                                            <div class="say-us-desc">
-                                                Lorem ipsum dolor sit amet consectetur. Adipiscing aenean phasellus blandit neque amet...
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="say-us-item swiper-slide col col-6">
-                                <div class="say-us-item-row">
-                                    <a href="#" class="say-us-wrap" target="_blank">
-                                        <div class="say-us-img">
-                                            <img src="./CSSLEPHUONGNEW/assets/images/say-us-1.jpg" alt="">
-                                        </div>
-                                        <div class="say-us-txt">
-                                            <div class="say-us-logo">
-                                                <img src="./CSSLEPHUONGNEW/assets/images/say-us-logo-1.png" alt="">
-                                            </div>
-                                            <div class="say-us-name">
-                                                Đặt hàng từ Trung Quốc cùng Lê Phương Logistic
-                                            </div>
-                                            <div class="say-us-desc">
-                                                Lorem ipsum dolor sit amet consectetur. Adipiscing aenean phasellus blandit neque amet...
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="say-us-item-row">
-                                    <a href="#" class="say-us-wrap" target="_blank">
-                                        <div class="say-us-img">
-                                            <img src="./CSSLEPHUONGNEW/assets/images/say-us-3.jpg" alt="">
-                                        </div>
-                                        <div class="say-us-txt">
-                                            <div class="say-us-logo">
-                                                <img src="./CSSLEPHUONGNEW/assets/images/say-us-logo-3.png" alt="">
-                                            </div>
-                                            <div class="say-us-name">
-                                                Đặt hàng từ Trung Quốc cùng Lê Phương Logistic
-                                            </div>
-                                            <div class="say-us-desc">
-                                                Lorem ipsum dolor sit amet consectetur. Adipiscing aenean phasellus blandit neque amet...
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="say-us-item swiper-slide col col-6">
-                                <div class="say-us-item-row">
-                                    <a href="#" class="say-us-wrap" target="_blank">
-                                        <div class="say-us-img">
-                                            <img src="./CSSLEPHUONGNEW/assets/images/say-us-2.jpg" alt="">
-                                        </div>
-                                        <div class="say-us-txt">
-                                            <div class="say-us-logo">
-                                                <img src="./CSSLEPHUONGNEW/assets/images/say-us-logo-2.png" alt="">
-                                            </div>
-                                            <div class="say-us-name">
-                                                Đặt hàng từ Trung Quốc cùng Lê Phương Logistic
-                                            </div>
-                                            <div class="say-us-desc">
-                                                Lorem ipsum dolor sit amet consectetur. Adipiscing aenean phasellus blandit neque amet...
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="say-us-item-row">
-                                    <a href="#" class="say-us-wrap" target="_blank">
-                                        <div class="say-us-img">
-                                            <img src="./CSSLEPHUONGNEW/assets/images/say-us-4.jpg" alt="">
-                                        </div>
-                                        <div class="say-us-txt">
-                                            <div class="say-us-logo">
-                                                <img src="./CSSLEPHUONGNEW/assets/images/say-us-logo-4.png" alt="">
-                                            </div>
-                                            <div class="say-us-name">
-                                                Đặt hàng từ Trung Quốc cùng Lê Phương Logistic
-                                            </div>
-                                            <div class="say-us-desc">
-                                                Lorem ipsum dolor sit amet consectetur. Adipiscing aenean phasellus blandit neque amet...
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="swiper-pagination swiper-pagin d-flex f-center"></div>
-                </div>
-            </div>
-
-            <div class="map-bg">
-                <img src="./CSSLEPHUONGNEW/assets/images/map-bg.png" alt="">
-            </div>
-        </section>
-
-        <section class="section lp-partner">
-            <div class="container">
-                <div class="lp-partner-header txt-center">
-                    <div class="lp-partner-tt sec-tt-ani add-active-js sec-tt">
-                        <h2>Đối tác</h2>
-
-                        <span class="title-ani title-ani-left">
-                            <div class="title-ani-wrap">
-                                <span class="title-ani-line"></span>
-                                <span class="title-ani-dot"></span>
-                            </div>
-                        </span>
-                        <span class="title-ani title-ani-right">
-                            <div class="title-ani-wrap">
-                                <span class="title-ani-line"></span>
-                                <span class="title-ani-dot"></span>
-                            </div>
-                        </span>
-                    </div>
-                </div>
-
-                <div class="lp-partner-list" data-aos="fade-up">
-                    <div class="lp-partner-item">
-                        <div class="lp-partner-wrap">
-                            <img src="./CSSLEPHUONGNEW/assets/images/lp-partner-1.png" alt="">
-                        </div>
-                    </div>
-                    <div class="lp-partner-item">
-                        <div class="lp-partner-wrap">
-                            <img src="./CSSLEPHUONGNEW/assets/images/lp-partner-2.png" alt="">
-                        </div>
-                    </div>
-                    <div class="lp-partner-item">
-                        <div class="lp-partner-wrap">
-                            <img src="./CSSLEPHUONGNEW/assets/images/lp-partner-3.png" alt="">
-                        </div>
-                    </div>
-                    <div class="lp-partner-item">
-                        <div class="lp-partner-wrap">
-                            <img src="./CSSLEPHUONGNEW/assets/images/lp-partner-4.png" alt="">
-                        </div>
-                    </div>
-                    <div class="lp-partner-item">
-                        <div class="lp-partner-wrap">
-                            <img src="./CSSLEPHUONGNEW/assets/images/lp-partner-5.png" alt="">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
     }
     else if(Model.Type == 2)
     {
         var pageTypeConent = Model.PageTypeContent;
-        <div>
-            @Html.Raw(pageTypeConent.Description);
-        </div>
+
+        <section class="detail">
+            <div class="container">
+                <div class="breadcumb">
+                    <ul class="breadcumb-list">
+                        <li class="breadcumb-item">
+                            <a href="/">Trang chủ</a>
+                        </li>
+                        <li class="breadcumb-item">
+                            &nbsp;/&nbsp;
+                            <a class="active" href="/@pageTypeConent.Code">@pageTypeConent.Name</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="detail-inner">
+                    <div class="detail-content">
+                        @if (!string.IsNullOrEmpty(pageTypeConent.Description))
+                        {
+                            <div class="detail-content-main">
+                                @Html.Raw(pageTypeConent.Description)
+                            </div>
+                        }
+                        @if (pageTypeConent.Pages.Count > 0)
+                        {
+                        <div class="detail-content-news">
+                            <div class="swiper detail-content-news-swiper">
+                                <div class="swiper-wrapper">
+                                    @foreach (var item in pageTypeConent.Pages)
+                                    {
+                                    <div class="swiper-slide">
+                                        <div class="detail-content-news-item">
+                                            <a href="/@item.Code">
+                                                <div class="detail-content-news-item-top"
+                                                         style="   background-image: url(@item.IMG.Replace(" ", "%20")); "></div>
+                                                <div class="detail-content-news-item-bottom">
+                                                    <div class="detail-content-news-item-title">
+                                                            @item.Title
+                                                    </div>
+                                                    <div class="detail-content-news-item-des">
+                                                            @item.Summary
+                                                    </div>
+                                                    <a href="/@item.Code" class="detail-content-news-item-link">
+                                                        <span>Xem chi tiết</span>
+                                                    </a>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    }
+                                </div>
+                                @if (pageTypeConent.Pages.Count % 3 != 0 && pageTypeConent.Pages.Count >= 3)
+                                {
+                                    <div class="detail-content-news-controls">
+                                        <div class="detail-content-news-controls-inner">
+                                            <div class="detail-content-news-controls-button-prev">
+                                                <img src="./demo-nhtq/assets/images/register-prev-icon.webp"
+                                                alt="" />
+                                            </div>
+                                            <div class="detail-content-news-controls-pagination"></div>
+                                            <div class="detail-content-news-controls-button-next">
+                                                <img src="./demo-nhtq/assets/images/register-next-icon.webp"
+                                                alt="" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        }
+                    </div>
+                    @if (pageTypeConent.SideBar)
+                    {
+                        <div class="detail-sidebar">
+                            <div class="sidebar-wrapper">
+                                <h3 class="sidebar-label">Bài viết mới nhất</h3>
+                                <ul class="sidebar-list">
+                                    @foreach (var item in Model.TopNewsPage.Pages)
+                                    {
+                                        <a href="/@item.Code">
+                                            <li class="sidebar-item">
+                                                <img src="@item.IMG"
+                                                alt=""
+                                                class="sidebar-image" />
+                                                <div class="sidebar-content">
+                                                    <h5 class="sidebar-title">
+                                                        @item.Title
+                                                    </h5>
+                                                    <span class="sidebar-time">@item.Created.ToString("dd/MM/yyyy")</span>
+                                                </div>
+                                            </li>
+                                        </a>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </section>
+
+
+
     }
     else if(Model.Type == 3)
     {
         var pageConent = Model.PageContent;
-        <div>
-            @Html.Raw(pageConent.PageContent);
-        </div>
+        var pageTypeConent = Model.PageTypeContent;
+
+        <section class="detail">
+            <div class="container">
+                <div class="breadcumb">
+                    <ul class="breadcumb-list">
+                        <li class="breadcumb-item">
+                            <a href="/">Trang chủ</a>
+                        </li>
+                        <li class="breadcumb-item">
+                            &nbsp;/&nbsp;
+                            <a href="/@pageTypeConent.Code">@pageTypeConent.Name</a>
+                        </li>
+                        <li class="breadcumb-item">
+                            &nbsp;/&nbsp;
+                            <a class="active" href="/@pageConent.Code">@pageConent.Title</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="detail-inner">
+                    <div class="detail-content">
+                        @if (!string.IsNullOrEmpty(pageConent.PageContent))
+                        {
+                            <div class="detail-content-main">
+                                @Html.Raw(pageConent.PageContent)
+                            </div>
+                        }
+                        @if(pageTypeConent.Pages.Count > 0)
+                        {
+                            <div class="detail-content-news">
+                                <h2>Bài viết liên quan</h2>
+                                <div class="swiper detail-content-news-swiper">
+                                    <div class="swiper-wrapper">
+                                        @foreach (var item in pageTypeConent.Pages)
+                                        {
+                                            <div class="swiper-slide">
+                                                <div class="detail-content-news-item">
+                                                    <a href="/@item.Code">
+                                                        <div class="detail-content-news-item-top"
+                                                        style="   background-image: url(@item.IMG.Replace(" ", "%20")); "></div>
+                                                        <div class="detail-content-news-item-bottom">
+                                                            <div class="detail-content-news-item-title">
+                                                                @item.Title
+                                                            </div>
+                                                            <div class="detail-content-news-item-des">
+                                                                @item.Summary
+                                                            </div>
+                                                            <!--<a href="/@item.Code" class="detail-content-news-item-link">-->
+                                                            <span>Xem chi tiết</span>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                    @if (pageTypeConent.Pages.Count % 3 != 0 && pageTypeConent.Pages.Count >= 3)
+                                    {
+                                        <div class="detail-content-news-controls">
+                                            <div class="detail-content-news-controls-inner">
+                                                <div class="detail-content-news-controls-button-prev">
+                                                    <img src="./demo-nhtq/assets/images/register-prev-icon.webp"
+                                                    alt="" />
+                                                </div>
+                                                <div class="detail-content-news-controls-pagination"></div>
+                                                <div class="detail-content-news-controls-button-next">
+                                                    <img src="./demo-nhtq/assets/images/register-next-icon.webp"
+                                                    alt="" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    @if (pageConent.SideBar)
+                    {
+                        <div class="detail-sidebar">
+                            <div class="sidebar-wrapper">
+                                <h3 class="sidebar-label">Bài viết mới nhất</h3>
+                                <ul class="sidebar-list">
+                                    @foreach (var item in Model.TopNewsPage.Pages)
+                                    {
+                                        <a href="/@item.Code">
+                                            <li class="sidebar-item">
+                                                <img src="@item.IMG"
+                                                alt=""
+                                                class="sidebar-image" />
+                                                <div class="sidebar-content">
+                                                    <h5 class="sidebar-title">
+                                                        @item.Title
+                                                    </h5>
+                                                    <span class="sidebar-time">@item.Created.ToString("dd/MM/yyyy")</span>
+                                                </div>
+                                            </li>
+                                        </a>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </section>
     }
     else
     {
