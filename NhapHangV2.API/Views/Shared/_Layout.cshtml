@@ -18,7 +18,217 @@
             crossorigin="anonymous"
             src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v17.0"
             nonce="Ek9qOyf8"></script>
-    <title>@config.WebsiteName</title>
+
+
+    <meta property="fb:app_id" content="676758839172144">
+    <meta property="og:type" content="website">
+    <meta property="og:image:width" content="200">
+    <meta property="og:image:height" content="500">
+    <meta property="twitter:image:width" content="200">
+    <meta property="twitter:image:height" content="500">
+
+    @if(Model.Type == 1)
+    {
+        <title>@config.MetaTitle</title>
+        <link rel="canonical" href="@config.OGUrl">
+        <meta name="keyword" content="@config.MetaKeyword">
+        <meta name="description" content="@config.MetaDescription">
+
+        <meta property="og:title" content="@config.OGTitle">
+        <meta property="og:description" content="@config.OGDescription">
+        <meta property="og:image" content="@config.OGImage">
+        <meta property="og:url" content="@config.OGUrl">
+
+        <meta property="twitter:title" content="@config.OGTwitterTitle">
+        <meta property="twitter:description" content="@config.OGTwitterDescription">
+        <meta property="twitter:image" content="@config.OGTwitterImage">
+
+    }
+    else if(Model.Type == 2)
+    {
+        var pageType = Model.PageTypeContent;
+        if (!string.IsNullOrEmpty(pageType.Title))
+        {
+            <title>@pageType.Title</title>
+        }
+        else
+        {
+            <title>@config.MetaTitle</title>
+        }
+        if (!string.IsNullOrEmpty(pageType.MetaKeyword))
+        {
+            <meta name="keyword" content="@pageType.MetaKeyword">
+        }
+        else
+        {
+            <meta name="keyword" content="@config.MetaKeyword">
+        }
+        if (!string.IsNullOrEmpty(pageType.MetaDescription))
+        {
+            <meta name="description" content="@pageType.MetaDescription">
+        }
+        else
+        {
+            <meta name="description" content="@config.MetaDescription">
+        }
+        if (!string.IsNullOrEmpty(pageType.OGTitle))
+        {
+            <meta property="og:title" content="@pageType.OGTitle">
+        }
+        else
+        {
+            <meta property="og:title" content="@config.OGTitle">
+        }
+        if (!string.IsNullOrEmpty(pageType.OGDescription))
+        {
+            <meta property="og:description" content="@pageType.OGDescription">
+        }
+        else
+        {
+            <meta property="og:description" content="@config.OGDescription">
+        }
+        if (!string.IsNullOrEmpty(pageType.OGImage))
+        {
+            <meta property="og:image" content="@pageType.OGImage">
+        }
+        else
+        {
+            <meta property="og:image" content="@config.OGImage">
+        }
+        if (!string.IsNullOrEmpty(pageType.OGUrl))
+        {
+            <meta property="og:url" content="@pageType.OGUrl">
+        }
+        else
+        {
+            <meta property="og:url" content="@config.OGUrl">
+        }
+        if (!string.IsNullOrEmpty(pageType.OGUrl))
+        {
+            <link rel="canonical" href="@pageType.OGUrl">
+        }
+        else
+        {
+            <link rel="canonical" href="@config.OGUrl">
+        }
+        if (!string.IsNullOrEmpty(pageType.OGTwitterTitle))
+        {
+            <meta property="twitter:title" content="@pageType.OGTwitterTitle">
+        }
+        else
+        {
+            <meta property="twitter:title" content="@config.OGTwitterTitle">
+        }
+        if (!string.IsNullOrEmpty(pageType.OGTwitterDescription))
+        {
+            <meta property="twitter:description" content="@pageType.OGTwitterDescription">
+        }
+        else
+        {
+            <meta property="twitter:description" content="@config.OGTwitterDescription">
+        }
+        if (!string.IsNullOrEmpty(pageType.OGTwitterIMG))
+        {
+            <meta property="twitter:image" content="@pageType.OGTwitterIMG">
+        }
+        else
+        {
+            <meta property="twitter:image" content="@config.OGTwitterImage">
+        }
+    }
+    else if(Model.Type == 3)
+    {
+        var pageContent = Model.PageContent;
+        if (!string.IsNullOrEmpty(pageContent.Title))
+        {
+            <title>@pageContent.Title</title>
+        }
+        else
+        {
+            <title>@config.MetaTitle</title>
+        }
+        if (!string.IsNullOrEmpty(pageContent.MetaKeyword))
+        {
+            <meta name="keyword" content="@pageContent.MetaKeyword">
+        }
+        else
+        {
+            <meta name="keyword" content="@config.MetaKeyword">
+        }
+        if (!string.IsNullOrEmpty(pageContent.MetaDescription))
+        {
+            <meta name="description" content="@pageContent.MetaDescription">
+        }
+        else
+        {
+            <meta name="description" content="@config.MetaDescription">
+        }
+        if (!string.IsNullOrEmpty(pageContent.OGTitle))
+        {
+            <meta property="og:title" content="@pageContent.OGTitle">
+        }
+        else
+        {
+            <meta property="og:title" content="@config.OGTitle">
+        }
+        if (!string.IsNullOrEmpty(pageContent.OGDescription))
+        {
+            <meta property="og:description" content="@pageContent.OGDescription">
+        }
+        else
+        {
+            <meta property="og:description" content="@config.OGDescription">
+        }
+        if (!string.IsNullOrEmpty(pageContent.OGImage))
+        {
+            <meta property="og:image" content="@pageContent.OGImage">
+        }
+        else
+        {
+            <meta property="og:image" content="@config.OGImage">
+        }
+        if (!string.IsNullOrEmpty(pageContent.OGUrl))
+        {
+            <meta property="og:url" content="@pageContent.OGUrl">
+        }
+        else
+        {
+            <meta property="og:url" content="@config.OGUrl">
+        }
+        if (!string.IsNullOrEmpty(pageContent.OGUrl))
+        {
+            <link rel="canonical" href="@pageContent.OGUrl">
+        }
+        else
+        {
+            <link rel="canonical" href="@config.OGUrl">
+        }
+        if (!string.IsNullOrEmpty(pageContent.OGTwitterTitle))
+        {
+            <meta property="twitter:title" content="@pageContent.OGTwitterTitle">
+        }
+        else
+        {
+            <meta property="twitter:title" content="@config.OGTwitterTitle">
+        }
+        if (!string.IsNullOrEmpty(pageContent.OGTwitterDescription))
+        {
+            <meta property="twitter:description" content="@pageContent.OGTwitterDescription">
+        }
+        else
+        {
+            <meta property="twitter:description" content="@config.OGTwitterDescription">
+        }
+        if (!string.IsNullOrEmpty(pageContent.OGTwitterIMG))
+        {
+            <meta property="twitter:image" content="@pageContent.OGTwitterIMG">
+        }
+        else
+        {
+            <meta property="twitter:image" content="@config.OGTwitterImage">
+        }
+    }
+
 </head>
 
 <body>
