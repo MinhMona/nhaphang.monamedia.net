@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using System.Diagnostics;
 using DocumentFormat.OpenXml.Bibliography;
 using OpenQA.Selenium.Support.UI;
+using Newtonsoft.Json.Linq;
 
 namespace NhapHangV2.Service.Services
 {
@@ -31,6 +32,7 @@ namespace NhapHangV2.Service.Services
                 chromeDriver = new ChromeDriver(Environment.CurrentDirectory, chromeOptions);
                 chromeDriver.Url = "https://user.lovbuy.com/item.php";
                 chromeDriver.Navigate();
+                chromeDriver.ExecuteScript("const element= document.createElement(\"script\");  element.append(\"function RemoveInput(id) {  document.getElementById('mona_'+id).remove();}\"); document.body.append(element);");
             }
         }
 
@@ -49,12 +51,44 @@ namespace NhapHangV2.Service.Services
 
         public async Task<string> CrawlProduct(long id, string web)
         {
-            var requestId = Guid.NewGuid().ToString().Replace('-','_');
-            chromeDriver.ExecuteScript("var content=null; $.ajax({ url: \"iteminfo.php\", method: 'post', data: { t1:'" + ((id * 2) + (time * 3)) + "', t2: '" + time * 7 + "', t3: '" + web + "' }, error: function () {  }, success: function (data) { $('body').append('<input id=\"mona_"+ requestId + "\" />'); console.log('"+ requestId+"'); $('#mona_"+ requestId +"').val(JSON.stringify(data)); }});");
-            WebDriverWait wait = new WebDriverWait(chromeDriver, TimeSpan.FromSeconds(10));
-            IWebElement resultElement = wait.Until(e => GetWebElement(e, requestId));
-            string result = resultElement.GetDomProperty("value");
-            chromeDriver.ExecuteScript("$('#mona_" + requestId + "').remove()");
+            List<string> requestIdList = new List<string>();
+            string result = "";
+            for (int i = 0; i < 5; i++)
+            {
+                requestIdList.Add(Guid.NewGuid().ToString().Replace('-', '_'));
+            }
+            foreach (var requestId in requestIdList)
+            {
+                chromeDriver.ExecuteScript("var content=null; $.ajax({ url: \"iteminfo.php\", method: 'post', data: { t1:'" + ((id * 2) + (time * 3)) + "', t2: '" + time * 7 + "', t3: '" + web + "' }, error: function () {  }, success: function (data) { $('body').append('<input id=\"mona_" + requestId + "\" />'); console.log('" + requestId + "'); $('#mona_" + requestId + "').val(JSON.stringify(data));}});");
+
+            }
+            foreach (var requestId in requestIdList)
+            {
+                chromeDriver.ExecuteScript("setTimeout(()=>RemoveInput('" + requestId + "'), 60000);");
+            }
+            foreach (var requestId in requestIdList)
+            {
+                WebDriverWait wait = new WebDriverWait(chromeDriver, TimeSpan.FromSeconds(20));
+                IWebElement resultElement = wait.Until(e => GetWebElement(e, requestId));
+                string data = resultElement.GetDomProperty("value");
+                var json = JObject.Parse(data);
+                var atributesCheck = json["item"]["props_name"].ToString().Split(';');
+                bool isCheck = true;
+                foreach (var item in atributesCheck)
+                {
+                    var itemCheck = item.Split(':');
+                    if (string.IsNullOrEmpty(itemCheck[3]))
+                    {
+                        isCheck = false;
+                        break;
+                    }
+                }
+                if (isCheck)
+                {
+                    result = data;
+                    break;
+                }
+            }
             return result;
         }
     }
