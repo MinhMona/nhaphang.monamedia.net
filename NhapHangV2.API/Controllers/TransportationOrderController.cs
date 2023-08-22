@@ -131,7 +131,7 @@ namespace NhapHangV2.API.Controllers
             if (itemModel.UID != null)
             { //admin tạo dùm
                 user = await userService.GetByIdAsync(itemModel.UID ?? 0);
-                itemModel.SalerID = LoginContext.Instance.CurrentUser.UserId;
+                itemModel.SalerID = user.SaleId;
             }
             else
             { //user đang login tạo
