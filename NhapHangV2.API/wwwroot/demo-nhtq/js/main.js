@@ -18,6 +18,7 @@ import CollapseModule from "./module/CollapseModule.js";
 import LoadMoreModule from "./module/LoadMoreModule.js";
 import DatePickerModule from "./module/DatePickerModule.js";
 import MenuHandler from "./components/MenuBar.js";
+import SmoothScrollModule from "./module/SmoothScrollModule.js";
 
 window.addEventListener("DOMContentLoaded", () => {
     // Animation
@@ -48,6 +49,7 @@ window.addEventListener("DOMContentLoaded", () => {
     SideModule();
     CollapseModule();
 
-    MenuHandler()
+    MenuHandler()    
+    SmoothScrollModule();
 
 });
