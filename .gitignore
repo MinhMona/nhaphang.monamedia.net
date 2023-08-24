@@ -370,3 +370,6 @@ NhapHangV2.API/appsettings.json
 /nhaphangdemo
 /nhaphangdemo.rar
 /NhapHangV2.API/appsettings.json
+/wwwroot
+*.zip
+*.rar

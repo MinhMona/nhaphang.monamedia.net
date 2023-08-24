@@ -50,6 +50,7 @@ namespace NhapHangV2.API.Controllers
         private readonly ISendNotificationService sendNotificationService;
         private readonly ISMSEmailTemplateService sMSEmailTemplateService;
         private readonly IMainOrderService mainOrderService;
+        private readonly ITransportationOrderService transportationOrderService;
         public ComplainController(IServiceProvider serviceProvider, ILogger<BaseController<Complain, ComplainModel, ComplainRequest, ComplainSearch>> logger, IWebHostEnvironment env, IConfiguration configuration) : base(serviceProvider, logger, env)
         {
             this.domainService = this.serviceProvider.GetRequiredService<IComplainService>();
@@ -61,6 +62,7 @@ namespace NhapHangV2.API.Controllers
             sendNotificationService = serviceProvider.GetRequiredService<ISendNotificationService>();
             mainOrderService = serviceProvider.GetRequiredService<IMainOrderService>();
             sMSEmailTemplateService = serviceProvider.GetRequiredService<ISMSEmailTemplateService>();
+            transportationOrderService = serviceProvider.GetRequiredService<ITransportationOrderService>();
 
         }
 
@@ -78,10 +80,25 @@ namespace NhapHangV2.API.Controllers
             bool success = false;
             if (ModelState.IsValid)
             {
-                var mainOrderComplain = await mainOrderService.GetByIdAsync(itemModel.MainOrderId ?? 0);
-                if (mainOrderComplain == null)
+                decimal? maxAmountRequest = 0;
+
+                var mainOrderComplain = new MainOrder();
+                var transOrderComplain = new TransportationOrder();
+                if (itemModel.MainOrderId > 0)
+                {
+                    mainOrderComplain = await mainOrderService.GetByIdAsync(itemModel?.MainOrderId ?? 0);
+                }
+                else if (itemModel.TransportationOrderId > 0)
+                {
+                    transOrderComplain = await transportationOrderService.GetByIdAsync(itemModel?.TransportationOrderId ?? 0);
+                }
+                if (mainOrderComplain == null && transOrderComplain == null)
                     throw new KeyNotFoundException("Đơn hàng không tồn tại");
-                decimal? maxAmountRequest = mainOrderComplain.TotalPriceVND;
+                else if (mainOrderComplain != null)
+                    maxAmountRequest = mainOrderComplain.TotalPriceVND;
+                else if (transOrderComplain != null)
+                    maxAmountRequest = transOrderComplain.TotalPriceVND;
+
                 if (itemModel.Amount > maxAmountRequest)
                     throw new AppException("Số tiền yêu cầu lớn hơn tổng tiền đơn hàng");
                 var item = mapper.Map<Complain>(itemModel);
@@ -104,7 +121,6 @@ namespace NhapHangV2.API.Controllers
                             string subject = emailTemplate.Subject;
                             string emailContent = string.Format(emailTemplate.Body);
                             await sendNotificationService.SendNotification(notificationSetting, notiTemplate, item.MainOrderId.ToString(), string.Format(Complain_Admin), "", null, subject, emailContent); //Thông báo Email
-                            //await sendNotificationService.SendNotification(notificationSetting, notiTemplate, item.MainOrderId.ToString(), "/manager/order/complain-list", "", null, subject, emailContent); //Thông báo Email
                         }
                         #endregion
                         appDomainResult.ResultCode = (int)HttpStatusCode.OK;

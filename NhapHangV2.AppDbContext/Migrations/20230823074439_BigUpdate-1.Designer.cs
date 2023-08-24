@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NhapHangV2.AppDbContext;
 
@@ -11,9 +12,10 @@ using NhapHangV2.AppDbContext;
 namespace NhapHangV2.AppDbContext.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230823074439_BigUpdate-1")]
+    partial class BigUpdate1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1214,9 +1216,6 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<int?>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TransportationOrderId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("UID")
                         .HasColumnType("int");
 
@@ -2412,9 +2411,6 @@ namespace NhapHangV2.AppDbContext.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime?>("CancelDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("ComplainDate")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("CompleteDate")
@@ -4087,9 +4083,6 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
-                    b.Property<decimal?>("ActualShippingCost")
-                        .HasColumnType("decimal(18,0)");
-
                     b.Property<decimal?>("Amount")
                         .HasColumnType("decimal(18,0)");
 
@@ -4099,9 +4092,6 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<decimal?>("CODFeeTQ")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime?>("CancelDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("CancelReason")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
@@ -4109,15 +4099,6 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<string>("Category")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
-
-                    b.Property<DateTime?>("ComplainDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("CompleteDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("ConfirmDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("Created")
                         .HasColumnType("datetime2");
@@ -4182,9 +4163,6 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<string>("OrderTransactionCode")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("PaidDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<int?>("SalerID")
                         .HasColumnType("int");
 
@@ -4204,9 +4182,6 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<int?>("Status")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("TQDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<decimal?>("TotalPriceCNY")
                         .HasColumnType("decimal(18,2)");
 
@@ -4222,9 +4197,6 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<string>("UpdatedBy")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime?>("VNDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<int?>("WareHouseFromId")
                         .HasColumnType("int");

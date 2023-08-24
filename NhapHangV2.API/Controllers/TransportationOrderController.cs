@@ -262,6 +262,7 @@ namespace NhapHangV2.API.Controllers
         public async Task<AppDomainResult> CancelItem(int id, string note)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
+            var currentDate = DateTime.Now;
             bool success = false;
             if (string.IsNullOrEmpty(note))
                 throw new AppException("Chưa nhập lý do hủy đơn hàng");
@@ -280,7 +281,9 @@ namespace NhapHangV2.API.Controllers
 
             trans.Status = (int?)StatusGeneralTransportationOrder.Huy;
             trans.CancelReason = note;
-            trans.Updated = DateTime.Now;
+            if (trans.CancelDate == null)
+                trans.CancelDate = currentDate;
+            trans.Updated = currentDate;
             trans.UpdatedBy = LoginContext.Instance.CurrentUser.UserName;
 
             List<TransportationOrder> listTrans = new List<TransportationOrder>();
@@ -368,6 +371,8 @@ namespace NhapHangV2.API.Controllers
                 x.DateExportRequest = DateTime.Now;
                 x.ShippingTypeVN = shippingType;
                 x.Status = (int?)StatusGeneralTransportationOrder.DaThanhToan;
+                if (x.PaidDate == null)
+                    x.PaidDate = DateTime.Now;
                 //Còn gán thằng TotalPrice thì trong Service đó
             });
 

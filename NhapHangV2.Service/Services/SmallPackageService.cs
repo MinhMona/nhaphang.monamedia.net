@@ -515,7 +515,8 @@ namespace NhapHangV2.Service.Services
                                     if (transportationOrder.Status == (int)StatusGeneralTransportationOrder.ChoDuyet)
                                         throw new AppException("Đơn ký gửi chưa được duyệt");
                                     transportationOrder.Status = (int)StatusGeneralTransportationOrder.VeKhoTQ;
-
+                                    if (transportationOrder.TQDate == null)
+                                        transportationOrder.TQDate = DateTime.Now;
                                     smallPackages = await unitOfWork.Repository<SmallPackage>().GetQueryable().Where(x => !x.Deleted && x.TransportationOrderId == transportationOrder.Id).ToListAsync();
                                     if (!smallPackages.Any())
                                         throw new KeyNotFoundException("Không tìm thấy smallpackage");
@@ -667,7 +668,8 @@ namespace NhapHangV2.Service.Services
                                     if (transportationOrder == null || transportationOrder.Id == 0) break;
 
                                     transportationOrder.Status = (int)StatusGeneralTransportationOrder.VeKhoVN;
-
+                                    if (transportationOrder.VNDate == null)
+                                        transportationOrder.VNDate = DateTime.Now;
                                     smallPackages = await unitOfWork.Repository<SmallPackage>().GetQueryable().Where(x => !x.Deleted && x.TransportationOrderId == transportationOrder.Id).ToListAsync();
                                     if (!smallPackages.Any())
                                         throw new KeyNotFoundException("Không tìm thấy smallpackage");
@@ -885,9 +887,14 @@ namespace NhapHangV2.Service.Services
                         {
                             unitOfWork.Repository<SmallPackage>().Update(smallPackage);
                             transportationOrder.Status = (int)StatusGeneralTransportationOrder.VeKhoTQ;
+                            if (transportationOrder.TQDate == null)
+                                transportationOrder.TQDate = DateTime.Now;
                             await unitOfWork.Repository<TransportationOrder>().UpdateFieldsSaveAsync(transportationOrder, new Expression<Func<TransportationOrder, object>>[]
                             {
-                                x =>x.Status
+                                x =>x.Status,
+                                x =>x.TQDate,
+                                x=>x.Updated,
+                                x=>x.UpdatedBy
                             });
                             unitOfWork.Repository<TransportationOrder>().Detach(transportationOrder);
                             totalSuccess++;

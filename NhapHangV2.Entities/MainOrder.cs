@@ -310,6 +310,11 @@ namespace NhapHangV2.Entities
         public DateTime? CancelDate { get; set; }
 
         /// <summary>
+        /// Ngày khiếu nại
+        /// </summary>
+        public DateTime? ComplainDate { get; set; }
+
+        /// <summary>
         /// Bảo hiểm
         /// </summary>
         public bool? IsInsurance { get; set; } = false;

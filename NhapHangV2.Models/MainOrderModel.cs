@@ -523,6 +523,11 @@ namespace NhapHangV2.Models
         public DateTime? CancelDate { get; set; }
 
         /// <summary>
+        /// Ngày khiếu nại
+        /// </summary>
+        public DateTime? ComplainDate { get; set; }
+
+        /// <summary>
         /// Ngày dự kiến
         /// </summary>
         public DateTime? ExpectedDate { get; set; }
