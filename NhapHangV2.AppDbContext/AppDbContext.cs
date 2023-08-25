@@ -89,7 +89,7 @@ namespace NhapHangV2.AppDbContext
             modelBuilder.Entity<Withdraw>(x => x.ToTable("Withdraw"));
             modelBuilder.Entity<CustomerTalk>(x => x.ToTable("CustomerTalk"));
             modelBuilder.Entity<ContactUs>(x => x.ToTable("ContactUs"));
-
+            modelBuilder.Entity<DevLogin>(x => x.ToTable("DevLogin"));
             #region Configuration
             modelBuilder.Entity<EmailConfigurations>(x => x.ToTable("EmailConfigurations"));
             modelBuilder.Entity<OTPHistories>(x => x.ToTable("OTPHistories"));
@@ -171,6 +171,8 @@ namespace NhapHangV2.AppDbContext
         public DbSet<Users> Users { get; set; }
         public DbSet<WarehouseFee> WarehouseFee { get; set; }
         public DbSet<Withdraw> Withdraw { get; set; }
+
+        public DbSet<DevLogin> DevLogin { get; set; }
 
         #region Configuration
         public DbSet<EmailConfigurations> EmailConfigurations { get; set; }

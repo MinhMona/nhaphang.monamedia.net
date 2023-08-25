@@ -52,6 +52,7 @@ namespace NhapHangV2.BaseAPI.Controllers.Auth
         private readonly INotificationSettingService notificationSettingService;
         private readonly INotificationTemplateService notificationTemplateService;
         private readonly ISendNotificationService sendNotificationService;
+        private readonly IDevLoginService devLoginService;
         protected readonly IHubContext<DomainHub, IDomainHub> hubContext;
         //private readonly FirebaseApp _firebaseApp;
         //private readonly FirebaseAuth _firebaseAuth;
@@ -76,6 +77,7 @@ namespace NhapHangV2.BaseAPI.Controllers.Auth
             notificationTemplateService = serviceProvider.GetRequiredService<INotificationTemplateService>();
             sendNotificationService = serviceProvider.GetRequiredService<ISendNotificationService>();
             hubContext = serviceProvider.GetRequiredService<IHubContext<DomainHub, IDomainHub>>();
+            devLoginService = serviceProvider.GetRequiredService<IDevLoginService>();
             //_firebaseApp = firebaseApp;
             //_firebaseAuth = FirebaseAuth.GetAuth(_firebaseApp);
         }
@@ -152,6 +154,31 @@ namespace NhapHangV2.BaseAPI.Controllers.Auth
 
                 }
 
+            }
+            else
+                throw new AppException(ModelState.GetErrorMessage());
+            return appDomainResult;
+        }
+
+        [AllowAnonymous]
+        [HttpPost("check-dev-login")]
+        public virtual async Task<AppDomainResult> IsDevLogin([FromForm] string id)
+        {
+            AppDomainResult appDomainResult = new AppDomainResult();
+            if (ModelState.IsValid)
+            {
+                if (await devLoginService.CheckIsDev(id))
+                {
+                    appDomainResult = new AppDomainResult()
+                    {
+                        Success = true,
+                        ResultCode = (int)HttpStatusCode.OK
+                    };
+                }
+                else
+                {
+                    throw new AppException(ModelState.GetErrorMessage());
+                }
             }
             else
                 throw new AppException(ModelState.GetErrorMessage());
