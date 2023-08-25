@@ -132,6 +132,8 @@ namespace NhapHangV2.Service.Services
                 {
                     if (item.Status == (int)StatusGeneralTransportationOrder.DaDuyet)
                     {
+                        if (item.ConfirmDate != null)
+                            item.ConfirmDate = DateTime.Now;
                         var smallPackage = unitOfWork.Repository<SmallPackage>().GetQueryable().Where(x => x.OrderTransactionCode.Equals(item.OrderTransactionCode)).FirstOrDefault();
                         if (smallPackage == null)
                         {
@@ -180,6 +182,31 @@ namespace NhapHangV2.Service.Services
                     }
                     else
                     {
+                        switch (item.Status)
+                        {
+                            case (int)StatusGeneralTransportationOrder.Huy:
+                                if (item.CancelDate == null)
+                                    item.CancelDate = DateTime.Now;
+                                break;
+                            case (int)StatusGeneralTransportationOrder.VeKhoTQ:
+                                if (item.TQDate == null)
+                                    item.TQDate = DateTime.Now;
+                                break;
+                            case (int)StatusGeneralTransportationOrder.VeKhoVN:
+                                if (item.VNDate == null)
+                                    item.VNDate = DateTime.Now;
+                                break;
+                            case (int)StatusGeneralTransportationOrder.DaThanhToan:
+                                if (item.PaidDate == null)
+                                    item.PaidDate = DateTime.Now;
+                                break;
+                            case (int)StatusGeneralTransportationOrder.DaHoanThanh:
+                                if (item.CompleteDate == null)
+                                    item.CompleteDate = DateTime.Now;
+                                break;
+                            default:
+                                break;
+                        }
                         unitOfWork.Repository<TransportationOrder>().Update(item);
                         foreach (var smallPackage in item.SmallPackages)
                         {
@@ -197,14 +224,14 @@ namespace NhapHangV2.Service.Services
                     {
                         //Nếu chưa có thì tạo mới
                         var staffInComeNew = await CommissionTransportationOrder(item, staffInCome);
-                        if(staffInComeNew != null)
+                        if (staffInComeNew != null)
                             await unitOfWork.Repository<StaffIncome>().CreateAsync(staffInComeNew);
                     }
                     if (staffInCome != null && staffInCome.UID == item.SalerID)
                     {
                         //Nếu saler trùng thì cập nhật lại
                         var staffInComeNew = await CommissionTransportationOrder(item, staffInCome);
-                        if (staffInComeNew != null) 
+                        if (staffInComeNew != null)
                             unitOfWork.Repository<StaffIncome>().Update(staffInComeNew);
                     }
                     else if (staffInCome != null && staffInCome.UID != item.SalerID)
@@ -449,10 +476,6 @@ namespace NhapHangV2.Service.Services
             switch (status)
             {
                 case (int)StatusGeneralTransportationOrder.Huy: //Hủy thì ngoài controller đã làm hết rồi, vào đây chỉ cập nhật thôi
-                    foreach (var tran in item)
-                    {
-
-                    }
                     await base.UpdateAsync(item);
                     break;
                 case (int)StatusGeneralTransportationOrder.DaThanhToan: //Thanh toán thì ngoài controller đã làm hết rồi, vào đây chỉ cập nhật thôi

@@ -72,5 +72,10 @@ namespace NhapHangV2.Models
         /// Tỉ giá theo Shop
         /// </summary>
         public decimal? CurrentCNYVN { get; set; }
+
+        /// <summary>
+        /// Id đơn ký gửi
+        /// </summary>
+        public int? TransportationOrderId { get; set; } 
     }
 }

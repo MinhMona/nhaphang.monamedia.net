@@ -40,16 +40,8 @@ namespace NhapHangV2.API.Controllers
         {
             AppDomainResult appDomainResult = new AppDomainResult();
             string result = string.Empty;
-            if (!memoryCache.TryGetValue(id + "_" + web, out result) || isDev)
-            {
-                result = await crawlProductService.CrawlProduct(id, web);
-                var cacheEntryOptions = new MemoryCacheEntryOptions
-                {
-                    AbsoluteExpiration = DateTime.Now.AddMinutes(1),
-                    SlidingExpiration = TimeSpan.FromMinutes(2),
-                };
-                memoryCache.Set(id + "_" + web, result, cacheEntryOptions);
-            }
+
+            result = await crawlProductService.CrawlProduct(id, web);
             if (!string.IsNullOrEmpty(result))
             {
                 appDomainResult = new AppDomainResult()

@@ -53,21 +53,41 @@ namespace NhapHangV2.Service.Services
 
         }
 
+
         public override async Task<bool> CreateAsync(Complain item)
         {
             using (var dbContextTransaction = Context.Database.BeginTransaction())
             {
                 try
                 {
-                    var mainOrder = await unitOfWork.Repository<MainOrder>().GetQueryable().FirstOrDefaultAsync(x => x.Id == item.MainOrderId);
-                    if (mainOrder == null) throw new KeyNotFoundException("Đơn không tồn tại");
-                    mainOrder.Status = (int)StatusOrderContants.DaKhieuNai;
-                    mainOrder.IsComplain = true;
-                    await unitOfWork.Repository<MainOrder>().UpdateFieldsSaveAsync(mainOrder, new Expression<Func<MainOrder, object>>[]
+                    if (item.MainOrderId > 0)
                     {
-                        x=>x.Status,
-                        x=>x.IsComplain
-                    });
+                        var mainOrder = await unitOfWork.Repository<MainOrder>().GetQueryable().FirstOrDefaultAsync(x => x.Id == item.MainOrderId);
+                        mainOrder.Status = (int)StatusOrderContants.DaKhieuNai;
+                        mainOrder.IsComplain = true;
+                        mainOrder.ComplainDate = DateTime.Now;
+                        await unitOfWork.Repository<MainOrder>().UpdateFieldsSaveAsync(mainOrder, new Expression<Func<MainOrder, object>>[]
+                        {
+                            x=>x.Status,
+                            x=>x.IsComplain,
+                            x=>x.ComplainDate,
+                            x=>x.Updated,
+                            x=>x.UpdatedBy,
+                        });
+                    }
+                    else if (item.TransportationOrderId > 0)
+                    {
+                        var transOrder = await unitOfWork.Repository<TransportationOrder>().GetQueryable().FirstOrDefaultAsync(x => x.Id == item.TransportationOrderId);
+                        transOrder.Status = (int)StatusGeneralTransportationOrder.DaKhieuNai;
+                        transOrder.ComplainDate = DateTime.Now;
+                        await unitOfWork.Repository<TransportationOrder>().UpdateFieldsSaveAsync(transOrder, new Expression<Func<TransportationOrder, object>>[]
+                        {
+                            x=>x.Status,
+                            x=>x.ComplainDate,
+                            x=>x.Updated,
+                            x=>x.UpdatedBy,
+                        });
+                    }
                     await unitOfWork.Repository<Complain>().CreateAsync(item);
                     await unitOfWork.SaveAsync();
                     await dbContextTransaction.CommitAsync();

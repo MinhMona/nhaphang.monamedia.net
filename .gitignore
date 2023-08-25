@@ -369,3 +369,7 @@ NhapHangV2.BaseAPI/NhapHangV2.BaseAPI.csproj
 NhapHangV2.API/appsettings.json
 /nhaphangdemo
 /nhaphangdemo.rar
+/NhapHangV2.API/appsettings.json
+/wwwroot
+*.zip
+*.rar

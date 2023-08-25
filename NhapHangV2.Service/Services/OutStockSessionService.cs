@@ -339,7 +339,8 @@ namespace NhapHangV2.Service.Services
                                 if (transOrder != null)
                                 {
                                     transOrder.Status = (int?)StatusGeneralTransportationOrder.DaThanhToan;
-
+                                    if (transOrder.PaidDate == null)
+                                        transOrder.PaidDate = DateTime.Now;
                                     unitOfWork.Repository<TransportationOrder>().Update(transOrder);
                                     await unitOfWork.SaveAsync();
                                     unitOfWork.Repository<TransportationOrder>().Detach(transOrder);
@@ -518,6 +519,8 @@ namespace NhapHangV2.Service.Services
                     else
                     {
                         trans.Status = (int)StatusGeneralTransportationOrder.DaHoanThanh;
+                        if (trans.CompleteDate == null)
+                            trans.CompleteDate = DateTime.Now;
                         unitOfWork.Repository<TransportationOrder>().Update(trans);
                     }
                 }

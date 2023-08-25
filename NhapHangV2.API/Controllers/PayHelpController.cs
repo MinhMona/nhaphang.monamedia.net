@@ -65,7 +65,7 @@ namespace NhapHangV2.API.Controllers
             var item = await this.domainService.GetByIdAsync(itemModel.Id);
             if (item != null)
             {
-                success = await payHelpService.UpdateStatus(item, itemModel.Status ?? 0, item.Status ?? 0);
+                success = await payHelpService.UpdateStatus(item, itemModel.Status ?? 0, item.Status ?? 0, item.TotalPriceVND);
                 if (success)
                     appDomainResult.ResultCode = (int)HttpStatusCode.OK;
                 else
@@ -111,9 +111,12 @@ namespace NhapHangV2.API.Controllers
                 var item = await this.domainService.GetByIdAsync(itemModel.Id);
                 if (item == null)
                     throw new KeyNotFoundException("Item không tồn tại");
+                decimal? totalPriceVNDOld = item.TotalPriceVND;
                 item.Note = itemModel.Note;
                 item.SalerID = itemModel.SalerID;
-                success = await payHelpService.UpdateStatus(item, itemModel.Status ?? 0, item.Status ?? 0);
+                item.TotalPriceVND += ((itemModel.FeeService ?? 0) - (item.FeeService ?? 0));
+                item.FeeService = itemModel.FeeService;
+                success = await payHelpService.UpdateStatus(item, itemModel.Status ?? 0, item.Status ?? 0, totalPriceVNDOld);
                 if (success)
                     appDomainResult.ResultCode = (int)HttpStatusCode.OK;
                 else
@@ -142,9 +145,14 @@ namespace NhapHangV2.API.Controllers
             if (item == null)
                 throw new KeyNotFoundException("Item không tồn tại");
             item.Status = (int)StatusPayHelp.DaXacNhan;
+            if (item.ConfirmDate == null)
+                item.ConfirmDate = DateTime.Now;
             success = await this.domainService.UpdateFieldAsync(item, new Expression<Func<PayHelp, object>>[]
             {
-                    s => s.Status
+                    s => s.Status,
+                    s => s.ConfirmDate,
+                    s => s.Updated,
+                    s => s.UpdatedBy,
             });
             if (success)
                 appDomainResult.ResultCode = (int)HttpStatusCode.OK;

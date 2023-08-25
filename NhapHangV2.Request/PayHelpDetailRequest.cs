@@ -20,5 +20,13 @@ namespace NhapHangV2.Request
         /// Nội dung
         /// </summary>
         public string? Desc2 { get; set; }
+        /// <summary>
+        /// Ảnh khách up
+        /// </summary>
+        public string? UserImage { get; set; }
+        /// <summary>
+        /// Ảnh quản trị up
+        /// </summary>
+        public string? AdminImage { get; set; }
     }
 }

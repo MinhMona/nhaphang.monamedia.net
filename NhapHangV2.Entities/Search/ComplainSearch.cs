@@ -16,5 +16,6 @@ namespace NhapHangV2.Entities.Search
         public DateTime? FromDate { get; set; }
 
         public DateTime? ToDate { get; set; }
+        public int? Type { get; set; }
     }
 }

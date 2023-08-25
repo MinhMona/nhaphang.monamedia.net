@@ -55,5 +55,10 @@ namespace NhapHangV2.Entities
         /// </summary>
         [NotMapped]
         public decimal? CurrentCNYVN { get; set; } = 0;
+
+        /// <summary>
+        /// Id đơn ký gửi
+        /// </summary>
+        public int? TransportationOrderId { get; set; } = 0;
     }
 }
