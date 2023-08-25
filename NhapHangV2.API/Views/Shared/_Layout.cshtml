@@ -1,0 +1,678 @@
+﻿@{
+
+    var config = Model.Configurations;
+    var user = Model.UserData;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./demo-nhtq/css/style.css" />
+    <link rel="stylesheet" href="./demo-nhtq/css/backdoor.css" />
+    <link rel="icon" type="image/png" href="./demo-nhtq/assets/images/favicon.webp" />
+
+    <script async
+            defer
+            crossorigin="anonymous"
+            src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v17.0"
+            nonce="Ek9qOyf8"></script>
+
+
+    <meta property="fb:app_id" content="676758839172144">
+    <meta property="og:type" content="website">
+    <meta property="og:image:width" content="200">
+    <meta property="og:image:height" content="500">
+    <meta property="twitter:image:width" content="200">
+    <meta property="twitter:image:height" content="500">
+
+    @if(Model.Type == 1)
+    {
+        <title>@config.MetaTitle</title>
+        <link rel="canonical" href="@config.OGUrl">
+        <meta name="keyword" content="@config.MetaKeyword">
+        <meta name="description" content="@config.MetaDescription">
+
+        <meta property="og:title" content="@config.OGTitle">
+        <meta property="og:description" content="@config.OGDescription">
+        <meta property="og:image" content="@config.OGImage">
+        <meta property="og:url" content="@config.OGUrl">
+
+        <meta property="twitter:title" content="@config.OGTwitterTitle">
+        <meta property="twitter:description" content="@config.OGTwitterDescription">
+        <meta property="twitter:image" content="@config.OGTwitterImage">
+
+    }
+    else if(Model.Type == 2)
+    {
+        var pageType = Model.PageTypeContent;
+        if (!string.IsNullOrEmpty(pageType.Title))
+        {
+            <title>@pageType.Title</title>
+        }
+        else
+        {
+            <title>@config.MetaTitle</title>
+        }
+        if (!string.IsNullOrEmpty(pageType.MetaKeyword))
+        {
+            <meta name="keyword" content="@pageType.MetaKeyword">
+        }
+        else
+        {
+            <meta name="keyword" content="@config.MetaKeyword">
+        }
+        if (!string.IsNullOrEmpty(pageType.MetaDescription))
+        {
+            <meta name="description" content="@pageType.MetaDescription">
+        }
+        else
+        {
+            <meta name="description" content="@config.MetaDescription">
+        }
+        if (!string.IsNullOrEmpty(pageType.OGTitle))
+        {
+            <meta property="og:title" content="@pageType.OGTitle">
+        }
+        else
+        {
+            <meta property="og:title" content="@config.OGTitle">
+        }
+        if (!string.IsNullOrEmpty(pageType.OGDescription))
+        {
+            <meta property="og:description" content="@pageType.OGDescription">
+        }
+        else
+        {
+            <meta property="og:description" content="@config.OGDescription">
+        }
+        if (!string.IsNullOrEmpty(pageType.OGImage))
+        {
+            <meta property="og:image" content="@pageType.OGImage">
+        }
+        else
+        {
+            <meta property="og:image" content="@config.OGImage">
+        }
+        if (!string.IsNullOrEmpty(pageType.OGUrl))
+        {
+            <meta property="og:url" content="@pageType.OGUrl">
+        }
+        else
+        {
+            <meta property="og:url" content="@config.OGUrl">
+        }
+        if (!string.IsNullOrEmpty(pageType.OGUrl))
+        {
+            <link rel="canonical" href="@pageType.OGUrl">
+        }
+        else
+        {
+            <link rel="canonical" href="@config.OGUrl">
+        }
+        if (!string.IsNullOrEmpty(pageType.OGTwitterTitle))
+        {
+            <meta property="twitter:title" content="@pageType.OGTwitterTitle">
+        }
+        else
+        {
+            <meta property="twitter:title" content="@config.OGTwitterTitle">
+        }
+        if (!string.IsNullOrEmpty(pageType.OGTwitterDescription))
+        {
+            <meta property="twitter:description" content="@pageType.OGTwitterDescription">
+        }
+        else
+        {
+            <meta property="twitter:description" content="@config.OGTwitterDescription">
+        }
+        if (!string.IsNullOrEmpty(pageType.OGTwitterIMG))
+        {
+            <meta property="twitter:image" content="@pageType.OGTwitterIMG">
+        }
+        else
+        {
+            <meta property="twitter:image" content="@config.OGTwitterImage">
+        }
+    }
+    else if(Model.Type == 3)
+    {
+        var pageContent = Model.PageContent;
+        if (!string.IsNullOrEmpty(pageContent.Title))
+        {
+            <title>@pageContent.Title</title>
+        }
+        else
+        {
+            <title>@config.MetaTitle</title>
+        }
+        if (!string.IsNullOrEmpty(pageContent.MetaKeyword))
+        {
+            <meta name="keyword" content="@pageContent.MetaKeyword">
+        }
+        else
+        {
+            <meta name="keyword" content="@config.MetaKeyword">
+        }
+        if (!string.IsNullOrEmpty(pageContent.MetaDescription))
+        {
+            <meta name="description" content="@pageContent.MetaDescription">
+        }
+        else
+        {
+            <meta name="description" content="@config.MetaDescription">
+        }
+        if (!string.IsNullOrEmpty(pageContent.OGTitle))
+        {
+            <meta property="og:title" content="@pageContent.OGTitle">
+        }
+        else
+        {
+            <meta property="og:title" content="@config.OGTitle">
+        }
+        if (!string.IsNullOrEmpty(pageContent.OGDescription))
+        {
+            <meta property="og:description" content="@pageContent.OGDescription">
+        }
+        else
+        {
+            <meta property="og:description" content="@config.OGDescription">
+        }
+        if (!string.IsNullOrEmpty(pageContent.OGImage))
+        {
+            <meta property="og:image" content="@pageContent.OGImage">
+        }
+        else
+        {
+            <meta property="og:image" content="@config.OGImage">
+        }
+        if (!string.IsNullOrEmpty(pageContent.OGUrl))
+        {
+            <meta property="og:url" content="@pageContent.OGUrl">
+        }
+        else
+        {
+            <meta property="og:url" content="@config.OGUrl">
+        }
+        if (!string.IsNullOrEmpty(pageContent.OGUrl))
+        {
+            <link rel="canonical" href="@pageContent.OGUrl">
+        }
+        else
+        {
+            <link rel="canonical" href="@config.OGUrl">
+        }
+        if (!string.IsNullOrEmpty(pageContent.OGTwitterTitle))
+        {
+            <meta property="twitter:title" content="@pageContent.OGTwitterTitle">
+        }
+        else
+        {
+            <meta property="twitter:title" content="@config.OGTwitterTitle">
+        }
+        if (!string.IsNullOrEmpty(pageContent.OGTwitterDescription))
+        {
+            <meta property="twitter:description" content="@pageContent.OGTwitterDescription">
+        }
+        else
+        {
+            <meta property="twitter:description" content="@config.OGTwitterDescription">
+        }
+        if (!string.IsNullOrEmpty(pageContent.OGTwitterIMG))
+        {
+            <meta property="twitter:image" content="@pageContent.OGTwitterIMG">
+        }
+        else
+        {
+            <meta property="twitter:image" content="@config.OGTwitterImage">
+        }
+    }
+
+</head>
+
+<body>
+    <header class="hd">
+        <div class="container">
+            <div class="hd-inner">
+                <div class="hd-logo" data-aos="zoom-in-right" data-aos-delay="200">
+                    <a href="/" target="_blank">
+                        <img src="./demo-nhtq/assets/images/logo.webp" alt="mona-nhtq-logo" />
+                    </a>
+                </div>
+                <ul class="hd-controls hd-controls-desktop">
+                    <li data-aos="zoom-in-left"
+                        data-aos-delay="200"
+                        class="hd-controls-item">
+                        <img src="./demo-nhtq/assets/images/icon-yuan.webp"
+                             class="hd-controls-icon"
+                             alt="" />
+                        <div class="hd-controls-info">
+                            <span class="hd-controls-info-value">1¥ = @string.Format("{0:N0}", config.Currency)</span>
+                        </div>
+                    </li>
+                    <li data-aos="zoom-in-left"
+                        data-aos-delay="200"
+                        class="hd-controls-item">
+                        <img src="./demo-nhtq/assets/images/icon-phone.webp"
+                             class="hd-controls-icon"
+                             alt="" />
+                        <div class="hd-controls-info">
+                            <span class="hd-controls-info-value">@config.Hotline</span>
+                        </div>
+                    </li>
+                </ul>
+                <div class="hd-controls-mobile">
+                    <button type="button" class="btn">
+                        <img src="./demo-nhtq/assets/images/icon-authen.webp" alt="" />
+                        <span>Tài khoản</span>
+                    </button>
+                    <div class="menu-close menuClose" id="menuBar">
+                        <div class="menu-close-wrap">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <nav class="hd-nav hd-nav-desktop">
+            <div class="container">
+                <ul class="hd-nav-list">
+
+                    <li data-aos="fade-up" data-aos-delay="100" class="hd-nav-item">
+                        <a href="/">Trang chủ</a>
+                    </li>
+                    @{
+                        int timeOut = 100;
+                    }
+                    @foreach (var item in Model.MenuList){
+                        timeOut += 100;
+                        if(Model.Type == 2)
+                        {
+                            if(item.Id == Model.PageTypeContent.MenuId)
+                            {
+                                if (item.Children.Count != 0)
+                                {
+                                    <li data-aos="fade-up"
+                                        data-aos-delay="@timeOut"
+                                        class="hd-nav-item sub-menu active">
+                                        <a href="@item.Link">@item.Name</a>
+                                        <ul class="hd-nav-sub-list">
+                                            @foreach (var subMenu in item.Children)
+                                            {
+                                                <li class="hd-nav-sub-item">
+                                                    <a href="@subMenu.Link">@subMenu.Name</a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li data-aos="fade-up" data-aos-delay="@timeOut" class="hd-nav-item active">
+                                        <a href="@item.Link">@item.Name</a>
+                                    </li>
+                                }
+                            }
+                            else
+                            {
+                                if (item.Children.Count != 0)
+                                {
+                                    <li data-aos="fade-up"
+                                        data-aos-delay="@timeOut"
+                                        class="hd-nav-item sub-menu">
+                                        <a href="@item.Link">@item.Name</a>
+                                        <ul class="hd-nav-sub-list">
+                                            @foreach (var subMenu in item.Children)
+                                            {
+                                                <li class="hd-nav-sub-item">
+                                                    <a href="@subMenu.Link">@subMenu.Name</a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li data-aos="fade-up" data-aos-delay="@timeOut" class="hd-nav-item">
+                                        <a href="@item.Link">@item.Name</a>
+                                    </li>
+                                }
+                            }
+                        }
+                        else if (Model.Type == 3)
+                        {
+                            if (item.Id == Model.PageContent.MenuId)
+                            {
+                                if (item.Children.Count != 0)
+                                {
+                                    <li data-aos="fade-up"
+                                        data-aos-delay="@timeOut"
+                                        class="hd-nav-item sub-menu active">
+                                        <a href="@item.Link">@item.Name</a>
+                                        <ul class="hd-nav-sub-list">
+                                            @foreach (var subMenu in item.Children)
+                                            {
+                                                <li class="hd-nav-sub-item">
+                                                    <a href="@subMenu.Link">@subMenu.Name</a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li data-aos="fade-up" data-aos-delay="@timeOut" class="hd-nav-item active">
+                                        <a href="@item.Link">@item.Name</a>
+                                    </li>
+                                }
+                            }
+                            else
+                            {
+                                if (item.Children.Count != 0)
+                                {
+                                    <li data-aos="fade-up"
+                                        data-aos-delay="@timeOut"
+                                        class="hd-nav-item sub-menu">
+                                        <a href="@item.Link">@item.Name</a>
+                                        <ul class="hd-nav-sub-list">
+                                            @foreach (var subMenu in item.Children)
+                                            {
+                                                <li class="hd-nav-sub-item">
+                                                    <a href="@subMenu.Link">@subMenu.Name</a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li data-aos="fade-up" data-aos-delay="@timeOut" class="hd-nav-item">
+                                        <a href="@item.Link">@item.Name</a>
+                                    </li>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (item.Children.Count != 0)
+                            {
+                                
+                                <li data-aos="fade-up"
+                                data-aos-delay="@timeOut"
+                                class="hd-nav-item sub-menu">
+                                    <a href="@item.Link">@item.Name</a>
+                                    <ul class="hd-nav-sub-list">
+                                        @foreach (var subMenu in item.Children)
+                                        {
+                                            <li class="hd-nav-sub-item">
+                                                <a href="@subMenu.Link">@subMenu.Name</a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
+                            else
+                            {
+                                <li data-aos="fade-up" data-aos-delay="@timeOut" class="hd-nav-item">
+                                    <a href="@item.Link">@item.Name</a>
+                                </li>
+                            }
+                        }
+                    }
+                    
+                    <li data-aos="fade-up"
+                        data-aos-delay="800"
+                        class="hd-nav-item authen-button @((Model.Username != null)?"login":"")">
+                        <!-- thêm class login nếu như đã đăng nhập -->
+
+                        <a href="/authen/login">
+                            <button type="button" class="btn button-non-login">
+                                <img src="./demo-nhtq/assets/images/icon-authen.webp" alt="" />
+                                <span>Đăng nhập</span>
+                            </button>
+                        </a>
+                        @if (Model.Username != null)
+                        {
+                            <div class="button-login">
+                                <a href="/">
+                                    <button type="button" class="btn">
+                                        <img src="./demo-nhtq/assets/images/icon-authen.webp" alt="" />
+                                        <span>@Model.Username</span>
+                                    </button>
+                                </a>
+
+                                <div class="login-expand">
+                                    <div class="login-expand-top">
+                                        <div class="login-expand-avatar">
+                                            <img src="@Model.UserData.AvatarIMG"
+                                            alt="avatar" />
+                                        </div>
+                                        <div class="login-expand-info">
+                                            <div class="login-expand-info-top">
+                                                <span class="login-expand-info-username">@Model.Username</span>
+                                                <span class="login-expand-info-vip">@Model.UserData.LevelName</span>
+                                            </div>
+
+                                            <div class="login-expand-info-bottom">
+                                                <span class="login-expand-info-icon">
+                                                    <i class="fas fa-wallet"></i>
+                                                </span>
+                                                <span class="login-expand-info-wallet">@string.Format("{0:N0}", user.Wallet)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <ul class="login-expand-list">
+                                        <li class="login-expand-item">
+                                            <a href="@((Model.UserGroupId == 2)? "/user/":"/dashboard/")">
+                                                <span class="login-expand-item-icon">
+                                                    <i class="fas fa-users-cog"></i>
+                                                </span>
+                                                <span class="login-expand-item-label">Quản trị</span>
+                                            </a>
+                                        </li>
+                                        <li class="login-expand-item">
+                                            <a href="/user/cart/">
+                                                <span class="login-expand-item-icon">
+                                                    <i class="fas fa-shopping-cart"></i>
+                                                </span>
+                                                <span class="login-expand-item-label">Giỏ hàng</span>
+                                            </a>
+                                        </li>
+                                        <li class="login-expand-item button-logout">
+                                            <a href="/Home/Logout">
+                                                <span class="login-expand-item-icon">
+                                                    <i class="fas fa-sign-out-alt"></i>
+                                                </span>
+                                                <span class="login-expand-item-label">Đăng xuất</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        }
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <nav class="hd-nav hd-nav-mobile" id="hd-nav-menu">
+            <div class="container">
+                <ul class="hd-nav-list">
+                    @foreach(var item in Model.MenuList){
+                        <li class="hd-nav-item">
+                            <a href="@item.Link">@item.Name</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <main class="main">
+            @RenderBody()
+    </main>
+
+    <footer class="footer">
+        <img src="./demo-nhtq/assets/images/footer-bg-1.webp"
+             alt=""
+             class="footer-bg-1"
+             data-aos="zoom-out" />
+        <img src="./demo-nhtq/assets/images/footer-bg-2.webp"
+             alt=""
+             class="footer-bg-2"
+             data-aos="zoom-out" />
+        <div class="container">
+            <div class="footer-inner">
+                <div class="footer-top">
+                    <img src="./demo-nhtq/assets/images/footer-logo.webp"
+                         alt=""
+                         class="footer-top-logo"
+                         data-aos="zoom-out" />
+                </div>
+                <div class="footer-bottom">
+                    <ul class="footer-bottom-list footer-contact">
+                        <li class="footer-bottom-item footer-bottom-label"
+                            data-aos="zoom-in-down"
+                            data-aos-delay="100">
+                            Liên hệ
+                        </li>
+
+                        <li class="footer-bottom-item"
+                            data-aos="zoom-in-up"
+                            data-aos-delay="100">
+                            <span class="footer-bottom-label">Hotline:</span>
+                            <span class="footer-bottom-value">
+                                <a href="tel:@config.Hotline">@config.Hotline</a>
+                            </span>
+                        </li>
+                        <li class="footer-bottom-item"
+                            data-aos="zoom-in-up"
+                            data-aos-delay="300">
+                            <span class="footer-bottom-label">Email:</span>
+                            <span class="footer-bottom-value">
+                                <a href="mailto:@(config.EmailContact)">@config.EmailContact</a>
+                            </span>
+                        </li>
+                        <li class="footer-bottom-item"
+                            data-aos="zoom-in-up"
+                            data-aos-delay="500">
+                            <span class="footer-bottom-label">Địa chỉ:</span>
+                            <span class="footer-bottom-value">@config.Address</span>
+                        </li>
+                    </ul>
+
+                    <ul class="footer-bottom-list footer-nganhHang">
+                        <li class="footer-bottom-item footer-bottom-label"
+                            data-aos="zoom-in-down"
+                            data-aos-delay="100">
+                            Menu
+                        </li>
+                        @{timeOut = -100;}
+                        @foreach(var item in Model.MenuList){
+                            timeOut += 200;
+                            <li class="footer-bottom-item footer-bottom-value"
+                                data-aos="zoom-in-up"
+                                data-aos-delay="@timeOut">
+                                <a href="@item.Link">@item.Name</a>
+                            </li>
+                        }
+                    </ul>
+
+                    <!-- <ul class="footer-bottom-list footer-hoTro">
+                      <li class="footer-bottom-item footer-bottom-label" data-aos="zoom-in-down" data-aos-delay="100">
+                        <a href="/">Hỗ trợ</a>
+                      </li>
+                      <li class="footer-bottom-item footer-bottom-value">
+                        <a href="/">Hướng dẫn đăng ký</a>
+                      </li>
+                      <li class="footer-bottom-item footer-bottom-value">
+                        <a href="/">Nạp tiền</a>
+                      </li>
+                      <li class="footer-bottom-item footer-bottom-value">
+                        <a href="/">Q&A</a>
+                      </li>
+                    </ul> -->
+
+                    <ul class="footer-bottom-list footer-congTy">
+                        <li class="footer-bottom-item footer-bottom-label"
+                            data-aos="zoom-in-down"
+                            data-aos-delay="100">
+                            <a href="/">Công ty</a>
+                        </li>
+                        <li class="footer-bottom-item footer-bottom-value"
+                            data-aos="zoom-in-up"
+                            data-aos-delay="100">
+                            <a href="/gioi-thieu">Về chúng tôi</a>
+                        </li>
+                        <li class="footer-bottom-item footer-bottom-value"
+                            data-aos="zoom-in-up"
+                            data-aos-delay="300">
+                            <a href="/">Điều khoản</a>
+                        </li>
+                    </ul>
+
+                    <ul class="footer-bottom-list footer-iframe">
+                        <li class="footer-bottom-item footer-bottom-label"
+                            data-aos="zoom-in-down"
+                            data-aos-delay="100">
+                            Fanpage
+                        </li>
+                        <li class="footer-bottom-item footer-bottom-value" data-aos="zoom-in-up">
+                            <div class="fb-page"
+                                 data-href="@config.FacebookFanpage"
+                                 data-width="320"
+                                 data-hide-cover="false"
+                                 data-show-facepile="false"></div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="footer-end" data-aos="zoom-in-up">
+                    &#64;
+                    <span>Thiết kế bởi</span>
+                    <span class="footer-end-logo">
+                        <img src="./demo-nhtq/assets/images/footer-end-logo.webp" alt="" />
+                        <a href="https://mona.software/">MONA.Media / Website</a>
+                        <img src="./demo-nhtq/assets/images/footer-end-link.webp" alt="" />
+                    </span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div class="back-to-top backToTop">
+        <div class="triangle"></div>
+        <div class="triangle"></div>
+        <div class="triangle"></div>
+    </div>
+    <div class="main-overlay" id="overlay"></div>
+    <script src="./demo-nhtq/js/library/jquery/jquery.js"></script>
+    <script src="./demo-nhtq/js/library/swiper/swiper-bundle.min.js"></script>
+    <script src="./demo-nhtq/js/library/aos/aos.js"></script>
+    <script src="./demo-nhtq/js/library/aos/aos.css"></script>
+    <script src="./demo-nhtq/js/library/select2/select2.min.js"></script>
+    <script src="./demo-nhtq/js/library/gallery/lightgallery-all.min.js"></script>
+    <script src="./demo-nhtq/js/library/jquery/jquery-migrate.js"></script>
+    <script src="./demo-nhtq/js/library/isotope/isotope.pkgd.min.js"></script>
+    <script src="./demo-nhtq/js/library/datetime/moment.min.js"></script>
+    <script src="./demo-nhtq/js/library/datetime/daterangepicker.min.js"></script>
+    <script src="./demo-nhtq/js/library/splitting/splitting.min.js"></script>
+    <script src="./demo-nhtq/js/library/smoothscroll/SmoothScroll.min.js"></script>
+    <script src="./demo-nhtq/js/main.js" type="module"></script>
+
+    <script>
+        AOS.init({
+            startEvent: "DOMContentLoaded",
+            offset: 0,
+            duration: 1200,
+            easing: "ease",
+            once: false,
+            mirror: true,
+            disable: function () {
+                return $(window).width() <= 768;
+            },
+        });
+    </script>
+</body>
+</html>

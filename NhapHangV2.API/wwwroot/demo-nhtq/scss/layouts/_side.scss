@@ -1,0 +1,106 @@
+.side {
+    &-fixed {
+        @include max($res-mobile) {
+            position: fixed;
+            width: 300px;
+            max-width: 100%;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            background-color: white;
+            z-index: 51;
+            transition: 0.4s ease-in-out;
+            opacity: 0;
+            transform: translateX(110%);
+            visibility: hidden;
+            &.open {
+                opacity: 1;
+                transform: translate(0, 0);
+                visibility: visible;
+            }
+        }
+        &-wrap {
+            @include max($res-mobile) {
+                padding: 6rem 2.4rem;
+                width: 100%;
+                height: 100%;
+                overflow-y: auto;
+            }
+        }
+    }
+    &-overlay {
+        position: fixed;
+        @include full;
+        background-color: rgba($color: $color-black, $alpha: 0.6);
+        z-index: 50;
+        transition: 0.5s ease-in-out;
+        opacity: 0;
+        transform: translateX(110%);
+        visibility: hidden;
+        &.open {
+            opacity: 1;
+            transform: translate(0, 0);
+            visibility: visible;
+        }
+        @include min($res-mobile-min) {
+            display: none;
+        }
+    }
+    &-open {
+        width: 4rem;
+        height: 4rem;
+        position: fixed;
+        right: 0;
+        @include posi-vertical;
+        z-index: 40;
+        background-color: $color-second;
+        @include mid-flex;
+        border-radius: 100rem 0 0 100rem;
+        cursor: pointer;
+        transition: 0.4s ease-in-out;
+        &.close {
+            opacity: 0;
+            transform: translate(100%, -50%);
+            visibility: visible;
+        }
+        @include min($res-mobile-min) {
+            display: none;
+        }
+        &-wrap {
+            width: 30px;
+            height: 30px;
+            border-radius: 100rem;
+            background-color: white;
+            @include mid-flex;
+            .icon {
+                color: $color-second;
+                font-weight: 600;
+                font-size: 1.6rem;
+            }
+        }
+    }
+    &-close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 30px;
+        height: 30px;
+        background-color: white;
+        border: 1px solid $color-pri;
+        @include mid-flex;
+        cursor: pointer;
+        &:hover {
+            .icon {
+                transform: rotate(360deg);
+            }
+        }
+        .icon {
+            font-size: 1.8rem;
+            font-weight: 400;
+            transition: 0.6s ease-in-out;
+        }
+        @include min($res-mobile-min) {
+            display: none;
+        }
+    }
+}

@@ -36,10 +36,11 @@ namespace NhapHangV2.API.Controllers
         }
 
         [HttpGet]
-        public async Task<AppDomainResult> CrawlProduct([FromQuery] long id, [FromQuery] string web)
+        public async Task<AppDomainResult> CrawlProduct([FromQuery] long id, [FromQuery] string web, [FromQuery] bool isDev)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
             string result = string.Empty;
+
             result = await crawlProductService.CrawlProduct(id, web);
             if (!string.IsNullOrEmpty(result))
             {

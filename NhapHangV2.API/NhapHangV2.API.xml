@@ -648,6 +648,11 @@
             <param name="baseSearch"></param>
             <returns></returns>
         </member>
+        <member name="P:NhapHangV2.API.Controllers.HomeController.HomeModel.Type">
+            <summary>
+            1: home page, 2: page type, 3: page, 4: Error
+            </summary>
+        </member>
         <member name="M:NhapHangV2.API.Controllers.MainOrderController.GetMainOrderOfOrderStaff(NhapHangV2.Entities.SQLEntities.MainOrderToolSearch)">
             <summary>
             Thông tin đơn hàng trang đơn hàng của user

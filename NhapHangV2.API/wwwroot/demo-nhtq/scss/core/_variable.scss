@@ -1,0 +1,45 @@
+:root {
+    --size-hd: 12rem;
+    // distance section
+    --pd-sc: 8rem;
+
+    @media (max-width: 1200px) {
+        --pd-sc: 4rem;
+    }
+}
+
+$color-pri: #F5851E;
+$color-second: #1f1f68; //#
+$color-third: #2686ED;
+$color-four: #f05123;
+$color-five: #f05123;
+$color-black: #000000;
+$color-white: #ffffff;
+$color-text: #000000;
+$color-text-second: #000000;
+$color-border-01: rgba(0, 0, 0, 0.1);
+$color-border-02: rgba(0, 0, 0, 0.2);
+$color-border-03: rgba(0, 0, 0, 0.3);
+$color-border-04: rgba(0, 0, 0, 0.4);
+$color-border-05: rgba(0, 0, 0, 0.5);
+$color-border-06: rgba(0, 0, 0, 0.6);
+$color-border-07: rgba(0, 0, 0, 0.7);
+$color-border-08: rgba(0, 0, 0, 0.8);
+$color-border-09: rgba(0, 0, 0, 0.9);
+$color-opa-white-01: rgba(255, 255, 255, 0.1);
+$color-opa-white-02: rgba(255, 255, 255, 0.2);
+$color-opa-white-03: rgba(255, 255, 255, 0.3);
+$color-opa-white-04: rgba(255, 255, 255, 0.4);
+$color-opa-white-05: rgba(255, 255, 255, 0.5);
+$color-opa-white-06: rgba(255, 255, 255, 0.6);
+$color-opa-white-07: rgba(255, 255, 255, 0.7);
+$color-opa-white-08: rgba(255, 255, 255, 0.8);
+$color-opa-white-09: rgba(255, 255, 255, 0.9);
+//Responsive
+$res-mobile: 1199px;
+$res-mobile-min: 1200px;
+$mobile: 500px;
+//Distance
+$radius: 0.6rem;
+// cubic
+$cubic: cubic-bezier(0.72, 0.04, 0.49, 0.82);
