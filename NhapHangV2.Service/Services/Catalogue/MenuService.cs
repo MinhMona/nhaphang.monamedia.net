@@ -44,7 +44,9 @@ namespace NhapHangV2.Service.Services.Catalogue
                         RowNumber = e.RowNumber,
                         Type = e.Type,
                         Updated = e.Updated,
-                        UpdatedBy = e.UpdatedBy
+                        UpdatedBy = e.UpdatedBy,
+                        PageId = e.PageId,
+                        PageTypeId = e.PageTypeId,
                     }).ToListAsync();
                     dataList.Items[i].Children = subMenus;
                     i++;

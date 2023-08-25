@@ -145,6 +145,36 @@ namespace NhapHangV2.Request
         /// </summary>
         public string? CancelReason { get; set; }
 
+        public decimal? FeeService { get; set; }
+        /// <summary>
+        /// Ngày xác nhận
+        /// </summary>
+        public DateTime? ConfirmDate { get; set; }
+        /// <summary>
+        /// Ngày về TQ
+        /// </summary>
+        public DateTime? TQDate { get; set; }
+        /// <summary>
+        /// Ngày về VN
+        /// </summary>
+        public DateTime? VNDate { get; set; }
+        /// <summary>
+        /// Ngày thanh toán
+        /// </summary>
+        public DateTime? PaidDate { get; set; }
+        /// <summary>
+        /// Ngày hoàn thành
+        /// </summary>
+        public DateTime? CompleteDate { get; set; }
+        /// <summary>
+        /// Ngày hủy
+        /// </summary>
+        public DateTime? CancelDate { get; set; }
+        /// <summary>
+        /// Chi phí vận chuyển thực tế
+        /// </summary>
+        public decimal? ActualShippingCost { get; set; }
+
     }
 
     //public class ShippingOrder

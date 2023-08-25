@@ -246,7 +246,8 @@ namespace NhapHangV2.Utilities
             VeKhoTQ = 4,
             VeKhoVN = 5,
             DaThanhToan = 6,
-            DaHoanThanh = 7
+            DaHoanThanh = 7,
+            DaKhieuNai = 8
         }
 
         /// <summary>

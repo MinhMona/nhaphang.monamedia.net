@@ -22,5 +22,14 @@ namespace NhapHangV2.Entities
         /// Nội dung
         /// </summary>
         public string Desc2 { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Ảnh khách up
+        /// </summary>
+        public string UserImage { get; set; } = string.Empty;
+        /// <summary>
+        /// Ảnh quản trị up
+        /// </summary>
+        public string AdminImage { get; set; } = string.Empty;
     }
 }

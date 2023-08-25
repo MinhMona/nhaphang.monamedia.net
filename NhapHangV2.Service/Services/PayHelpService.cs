@@ -58,7 +58,7 @@ namespace NhapHangV2.Service.Services
             return "PayHelp_2_GetPagingData";
         }
 
-        public async Task<bool> UpdateStatus(PayHelp model, int status, int statusOld)
+        public async Task<bool> UpdateStatus(PayHelp model, int status, int statusOld, decimal? totalPriceVNDOld)
         {
             using (var dbContextTransaction = Context.Database.BeginTransaction())
             {
@@ -119,7 +119,7 @@ namespace NhapHangV2.Service.Services
                         unitOfWork.Repository<PayHelpDetail>().Update(payHelpDetail);
                     }
 
-                    if (status == statusOld)
+                    if (status == statusOld && totalPriceVNDOld == model.TotalPriceVND)
                     {
                         unitOfWork.Repository<PayHelp>().Update(model);
                         await unitOfWork.SaveAsync();
@@ -143,6 +143,8 @@ namespace NhapHangV2.Service.Services
                             if (model.Status == (int)StatusPayHelp.ChuaThanhToan || model.Status == (int)StatusPayHelp.DaXacNhan)
                             {
                                 model.Status = (int)StatusPayHelp.DaHuy;
+                                if (model.CancelDate == null)
+                                    model.CancelDate = currentDate;
                                 unitOfWork.Repository<PayHelp>().Update(model);
                             }
                             else
@@ -176,6 +178,8 @@ namespace NhapHangV2.Service.Services
                                 });
 
                                 model.Status = (int)StatusPayHelp.DaHuy;
+                                if (model.CancelDate == null)
+                                    model.CancelDate = currentDate;
                                 unitOfWork.Repository<PayHelp>().Update(model);
 
                                 var notificationSetting = await notificationSettingService.GetByIdAsync(18);
@@ -212,12 +216,12 @@ namespace NhapHangV2.Service.Services
                             }
                             bool isSuccess = false;
                             //Kiểm tra
-                            if (model.Status != (int?)StatusPayHelp.DaXacNhan) //Không đúng trạng thái
+                            if (model.Status != (int?)StatusPayHelp.DaXacNhan && model.Status != (int?)StatusPayHelp.DaThanhToan) //Không đúng trạng thái
                                 throw new AppException(string.Format("Đơn này bị sai trạng thái để Thanh toán, vui lòng kiểm tra lại"));
 
                             decimal wallet = userRequest.Wallet ?? 0;
 
-                            decimal totalPriceVND = model.TotalPriceVND ?? 0;
+                            decimal totalPriceVND = (model.TotalPriceVND ?? 0) - (model.Deposit ?? 0);
 
                             if (wallet < totalPriceVND)
                                 throw new AppException("Tài khoản yêu cầu không đủ số dư để thanh toán");
@@ -263,7 +267,9 @@ namespace NhapHangV2.Service.Services
 
                             isSuccess = true;
                             model.Status = (int?)StatusPayHelp.DaThanhToan;
-                            model.Deposit = totalPriceVND;
+                            model.Deposit = (model.Deposit ?? 0) + totalPriceVND;
+                            if (model.PaidDate == null)
+                                model.PaidDate = currentDate;
                             unitOfWork.Repository<PayHelp>().Update(model);
 
                             //Thông báo đã thanh toán đơn thanh toán hộ
@@ -296,7 +302,8 @@ namespace NhapHangV2.Service.Services
                             if (model.Status != (int)StatusPayHelp.DaThanhToan)
                                 throw new AppException("Đơn chưa thanh toán");
                             model.Status = (int?)StatusPayHelp.DaHoanThanh;
-
+                            if (model.CompleteDate == null)
+                                model.CompleteDate = currentDate;
                             await unitOfWork.Repository<HistoryServices>().CreateAsync(new HistoryServices
                             {
                                 PostId = model.Id,
@@ -336,6 +343,8 @@ namespace NhapHangV2.Service.Services
                                 Note = string.Format("{0} đã thay đôi trạng thái từ {1} sang {2}", user.UserName, oldStatusText, newStatusText),
                             });
                             model.Status = status;
+                            if (status == (int)StatusPayHelp.DaXacNhan && model.ConfirmDate == null)
+                                model.ConfirmDate = currentDate;
                             unitOfWork.Repository<PayHelp>().Update(model);
                             break;
                     }

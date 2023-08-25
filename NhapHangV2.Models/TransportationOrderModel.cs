@@ -57,6 +57,8 @@ namespace NhapHangV2.Models
                         return "Đã thanh toán";
                     case (int)StatusGeneralTransportationOrder.DaHoanThanh:
                         return "Đã hoàn thành";
+                    case (int)StatusGeneralTransportationOrder.DaKhieuNai:
+                        return "Đã khiếu nại";
                     default:
                         return string.Empty;
                 }
@@ -101,7 +103,6 @@ namespace NhapHangV2.Models
         /// <summary>
         /// Ghi chú hủy đơn
         /// </summary>
-        [StringLength(1000)]
         public string CancelReason { get; set; }
 
         public int? ShippingTypeVN { get; set; }
@@ -268,5 +269,39 @@ namespace NhapHangV2.Models
         /// ID Saler tạo dùm
         /// </summary>
         public int? SalerID { get; set; }
+
+        public decimal? FeeService { get; set; }
+        /// <summary>
+        /// Ngày xác nhận
+        /// </summary>
+        public DateTime? ConfirmDate { get; set; }
+        /// <summary>
+        /// Ngày về TQ
+        /// </summary>
+        public DateTime? TQDate { get; set; }
+        /// <summary>
+        /// Ngày về VN
+        /// </summary>
+        public DateTime? VNDate { get; set; }
+        /// <summary>
+        /// Ngày thanh toán
+        /// </summary>
+        public DateTime? PaidDate { get; set; }
+        /// <summary>
+        /// Ngày hoàn thành
+        /// </summary>
+        public DateTime? CompleteDate { get; set; }
+        /// <summary>
+        /// Ngày hủy
+        /// </summary>
+        public DateTime? CancelDate { get; set; }
+        /// <summary>
+        /// Ngày khiếu nại
+        /// </summary>
+        public DateTime? ComplainDate { get; set; }
+        /// <summary>
+        /// Chi phí vận chuyển thực tế
+        /// </summary>
+        public decimal? ActualShippingCost { get; set; } 
     }
 }

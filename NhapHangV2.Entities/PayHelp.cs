@@ -93,5 +93,28 @@ namespace NhapHangV2.Entities
         /// </summary>
         [NotMapped]
         public string SalerName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Ngày xác nhận
+        /// </summary>
+        public DateTime? ConfirmDate { get; set; }
+        /// <summary>
+        /// Ngày thanh toán
+        /// </summary>
+        public DateTime? PaidDate { get; set; }
+        /// <summary>
+        /// Ngày hoàn thành
+        /// </summary>
+        public DateTime? CompleteDate { get; set; }
+        /// <summary>
+        /// Ngày hủy
+        /// </summary>
+        public DateTime? CancelDate { get; set; }
+
+        /// <summary>
+        /// Phí dịch vụ
+        /// </summary>
+        [Column(TypeName = "decimal(18,0)")]
+        public decimal? FeeService { get; set; }
     }
 }

@@ -148,8 +148,8 @@ namespace NhapHangV2.API.Controllers
                     }
                 } while (true);
                 itemModel.Code = AppUtilities.RemoveUnicode(itemModel.Title).ToLower().Replace(" ", "-");
-                var pageType = await pageTypeService.GetByIdAsync(Convert.ToInt32(itemModel.PageTypeId));
-                itemModel.Code = pageType.Code + "/" + itemModel.Code;
+                //var pageType = await pageTypeService.GetByIdAsync(Convert.ToInt32(itemModel.PageTypeId));
+                //itemModel.Code = pageType.Code + "/" + itemModel.Code;
                 var item = mapper.Map<Page>(itemModel);
                 if (item != null)
                 {
@@ -220,8 +220,8 @@ namespace NhapHangV2.API.Controllers
                     }
                 } while (true);
                 itemModel.Code = AppUtilities.RemoveUnicode(itemModel.Title).ToLower().Replace(" ", "-");
-                var pageType = await pageTypeService.GetByIdAsync(Convert.ToInt32(itemModel.PageTypeId));
-                itemModel.Code = pageType.Code + "/" + itemModel.Code;
+                //var pageType = await pageTypeService.GetByIdAsync(Convert.ToInt32(itemModel.PageTypeId));
+                //itemModel.Code = pageType.Code + "/" + itemModel.Code;
                 var page = pageService.GetById(itemModel.Id);
                 if (!page.Code.Equals(itemModel.Code))
                 {
