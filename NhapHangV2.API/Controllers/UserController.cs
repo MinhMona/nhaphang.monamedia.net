@@ -253,6 +253,30 @@ namespace NhapHangV2.API.Controllers
             return appDomainResult;
         }
 
+
+        [HttpGet("get-user-tool")]
+        [AppAuthorize(new int[] { CoreContants.ViewAll })]
+        public async Task<AppDomainResult> GetByOrdererID(int id)
+        {
+            AppDomainResult appDomainResult = new AppDomainResult();
+
+            if (ModelState.IsValid)
+            {
+                List<string> userList = await userService.GetUserByOrdererId(id);
+                appDomainResult = new AppDomainResult
+                {
+                    Data = userList,
+                    Success = true,
+                    ResultCode = (int)HttpStatusCode.OK
+                };
+            }
+            else
+                throw new AppException(ModelState.GetErrorMessage());
+
+            return appDomainResult;
+        }
+
+
         /// <summary>
         /// Cập nhật ảnh đại diện của tài khoản
         /// </summary>

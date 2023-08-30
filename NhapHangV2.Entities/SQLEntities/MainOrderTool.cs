@@ -10,9 +10,11 @@ namespace NhapHangV2.Entities.SQLEntities
     public class MainOrderTool : DomainEntities.AppDomain
     {
         public string Username { get; set; }
-        public int UID { get; set; }
         public string MainOrderCode { get; set; }
         public string Site { get; set; }
+        public int MainOrderId { get; set; }
+        public bool IsHasOrderTransactionCode { get; set; }
+
     }
 
     public class MainOrderCodeTool
@@ -30,5 +32,11 @@ namespace NhapHangV2.Entities.SQLEntities
         public int PageSize { get; set; }
         [DefaultValue("Id desc")]
         public string OrderBy { set; get; }
+        public string Site { get; set; }
+        [DefaultValue(2)]
+        public int HasMVD { get; set; }
+        public string Username { get; set; }
+        public int? MainOrderId { get; set; }
+        public string MainOrderCode { get; set; }
     }
 }

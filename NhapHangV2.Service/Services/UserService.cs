@@ -318,6 +318,13 @@ namespace NhapHangV2.Service.Services
             return result;
         }
 
+
+        public async Task<List<string>> GetUserByOrdererId(int id)
+        {
+            var userList  = await unitOfWork.Repository<Users>().GetQueryable().Where(x=> x.DatHangId == id).Select(x => x.UserName).ToListAsync();
+            return userList;
+        }
+
         /// <summary>
         /// Kiểm tra user đăng nhập
         /// </summary>

@@ -119,6 +119,46 @@ namespace NhapHangV2.BaseAPI.Controllers.Auth
             return appDomainResult;
         }
 
+
+        /// <summary>
+        /// Đăng nhập hệ thống
+        /// </summary>
+        /// <param name="loginModel"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost("login-tool")]
+        public virtual async Task<AppDomainResult> LoginToolAsync([FromForm] Login loginModel)
+        {
+            AppDomainResult appDomainResult = new AppDomainResult();
+            if (ModelState.IsValid)
+            {
+                var userInfos = await this.userService.Verify(loginModel.UserName, loginModel.Password);
+                if (userInfos != null)
+                {
+                    var userModel = mapper.Map<UserModel>(userInfos);
+                    var token = await GenerateJwtTokenForLogin(userModel, TimeSpan.FromDays(365));
+
+                    // Lưu giá trị token
+                    await this.userService.UpdateUserToken(userModel.Id, token, true);
+
+                    appDomainResult = new AppDomainResult()
+                    {
+                        Success = true,
+                        Data = new
+                        {
+                            token = token
+                        },
+                        ResultCode = (int)HttpStatusCode.OK
+                    };
+
+                }
+
+            }
+            else
+                throw new AppException(ModelState.GetErrorMessage());
+            return appDomainResult;
+        }
+
         /// <summary>
         /// Đăng nhập hệ thống
         /// </summary>
@@ -754,6 +794,50 @@ namespace NhapHangV2.BaseAPI.Controllers.Auth
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
+
+        protected async Task<string> GenerateJwtTokenForLogin(UserModel user, TimeSpan expires, bool isConfirmOTP = false)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var appSettingsSection = configuration.GetSection("AppSettings");
+            // configure jwt authentication
+            var appSettings = appSettingsSection.Get<AppSettings>();
+            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+
+            var userInGroups = await userInGroupService.GetAsync(e => !e.Deleted && e.UserId == user.Id);
+            if (userInGroups != null)
+            {
+                foreach (var userInGroup in userInGroups)
+                {
+                    user.UserGroupId = userInGroup.UserGroupId;
+                    break;
+                }
+            }
+            var userLoginModel = new UserLoginModel()
+            {
+                UserId = user.Id,
+                UserName = user.UserName,
+                UserGroupId = user.UserGroupId,
+                IsCheckOTP = user.IsCheckOTP,
+                IsConfirmOTP = isConfirmOTP,
+            };
+            AppDomain currentDomain = AppDomain.CurrentDomain;
+            Assembly[] assems = currentDomain.GetAssemblies();
+            var controllers = new List<ControllerModel>();
+            var roles = new List<Role>();
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                            {
+                                new Claim(ClaimTypes.UserData, JsonConvert.SerializeObject(userLoginModel))
+                            }),
+                Expires = DateTime.UtcNow.AddHours(7).AddTicks(expires.Ticks),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
+
 
         #endregion
 

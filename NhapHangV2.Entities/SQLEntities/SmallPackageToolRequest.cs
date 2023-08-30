@@ -8,9 +8,8 @@ namespace NhapHangV2.Entities
 {
     public class SmallPackageToolRequest : DomainEntities.AppDomain
     {
-        public string? OrdertransactionCode { get; set; }
+        public List<string> OrdertransactionCodes { get; set; }
         public int? MainOrderId { get; set; }
-        public int? MainOrderCodeId { get; set; }
-        public int? UID { get; set; }
+        public string MainOrderCode { get; set; }
     }
 }

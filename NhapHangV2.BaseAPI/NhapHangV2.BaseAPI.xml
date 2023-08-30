@@ -11,6 +11,13 @@
             <param name="loginModel"></param>
             <returns></returns>
         </member>
+        <member name="M:NhapHangV2.BaseAPI.Controllers.Auth.AuthController.LoginToolAsync(NhapHangV2.Request.Auth.Login)">
+            <summary>
+            Đăng nhập hệ thống
+            </summary>
+            <param name="loginModel"></param>
+            <returns></returns>
+        </member>
         <member name="M:NhapHangV2.BaseAPI.Controllers.Auth.AuthController.LoginForAppAsync(NhapHangV2.Request.Auth.Login)">
             <summary>
             Đăng nhập hệ thống

@@ -66,22 +66,28 @@ namespace NhapHangV2.Service.Services
                 int i = 0;
                 foreach (var request in requests)
                 {
-                    sql += $"DECLARE @UID{i} INT = (SELECT UID FROM MainOrder WHERE Id = {request.MainOrderId}) " +
-                        $"DECLARE @MVD{i} INT = (SELECT COUNT(Id) FROM SmallPackage WHERE OrderTransactionCode = '{request.OrdertransactionCode}') " +
-                        $"IF(@UID{i} > 0 AND @MVD{i} < 1) " +
-                        $"BEGIN " +
-                        $"INSERT INTO SmallPackage(MainOrderId, UID, OrderTransactionCode, FeeShip, " +
-                        $"Weight,Status,FloatingStatus,FloatingUserName,FloatingUserPhone,IsTemp,IsLost,IsHelpMoving, " +
-                        $"TotalPrice,StaffTQWarehouse,StaffVNWarehouse,StaffVNOutWarehouse,CurrentPlaceId, " +
-                        $"MainOrderCodeId,DonGia,PriceWeight,Created,CreatedBy,Deleted,Active,IsPayment,PriceVolume,VolumePayment) " +
-                        $"VALUES ({request.MainOrderId}, @UID{i}, N'{request.OrdertransactionCode}', 0, " +
-                        $"0,{(int)StatusSmallPackage.MoiDat},0,'','',0,0,0, " +
-                        $"0,'','','',0, " +
-                        $"{request.MainOrderCodeId}, 0,0,'{currentDate}',N'{currentUser.UserName}',0,1,0,0,0) " +
-                        $"INSERT INTO HistoryOrderChange(MainOrderId, UID, HistoryContent,Type,Created,CreatedBy,Deleted,Active) " +
-                        $"VALUES ({request.MainOrderId}, {currentUser.UserId}, N'{currentUser.UserName} đã thêm mã vận đơn {request.OrdertransactionCode} vào đơn hàng #{request.MainOrderId} bằng công cụ',11, '{currentDate}', N'{currentUser.UserName}',0,1) " +
-                        $"END ";
-                    i++;
+                    foreach (var smalpackge in request.OrdertransactionCodes)
+                    {
+                        sql += $"DECLARE @UID{i} INT = (SELECT UID FROM MainOrder WHERE Id = {request.MainOrderId}) " +
+                            $"DECLARE @MVD{i} INT = (SELECT COUNT(Id) FROM SmallPackage WHERE OrderTransactionCode = '{smalpackge}' AND Deleted = 0 ) " +
+                            $"IF(@UID{i} > 0 AND @MVD{i} < 1) " +
+                            $"BEGIN " +
+                            $" Declare @MainOrderCodeId{i} INT = (SELECT ID from MainOrderCode where Code = {request.MainOrderCode} AND MainOrderId = {request.MainOrderId} ) " +
+                            $"INSERT INTO SmallPackage(MainOrderId, UID, OrderTransactionCode, FeeShip, " +
+                            $"Weight,Status,FloatingStatus,FloatingUserName,FloatingUserPhone,IsTemp,IsLost,IsHelpMoving, " +
+                            $"TotalPrice,StaffTQWarehouse,StaffVNWarehouse,StaffVNOutWarehouse,CurrentPlaceId, " +
+                            $"MainOrderCodeId,DonGia,PriceWeight,Created,CreatedBy,Deleted,Active,IsPayment,PriceVolume,VolumePayment) " +
+                            $"VALUES ({request.MainOrderId}, @UID{i}, N'{smalpackge}', 0, " +
+                            $"0,{(int)StatusSmallPackage.MoiDat},0,'','',0,0,0, " +
+                            $"0,'','','',0, " +
+                            $" @MainOrderCodeId{i} , 0,0,'{currentDate}',N'{currentUser.UserName}',0,1,0,0,0) " +
+                            $"INSERT INTO HistoryOrderChange(MainOrderId, UID, HistoryContent,Type,Created,CreatedBy,Deleted,Active) " +
+                            $"VALUES ({request.MainOrderId}, {currentUser.UserId}, N'{currentUser.UserName} đã thêm mã vận đơn {smalpackge} vào đơn hàng #{request.MainOrderId} bằng công cụ',11, '{currentDate}', N'{currentUser.UserName}',0,1) " +
+                            $"DECLARE @Status{i} INT = (Select Top 1 Status from MainOrder where id = {request.MainOrderId})" +
+                            $"If(@Status{i} < 6) Begin Update MainOrder set Status = 6 where ID = {request.MainOrderId} END " +
+                            $"END ";
+                        i++;
+                    }
                 }
                 unitOfWork.Repository<SmallPackage>().ExecuteNonQuery(sql);
             }

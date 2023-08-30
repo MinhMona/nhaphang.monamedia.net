@@ -22,5 +22,6 @@ namespace NhapHangV2.Interface.Services
         Task<Users> GetUserByIdAndGroupId(int UID, int groupId);
         Task<Users> GetUserByFireBaseIdToken(string idToken);
         Task<Users> CreateUserTransactionMoney(Users users, decimal totalMoney);
+        Task<List<string>> GetUserByOrdererId(int id);
     }
 }

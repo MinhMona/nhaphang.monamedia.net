@@ -75,6 +75,11 @@ namespace NhapHangV2.Service.Services
             sqlParameters.Add(new SqlParameter("@PageIndex", search.PageIndex));
             sqlParameters.Add(new SqlParameter("@PageSize", search.PageSize));
             sqlParameters.Add(new SqlParameter("@OrderBy", search.OrderBy));
+            sqlParameters.Add(new SqlParameter("@Site", search.Site));
+            sqlParameters.Add(new SqlParameter("@HasMVD", search.HasMVD));
+            sqlParameters.Add(new SqlParameter("@MainOrderCode", search.MainOrderCode));
+            sqlParameters.Add(new SqlParameter("@MainOrderId", search.MainOrderId));
+            sqlParameters.Add(new SqlParameter("@Username", search.Username));
             pagedList = await this.unitOfWork.Repository<MainOrderTool>().ExcuteQueryPagingAsync("OrderOfStaff", sqlParameters.ToArray());
             pagedList.PageIndex = search.PageIndex;
             pagedList.PageSize = search.PageSize;
