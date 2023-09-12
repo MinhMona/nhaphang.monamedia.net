@@ -85,17 +85,22 @@ namespace NhapHangV2.API.Controllers.Catalogue
                 throw new KeyNotFoundException("Bao lớn không tồn tại");
             switch (itemModel.Status ?? 0)
             {
-                case (int)StatusBigPackage.DangChuyenVe:
-                    updateSmallPackageResult = await ChangeSmallPackgeStatus(itemModel, (int)StatusSmallPackage.DaVeKhoTQ);
+                case (int)StatusBigPackage.MoiTao:
+                    updateSmallPackageResult = await ChangeSmallPackgeStatus(itemModel, (int)StatusSmallPackage.VeKhoTQ);
                     if (!updateSmallPackageResult)
                         throw new AppException("Cập nhật trạng thái mã vận đơn thất bại");
                     break;
-                case (int)StatusBigPackage.DaNhanHang:
-                    updateSmallPackageResult = await ChangeSmallPackgeStatus(itemModel, (int)StatusSmallPackage.DaVeKhoVN);
+                case (int)StatusBigPackage.XuatKhoTQ:
+                    updateSmallPackageResult = await ChangeSmallPackgeStatus(itemModel, (int)StatusSmallPackage.XuatKhoTQ);
                     if (!updateSmallPackageResult)
                         throw new AppException("Cập nhật trạng thái mã vận đơn thất bại");
                     break;
-                case (int)StatusBigPackage.Huy:
+                case (int)StatusBigPackage.TrongKhoVN:
+                    updateSmallPackageResult = await ChangeSmallPackgeStatus(itemModel, (int)StatusSmallPackage.VeKhoVN);
+                    if (!updateSmallPackageResult)
+                        throw new AppException("Cập nhật trạng thái mã vận đơn thất bại");
+                    break;
+                case (int)StatusBigPackage.DaHuy:
                 default:
                     updateSmallPackageResult = await ChangeSmallPackgeStatus(itemModel, (int)StatusSmallPackage.DaHuy);
                     if (!updateSmallPackageResult)

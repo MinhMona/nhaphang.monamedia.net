@@ -147,7 +147,7 @@ namespace NhapHangV2.Service.Services
                             Content = string.Format("{0} đã được nạp tiền vào tài khoản.", users.UserName),
                             MoneyLeft = users.Wallet,
                             Type = (int?)DauCongVaTru.Cong,
-                            TradeType = (int?)HistoryPayWalletContents.AdminChuyenTien,
+                            TradeType = (int?)HistoryPayWalletContents.NapTien,
                             Deleted = false,
                             Active = true,
                             Created = currentDate,
@@ -176,7 +176,7 @@ namespace NhapHangV2.Service.Services
                         Content = string.Format("{0} đã thanh toán đơn hàng vận chuyển hộ.", users.UserName),
                         MoneyLeft = users.Wallet,
                         Type = (int?)DauCongVaTru.Tru,
-                        TradeType = (int?)HistoryPayWalletContents.ThanhToanVanChuyenHo,
+                        TradeType = (int?)HistoryPayWalletContents.ThanhToanKyGui,
                         Deleted = false,
                         Active = true,
                         Created = currentDate,
@@ -207,7 +207,7 @@ namespace NhapHangV2.Service.Services
                             {
                                 smallPackage.Updated = currentDate;
                                 smallPackage.UpdatedBy = users.UserName;
-                                smallPackage.Status = (int)StatusSmallPackage.DaVeKhoVN;
+                                smallPackage.Status = (int)StatusSmallPackage.VeKhoTQ;
                                 unitOfWork.Repository<SmallPackage>().Update(smallPackage);
 
                                 //await unitOfWork.Repository<SmallPackage>().UpdateFieldsSaveAsync(smallPackage, new Expression<Func<SmallPackage, object>>[]
@@ -403,11 +403,11 @@ namespace NhapHangV2.Service.Services
                     if (tran == null) continue;
 
                     //Cập nhật
-                    smallPackage.Status = (int)StatusSmallPackage.DaThanhToan;
+                    smallPackage.Status = (int)StatusSmallPackage.DaGiao;
                     tran.Status = (int)StatusGeneralTransportationOrder.DaHoanThanh;
                     smallPackage.DateOutWarehouse = tran.DateExport = currentDate;
 
-                    var checkUpdateReq = exportRequestTurn.SmallPackages.Where(e => e.Status < (int)StatusSmallPackage.DaThanhToan).ToList();
+                    var checkUpdateReq = exportRequestTurn.SmallPackages.Where(e => e.Status < (int)StatusSmallPackage.DaGiao).ToList();
 
                     if (!checkUpdateReq.Any()) requestOutStock.Status = 2; //Đã xuất
 
@@ -432,7 +432,7 @@ namespace NhapHangV2.Service.Services
                     var tran = item.TransportationOrders.Where(e => e.SmallPackageId == smallPackage.Id).FirstOrDefault();
 
                     //Cập nhật
-                    smallPackage.Status = (int)StatusSmallPackage.DaThanhToan;
+                    smallPackage.Status = (int)StatusSmallPackage.DaGiao;
                     tran.Status = (int)StatusGeneralTransportationOrder.DaHoanThanh;
                     smallPackage.DateOutWarehouse = tran.DateExport = currentDate;
 

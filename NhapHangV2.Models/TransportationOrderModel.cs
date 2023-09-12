@@ -47,10 +47,12 @@ namespace NhapHangV2.Models
                         return "Hủy";
                     case (int)StatusGeneralTransportationOrder.ChoDuyet:
                         return "Chờ duyệt";
-                    case (int)StatusGeneralTransportationOrder.DaDuyet:
-                        return "Đã duyệt";
+                    case (int)StatusGeneralTransportationOrder.DonMoi:
+                        return "Đơn mới";
                     case (int)StatusGeneralTransportationOrder.VeKhoTQ:
                         return "Đã về kho TQ";
+                    case (int)StatusGeneralTransportationOrder.DangVeVN:
+                        return "Đang về kho VN";
                     case (int)StatusGeneralTransportationOrder.VeKhoVN:
                         return "Đã về kho VN";
                     case (int)StatusGeneralTransportationOrder.DaThanhToan:
@@ -64,6 +66,7 @@ namespace NhapHangV2.Models
                 }
             }
         }
+
 
         /// <summary>
         /// Ghi chú khách hàng

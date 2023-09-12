@@ -275,6 +275,10 @@ namespace NhapHangV2.Entities
         /// </summary>
         public DateTime? TQDate { get; set; }
         /// <summary>
+        /// Ngày xuất TQ
+        /// </summary>
+        public DateTime? ComingVNDate { get; set; }
+        /// <summary>
         /// Ngày về VN
         /// </summary>
         public DateTime? VNDate { get; set; }

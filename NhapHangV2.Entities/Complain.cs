@@ -42,7 +42,7 @@ namespace NhapHangV2.Entities
         /// <summary>
         /// Trạng thái
         /// </summary>
-        public int? Status { get; set; } = (int)StatusComplain.ChuaDuyet;
+        public int? Status { get; set; } = (int)StatusComplain.MoiTao;
 
         /// <summary>
         /// UserName

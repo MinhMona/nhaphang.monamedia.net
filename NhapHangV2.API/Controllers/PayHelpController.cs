@@ -144,7 +144,7 @@ namespace NhapHangV2.API.Controllers
             var item = await this.domainService.GetByIdAsync(itemModel.Id);
             if (item == null)
                 throw new KeyNotFoundException("Item không tồn tại");
-            item.Status = (int)StatusPayHelp.DaXacNhan;
+            item.Status = (int)StatusPayHelp.DaDuyet;
             if (item.ConfirmDate == null)
                 item.ConfirmDate = DateTime.Now;
             success = await this.domainService.UpdateFieldAsync(item, new Expression<Func<PayHelp, object>>[]

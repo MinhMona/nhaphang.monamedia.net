@@ -531,7 +531,7 @@ namespace NhapHangV2.API.Controllers
                         DeliveryAddress = address,
                         ReceiverEmail = email,
                         ReceiverPhone = phone,
-                        Status = (int)StatusOrderContants.ChuaDatCoc,
+                        Status = (int)StatusOrderContants.DonMoi,
                         Deposit = deposit,
                         CurrentCNYVN = currency,
                         TotalPriceVND = Math.Round(totalPriceVND, 0),
@@ -666,12 +666,6 @@ namespace NhapHangV2.API.Controllers
                     success = await orderShopTempService.CreateAsync(item);
                     if (success)
                     {
-                        //Thông báo thêm vào giỏ hàng thành công
-                        var notificationSetting = await notificationSettingService.GetByIdAsync(20);
-                        var notiTemplateUser = await notificationTemplateService.GetByIdAsync(29);
-                        notiTemplateUser.Content = $"Đã thêm {itemModel.quantity} sản phẩm {itemModel.title_origin} vào giỏ hàng";
-                        await sendNotificationService.SendNotification(notificationSetting, notiTemplateUser, itemModel.title_origin, String.Empty, String.Format(Add_Product_Success),
-                            LoginContext.Instance.CurrentUser.UserId, string.Empty, string.Empty);
                         appDomainResult.ResultCode = (int)HttpStatusCode.OK;
                     }
                     else
@@ -710,12 +704,6 @@ namespace NhapHangV2.API.Controllers
                     success = await orderShopTempService.CreateAddSameAsync(item);
                     if (success)
                     {
-                        //Thông báo thêm vào giỏ hàng thành công
-                        var notificationSetting = await notificationSettingService.GetByIdAsync(20);
-                        var notiTemplateUser = await notificationTemplateService.GetByIdAsync(29);
-                        notiTemplateUser.Content = $"Đã thêm giỏ hàng tương tự đơn #{request.Id}";
-                        await sendNotificationService.SendNotification(notificationSetting, notiTemplateUser, String.Empty, String.Empty, String.Format(Add_Product_Success),
-                            LoginContext.Instance.CurrentUser.UserId, string.Empty, string.Empty);
                         appDomainResult.ResultCode = (int)HttpStatusCode.OK;
                     }
                     else

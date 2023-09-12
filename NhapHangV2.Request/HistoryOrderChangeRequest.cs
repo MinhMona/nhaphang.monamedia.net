@@ -10,6 +10,7 @@ namespace NhapHangV2.Request
 {
     public class HistoryOrderChangeRequest : AppDomainRequest
     {
+        public int? TransportationOrderId { get; set; }
         public int? MainOrderId { get; set; }
 
         public int? UID { get; set; }

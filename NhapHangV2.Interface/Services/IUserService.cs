@@ -1,6 +1,7 @@
 ﻿using NhapHangV2.Entities;
 using NhapHangV2.Entities.Search;
 using NhapHangV2.Interface.Services.DomainServices;
+using NhapHangV2.Interface.UnitOfWork;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -22,5 +23,6 @@ namespace NhapHangV2.Interface.Services
         Task<Users> GetUserByIdAndGroupId(int UID, int groupId);
         Task<Users> GetUserByFireBaseIdToken(string idToken);
         Task<Users> CreateUserTransactionMoney(Users users, decimal totalMoney);
+        Task<string> GetSaleName(int? saleId);
     }
 }

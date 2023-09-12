@@ -20,5 +20,6 @@ namespace NhapHangV2.Interface.Services
         List<TransportationsInfor> GetTransportationsInfor(TransportationOrderSearch transportationOrderSearch);
         TransportationsAmount GetTransportationsAmount(int UID);
         Task<bool> UpdateStaffAsync(int transportationOrderID, int salerID);
+        string GetStatusName(int? status);
     }
 }

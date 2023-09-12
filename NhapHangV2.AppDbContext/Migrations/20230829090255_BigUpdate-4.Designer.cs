@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NhapHangV2.AppDbContext;
 
@@ -11,9 +12,10 @@ using NhapHangV2.AppDbContext;
 namespace NhapHangV2.AppDbContext.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230829090255_BigUpdate-4")]
+    partial class BigUpdate4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2757,7 +2759,7 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<bool>("IsRead")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("MainOrderId")
+                    b.Property<int>("MainOrderId")
                         .HasColumnType("int");
 
                     b.Property<string>("NotificationContent")
@@ -2769,7 +2771,7 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<bool>("OfEmployee")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("ToUserId")
+                    b.Property<int>("ToUserId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("Updated")
@@ -2782,7 +2784,7 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<string>("Url")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserGroupId")
+                    b.Property<int>("UserGroupId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

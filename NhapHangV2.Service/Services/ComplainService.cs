@@ -1,30 +1,21 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NhapHangV2.Entities;
-using NhapHangV2.Entities.Catalogue;
+using NhapHangV2.Entities.Configuration;
 using NhapHangV2.Entities.Search;
 using NhapHangV2.Extensions;
 using NhapHangV2.Interface.DbContext;
 using NhapHangV2.Interface.Services;
-using NhapHangV2.Interface.Services.Auth;
 using NhapHangV2.Interface.Services.Catalogue;
 using NhapHangV2.Interface.Services.Configuration;
 using NhapHangV2.Interface.UnitOfWork;
-using NhapHangV2.Request;
-using NhapHangV2.Service.Services.Auth;
-using NhapHangV2.Service.Services.Catalogue;
-using NhapHangV2.Service.Services.Configurations;
 using NhapHangV2.Service.Services.DomainServices;
-using NhapHangV2.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 using static NhapHangV2.Utilities.CoreContants;
 
@@ -36,9 +27,7 @@ namespace NhapHangV2.Service.Services
         protected readonly IUserService userService;
         protected readonly IMainOrderService mainOrderService;
         private readonly INotificationSettingService notificationSettingService;
-        private readonly INotificationTemplateService notificationTemplateService;
         private readonly ISendNotificationService sendNotificationService;
-        private readonly ISMSEmailTemplateService sMSEmailTemplateService;
 
 
         public ComplainService(IServiceProvider serviceProvider, IAppUnitOfWork unitOfWork, IMapper mapper, IAppDbContext Context) : base(unitOfWork, mapper)
@@ -47,10 +36,7 @@ namespace NhapHangV2.Service.Services
             userService = serviceProvider.GetRequiredService<IUserService>();
             mainOrderService = serviceProvider.GetRequiredService<IMainOrderService>();
             notificationSettingService = serviceProvider.GetRequiredService<INotificationSettingService>();
-            notificationTemplateService = serviceProvider.GetRequiredService<INotificationTemplateService>();
             sendNotificationService = serviceProvider.GetRequiredService<ISendNotificationService>();
-            sMSEmailTemplateService = serviceProvider.GetRequiredService<ISMSEmailTemplateService>();
-
         }
 
 
@@ -60,12 +46,14 @@ namespace NhapHangV2.Service.Services
             {
                 try
                 {
+                    string orderType = "";
                     if (item.MainOrderId > 0)
                     {
                         var mainOrder = await unitOfWork.Repository<MainOrder>().GetQueryable().FirstOrDefaultAsync(x => x.Id == item.MainOrderId);
-                        mainOrder.Status = (int)StatusOrderContants.DaKhieuNai;
+                        mainOrder.Status = (int)StatusOrderContants.KhieuNai;
                         mainOrder.IsComplain = true;
-                        mainOrder.ComplainDate = DateTime.Now;
+                        if (mainOrder.ComplainDate == null)
+                            mainOrder.ComplainDate = DateTime.Now;
                         await unitOfWork.Repository<MainOrder>().UpdateFieldsSaveAsync(mainOrder, new Expression<Func<MainOrder, object>>[]
                         {
                             x=>x.Status,
@@ -74,6 +62,10 @@ namespace NhapHangV2.Service.Services
                             x=>x.Updated,
                             x=>x.UpdatedBy,
                         });
+                        if (mainOrder.OrderType != 1)
+                            orderType = $"mua hộ khác {item.MainOrderId}";
+                        else
+                            orderType = $"mua hộ {item.MainOrderId}";
                     }
                     else if (item.TransportationOrderId > 0)
                     {
@@ -87,9 +79,16 @@ namespace NhapHangV2.Service.Services
                             x=>x.Updated,
                             x=>x.UpdatedBy,
                         });
+                        orderType = $"ký gửi {item.TransportationOrderId}";
                     }
                     await unitOfWork.Repository<Complain>().CreateAsync(item);
                     await unitOfWork.SaveAsync();
+
+                    var notificationSetting = await notificationSettingService.GetByIdAsync((int)NotificationSettingId.TrangThaiKhieuNai);
+                    sendNotificationService.SendNotification(notificationSetting,
+                        new List<string>() { item.Id.ToString(), orderType },
+                        new UserNotification());
+
                     await dbContextTransaction.CommitAsync();
                     return true;
                 }
@@ -129,36 +128,30 @@ namespace NhapHangV2.Service.Services
             var item = await this.GetByIdAsync(id);
             if (item == null)
                 throw new KeyNotFoundException("Item không tồn tại");
-            var mainOrder = await mainOrderService.GetByIdAsync(item.MainOrderId ?? 0);
-            if (mainOrder == null)
+            var mainOrder = await unitOfWork.Repository<MainOrder>().GetQueryable().FirstOrDefaultAsync(x => x.Id == item.MainOrderId);
+            var transOrder = await unitOfWork.Repository<TransportationOrder>().GetQueryable().FirstOrDefaultAsync(x => x.Id == item.TransportationOrderId);
+            if (mainOrder == null && transOrder == null)
             {
                 throw new KeyNotFoundException("Không tìm thấy đơn hàng");
             }
             var users = await userService.GetByIdAsync(item.UID ?? 0);
             item.Updated = currentDate;
             item.UpdatedBy = userName;
-            item.Status = status;
             item.Amount = amount;
-            int notiTemplateId = 0;
-            string emailTemplateCode = "";
+            string newStatus = GetStatusName(status);
+            string oldStatus = GetStatusName(item.Status);
             switch (status)
             {
                 case (int)StatusComplain.DaHuy:
                     mainOrder.IsComplain = false;
-                    mainOrder.Status = (int)StatusOrderContants.DaHoanThanh;
+                    mainOrder.Status = (int)StatusOrderContants.HoanThanh;
                     unitOfWork.Repository<MainOrder>().UpdateFieldsSave(mainOrder, new Expression<Func<MainOrder, object>>[]
                     {
                             e => e.IsComplain,
-                            e=>e.Status
+                            e => e.Status
                     });
-                    //Thông báo
-                    notiTemplateId = 4;
                     break;
-                case (int)StatusComplain.ChuaDuyet:
-                    break;
-                case (int)StatusComplain.DangXuLy:
-                    break;
-                case (int)StatusComplain.DaXuLy:
+                case (int)StatusComplain.HoanThanh:
                     decimal? wallet = users.Wallet + amount;
                     //Cập nhật cho account
                     users.Wallet = wallet;
@@ -166,6 +159,29 @@ namespace NhapHangV2.Service.Services
                     users.UpdatedBy = users.UserName;
                     unitOfWork.Repository<Users>().Update(users);
                     //Lịch sử ví tiền
+                    int tradeType = (int)HistoryPayWalletContents.HoanTienKhieuNaiMuaHo;
+                    string content = string.Format("{0} đã được hoàn tiền khiếu nại của đơn mua hộ: {1} vào tài khoản.", userName, item.MainOrderId);
+                    if (mainOrder != null)
+                    {
+                        mainOrder.IsComplain = false;
+                        mainOrder.Status = (int)StatusOrderContants.HoanThanh;
+                        unitOfWork.Repository<MainOrder>().UpdateFieldsSave(mainOrder, new Expression<Func<MainOrder, object>>[]
+                        {
+                            e => e.IsComplain,
+                            e => e.Status
+                        });
+                    }
+                    else if (transOrder != null)
+                    {
+                        transOrder.Status = (int)StatusGeneralTransportationOrder.DaHoanThanh;
+                        unitOfWork.Repository<TransportationOrder>().UpdateFieldsSave(transOrder, new Expression<Func<TransportationOrder, object>>[]
+                        {
+                            e => e.Status
+                        });
+                        tradeType = (int)HistoryPayWalletContents.HoanTienKhieuNaiKyGui;
+                        content = string.Format("{0} đã được hoàn tiền khiếu nại của đơn ký gửi: {1} vào tài khoản.", userName, item.TransportationOrderId);
+
+                    }
                     await unitOfWork.Repository<HistoryPayWallet>().CreateAsync(new HistoryPayWallet
                     {
                         UID = users.Id,
@@ -173,27 +189,18 @@ namespace NhapHangV2.Service.Services
                         MoneyLeft = wallet,
                         Amount = amount,
                         Type = (int)DauCongVaTru.Cong,
-                        TradeType = (int)HistoryPayWalletContents.HoanTienKhieuNai,
-                        Content = string.Format("{0} đã được hoàn tiền khiếu nại của đơn hàng: {1} vào tài khoản.", userName, item.MainOrderId),
+                        TradeType = tradeType,
+                        Content = content,
                         Deleted = false,
                         Active = true,
                         Created = currentDate,
                         CreatedBy = userName
                     });
-                    mainOrder.IsComplain = false;
-                    mainOrder.Status = (int)StatusOrderContants.DaHoanThanh;
-                    unitOfWork.Repository<MainOrder>().UpdateFieldsSave(mainOrder, new Expression<Func<MainOrder, object>>[]
-                    {
-                            e => e.IsComplain,
-                            e=>e.Status
-                    });
-                    //Thông báo
-                    notiTemplateId = 3;
                     break;
                 default:
                     break;
             }
-
+            item.Status = status;
             unitOfWork.Repository<Complain>().UpdateFieldsSave(item, new Expression<Func<Complain, object>>[]
             {
                 e => e.Updated,
@@ -202,16 +209,32 @@ namespace NhapHangV2.Service.Services
                 e => e.Amount
             });
 
-            //Thông báo (Hủy và đã duyệt)
-            if (notiTemplateId > 0)
-            {
-                var notificationSetting = await notificationSettingService.GetByIdAsync(10);
-                var notiTemplate = await notificationTemplateService.GetByIdAsync(notiTemplateId);
-                var emailTemplate = await sMSEmailTemplateService.GetByCodeAsync(emailTemplateCode);
-                await sendNotificationService.SendNotification(notificationSetting, notiTemplate, item.MainOrderId.ToString(), "", string.Format(Complain_List), users.Id, String.Empty, String.Empty);
-            }
+            var notificationSetting = await notificationSettingService.GetByIdAsync((int)NotificationSettingId.TrangThaiKhieuNai);
+            sendNotificationService.SendNotification(notificationSetting,
+                new List<string>() { item.Id.ToString(), userName, oldStatus, newStatus },
+                new UserNotification() { UserId = item.UID });
+
             await unitOfWork.SaveAsync();
             return true;
+        }
+
+        public string GetStatusName(int? status)
+        {
+            switch (status)
+            {
+                case (int)StatusComplain.DaHuy:
+                    return "Đã hủy";
+                case (int)StatusComplain.MoiTao:
+                    return "Mới tạo";
+                case (int)StatusComplain.DaXacNhan:
+                    return "Đã xác nhận";
+                case (int)StatusComplain.DangXuLy:
+                    return "Đang xử lý";
+                case (int)StatusComplain.HoanThanh:
+                    return "Hoàn thành";
+                default:
+                    return "Không xác định";
+            }
         }
     }
 }

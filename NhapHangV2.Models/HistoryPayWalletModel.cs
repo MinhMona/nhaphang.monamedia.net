@@ -55,26 +55,36 @@ namespace NhapHangV2.Models
             {
                 switch (TradeType)
                 {
-                    case (int)HistoryPayWalletContents.DatCoc:
-                        return "Đặt cọc";
-                    case (int)HistoryPayWalletContents.NhanLaiTienDatCoc:
-                        return "Nhận lại tiền cọc";
-                    case (int)HistoryPayWalletContents.ThanhToanHoaDon:
-                        return "Thanh toán hóa đơn";
-                    case (int)HistoryPayWalletContents.AdminChuyenTien:
-                        return "Admin chuyển tiền";
+                    case (int)HistoryPayWalletContents.NapTien:
+                        return "Nạp tiền";
                     case (int)HistoryPayWalletContents.RutTien:
                         return "Rút tiền";
-                    case (int)HistoryPayWalletContents.HuyLenhRutTien:
+                    case (int)HistoryPayWalletContents.DatCocMuaHo:
+                        return "Đặt cọc mua hộ";
+                    case (int)HistoryPayWalletContents.ThanhToanMuaHo:
+                        return "Thanh toán đơn mua hộ";
+                    case (int)HistoryPayWalletContents.ThanhToanKyGui:
+                        return "Thanh toán đơn ký gửi";
+                    case (int)HistoryPayWalletContents.ThanhToanThanhToanHo:
+                        return "Thanh toán đơn thanh toán hộ";
+                    case (int)HistoryPayWalletContents.HoanTienKhieuNaiMuaHo:
+                        return "Hoàn tiền khiếu nại đơn mua hộ";
+                    case (int)HistoryPayWalletContents.HoanTienKhieuNaiKyGui:
+                        return "Hoàn tiền khiếu nại đơn ký gửi";
+                    case (int)HistoryPayWalletContents.HoanTienSanPham:
+                        return "Hoàn tiền sản phẩm";
+                    case (int)HistoryPayWalletContents.HoanTienDaTraMuaHo:
+                        return "Hoàn tiền đã trả đơn mua hộ";
+                    case (int)HistoryPayWalletContents.HoanTienDaTraKyGui:
+                        return "Hoàn tiền đã trả đơn ký gửi";
+                    case (int)HistoryPayWalletContents.HoaHongMuaHo:
+                        return "Hoa hồng đơn mua hộ";
+                    case (int)HistoryPayWalletContents.HoaHongKyGui:
+                        return "Hoa hồng đơn ký gửi";
+                    case (int)HistoryPayWalletContents.HoaHongThanhToanHo:
+                        return "Hoa hồng đơn thanh toán hộ";
+                    case (int)HistoryPayWalletContents.HuyRutTien:
                         return "Hủy lệnh rút tiền";
-                    case (int)HistoryPayWalletContents.HoanTienKhieuNai:
-                        return "Hoàn tiền khiếu nại";
-                    case (int)HistoryPayWalletContents.ThanhToanVanChuyenHo:
-                        return "Thanh toán vận chuyển hộ";
-                    case (int)HistoryPayWalletContents.ThanhToanHo:
-                        return "Thanh toán hộ";
-                    case (int)HistoryPayWalletContents.HoaHong:
-                        return "Hoa hồng";
                     default:
                         return string.Empty;
                 }

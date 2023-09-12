@@ -13,7 +13,6 @@ using NhapHangV2.Interface.Services;
 using NhapHangV2.Interface.Services.Catalogue;
 using NhapHangV2.Models;
 using NhapHangV2.Request;
-using NhapHangV2.Service;
 using NhapHangV2.Utilities;
 using System;
 using System.Collections.Generic;
@@ -56,8 +55,20 @@ namespace NhapHangV2.API.Controllers
             transportationOrderService = serviceProvider.GetRequiredService<ITransportationOrderService>();
             this.hubContext = hubContext;
         }
-
-
+        [HttpPut("assign-big-package")]
+        [Authorize]
+        [AppAuthorize(new int[] { CoreContants.Update })]
+        public async Task<AppDomainResult> AssignBigPackage([FromBody] AssignBigPackageRequest request)
+        {
+            if (!ModelState.IsValid)
+                throw new AppException(ModelState.GetErrorMessage());
+            await smallPackageService.AssignBigPackage(request);
+            return new AppDomainResult()
+            {
+                ResultCode = (int)HttpStatusCode.OK,
+                Success = true,
+            };
+        }
         /// <summary>
         /// Create tool
         /// </summary>
@@ -258,107 +269,39 @@ namespace NhapHangV2.API.Controllers
         [AppAuthorize(new int[] { CoreContants.AddNew })]
         public async Task<AppDomainResult> AddItem([FromBody] SmallPackageRequest itemModel)
         {
-            AppDomainResult appDomainResult = new AppDomainResult();
-            bool success = false;
-            if (ModelState.IsValid)
-            {
-                var item = mapper.Map<SmallPackage>(itemModel);
-                if (item != null)
-                {
-                    DateTime currentDate = DateTime.Now;
-
-                    //Kiểm hàng Trung quốc
-                    if (itemModel.IsWarehouseTQ)
-                    {
-                        item.Status = (int)StatusSmallPackage.DaVeKhoTQ;
-                        item.DateInTQWarehouse = item.DateScanTQ = currentDate;
-                        item.IsTemp = true;
-
-                        // Kiểm tra item có tồn tại chưa?
-                        var smallPackageCheck = await smallPackageService.GetSingleAsync(e => e.OrderTransactionCode == item.OrderTransactionCode);
-                        if (smallPackageCheck != null)
-                            throw new AppException("Mã vận đã tồn tại");
-                        else
-                        {
-                            if (string.IsNullOrEmpty(item.OrderTransactionCode) || string.IsNullOrWhiteSpace(item.OrderTransactionCode))
-                                throw new AppException("Mã vận đơn không hợp lệ");
-                        }
-                        #region Tách mã vận đơn (chưa dùng tới)
-                        //if (smallPackageCheck != null) //Tồn tại
-                        //{
-                        //    item.UID = smallPackageCheck.UID;
-                        //    item.MainOrderId = smallPackageCheck.MainOrderId;
-                        //    item.TransportationOrderId = smallPackageCheck.TransportationOrderId;
-                        //    string newOrderTransactionCode = smallPackageCheck.OrderTransactionCode + "-" + currentDate.Second.ToString();
-                        //    item.OrderTransactionCode = newOrderTransactionCode;
-                        //    if (item.TransportationOrderId > 0)
-                        //    {
-                        //        var orderTrans = await transportationOrderService.GetByIdAsync(item.TransportationOrderId ?? 0);
-                        //        orderTrans.OrderTransactionCode = newOrderTransactionCode;
-                        //        bool updateResult = await transportationOrderService.UpdateFieldAsync(orderTrans, new Expression<Func<TransportationOrder, object>>[]
-                        //        {
-                        //            t => t.OrderTransactionCode
-                        //        });
-                        //        if (!updateResult)
-                        //            throw new AppException("Không thể cập nhật mã vận đơn cho đơn ký gửi");
-                        //    }
-                        //}
-                        //else
-                        //{
-                        //    if (string.IsNullOrEmpty(item.OrderTransactionCode))
-                        //    {
-                        //        item.OrderTransactionCode = currentDate.Year.ToString() +
-                        //            currentDate.Month.ToString() +
-                        //            currentDate.Day.ToString() +
-                        //            currentDate.Hour.ToString() +
-                        //            currentDate.Minute.ToString() +
-                        //            currentDate.Second.ToString() +
-                        //            currentDate.Millisecond.ToString();
-                        //    }
-                        //}
-                        #endregion
-                    }
-
-                    //Kiểm hàng VN
-                    if (itemModel.IsWarehouseVN)
-                    {
-                        item.Status = (int)StatusSmallPackage.DaVeKhoVN;
-                        item.DateInLasteWareHouse = item.DateScanVN = currentDate;
-
-                        // Kiểm tra item có tồn tại chưa?
-                        var smallPackageCheck = await smallPackageService.GetSingleAsync(e => e.OrderTransactionCode == item.OrderTransactionCode);
-                        if (smallPackageCheck != null) //Tồn tại
-                        {
-                            throw new AppException("Mã vận đã tồn tại");
-                        }
-                        else
-                            throw new KeyNotFoundException("Mã vận đơn không tồn tại");
-                    }
-
-                    var exists = await smallPackageService.GetByOrderTransactionCode(itemModel.OrderTransactionCode);
-                    if (exists != null)
-                        throw new AppException(string.Format("Mã vận đơn {0} đã tồn tại", itemModel.OrderTransactionCode));
-                    success = await smallPackageService.CreateAsync(item);
-                    if (success)
-                    {
-                        //Quét mã lại
-                        var items = await smallPackageService.CheckBarCode(new List<SmallPackage> { item }, false);
-
-                        appDomainResult.Data = mapper.Map<List<SmallPackageModel>>(items);
-                        appDomainResult.ResultCode = (int)HttpStatusCode.OK;
-
-
-                    }
-
-                    appDomainResult.Success = success;
-                }
-                else
-                    throw new KeyNotFoundException("Item không tồn tại");
-            }
-            else
+            if (!ModelState.IsValid)
             {
                 throw new AppException(ModelState.GetErrorMessage());
             }
+            AppDomainResult appDomainResult = new AppDomainResult();
+            bool success = false;
+            var exists = await smallPackageService.GetByOrderTransactionCode(itemModel.OrderTransactionCode);
+            if (exists != null)
+                throw new AppException(string.Format("Mã vận đơn {0} đã tồn tại", itemModel.OrderTransactionCode));
+            var item = mapper.Map<SmallPackage>(itemModel);
+            DateTime currentDate = DateTime.Now;
+            //Kiểm hàng Trung quốc
+            if (itemModel.IsWarehouseTQ)
+            {
+                item.Status = (int)StatusSmallPackage.VeKhoTQ;
+                item.DateInTQWarehouse = item.DateScanTQ = currentDate;
+                item.IsTemp = true;
+            }
+            //Kiểm hàng VN
+            if (itemModel.IsWarehouseVN)
+            {
+                item.Status = (int)StatusSmallPackage.VeKhoVN;
+                item.DateInLasteWareHouse = item.DateScanVN = currentDate;
+            }
+            success = await smallPackageService.CreateAsync(item);
+            if (success)
+            {
+                //Quét mã lại
+                var items = await smallPackageService.CheckBarCode(new List<SmallPackage> { item }, false);
+                appDomainResult.Data = mapper.Map<List<SmallPackageModel>>(items);
+                appDomainResult.ResultCode = (int)HttpStatusCode.OK;
+            }
+            appDomainResult.Success = success;
             return appDomainResult;
         }
 
@@ -493,7 +436,7 @@ namespace NhapHangV2.API.Controllers
                 using Stream streamToWriteTo = System.IO.File.Open(fileToWriteTo, FileMode.Create);
                 await streamToReadFrom.CopyToAsync(streamToWriteTo);
 
-                appDomainImportResult = await smallPackageService.ImportTemplateFile(streamToWriteTo, request.BigPackageId, LoginContext.Instance.CurrentUser.UserName);
+                appDomainImportResult = await smallPackageService.ImportTemplateFile(streamToWriteTo, request.BigPackageId, LoginContext.Instance.CurrentUser.UserName, request.Type);
                 System.IO.File.Delete(fileToWriteTo);
                 string fileInputName = request.FileURL.Split("/").LastOrDefault().ToString();
                 string fileInputNamePath = Path.Combine(webRoot, CoreContants.UPLOAD_FOLDER_NAME, fileInputName);
@@ -740,5 +683,6 @@ namespace NhapHangV2.API.Controllers
     {
         public string FileURL { get; set; }
         public int? BigPackageId { get; set; }
+        public int? Type { get; set; }
     }
 }

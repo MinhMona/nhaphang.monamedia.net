@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,12 +27,12 @@ namespace NhapHangV2.Entities
         /// <summary>
         /// Gửi đến người dùng
         /// </summary>
-        public int ToUserId { get; set; } = 0;
+        public int? ToUserId { get; set; }
 
         /// <summary>
         /// Gửi đến nhóm người dùng
         /// </summary>
-        public int UserGroupId { get; set; } = 0;
+        public int? UserGroupId { get; set; }
 
         /// <summary>
         /// Link Url
@@ -41,11 +42,16 @@ namespace NhapHangV2.Entities
         /// <summary>
         /// Mã đơn hàng
         /// </summary>
-        public int MainOrderId { get; set; } = 0;
+        public int? MainOrderId { get; set; }
 
         /// <summary>
         /// Là thông báo của nhân viên
         /// </summary>
         public bool OfEmployee { get; set; }
+
+        [NotMapped]
+        public string EmailSubject { get; set; }
+        [NotMapped]
+        public string EmailContent { get; set; }
     }
 }

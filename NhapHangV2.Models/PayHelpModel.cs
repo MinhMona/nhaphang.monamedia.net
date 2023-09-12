@@ -68,16 +68,16 @@ namespace NhapHangV2.Models
                     return "Đang hoàn thiện";
                 switch (Status)
                 {
-                    case (int)StatusPayHelp.ChuaThanhToan:
+                    case (int)StatusPayHelp.DonHuy:
+                        return "Đơn hủy";
+                    case (int)StatusPayHelp.ChoDuyet:
                         return "Chờ duyệt";
+                    case (int)StatusPayHelp.DaDuyet:
+                        return "Đã duyệt";
                     case (int)StatusPayHelp.DaThanhToan:
                         return "Đã thanh toán";
-                    case (int)StatusPayHelp.DaHuy:
-                        return "Đã hủy";
                     case (int)StatusPayHelp.DaHoanThanh:
                         return "Đã hoàn thành";
-                    case (int)StatusPayHelp.DaXacNhan:
-                        return "Xác nhận";
                     default:
                         return string.Empty;
                 }

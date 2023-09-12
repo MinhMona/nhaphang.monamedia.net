@@ -43,20 +43,22 @@ namespace NhapHangV2.Models
         /// <summary>
         /// Tên trạng thái
         /// </summary>
-        public string StatusName 
+        public string StatusName
         {
             get
             {
                 switch (Status)
                 {
-                    case (int)StatusComplain.ChuaDuyet:
-                        return "Chưa duyệt";
-                    case (int)StatusComplain.DangXuLy:
-                        return "Đang xử lý";
-                    case (int)StatusComplain.DaXuLy:
-                        return "Đã xử lý";
                     case (int)StatusComplain.DaHuy:
                         return "Đã hủy";
+                    case (int)StatusComplain.MoiTao:
+                        return "Mới tạo";
+                    case (int)StatusComplain.DaXacNhan:
+                        return "Đã xác nhận";
+                    case (int)StatusComplain.DangXuLy:
+                        return "Đang xử lý";
+                    case (int)StatusComplain.HoanThanh:
+                        return "Hoàn thành";
                     default:
                         return string.Empty;
                 }
@@ -76,6 +78,6 @@ namespace NhapHangV2.Models
         /// <summary>
         /// Id đơn ký gửi
         /// </summary>
-        public int? TransportationOrderId { get; set; } 
+        public int? TransportationOrderId { get; set; }
     }
 }

@@ -12,6 +12,14 @@ namespace NhapHangV2.Models
     public class SmallPackageModel : AppDomainModel
     {
         /// <summary>
+        /// Nhân viên xuất kho TQ
+        /// </summary>
+        public string StaffOutTQ { get; set; } = string.Empty;
+        /// <summary>
+        /// Ngày xuất kho TQ
+        /// </summary>
+        public DateTime? DateOutTQ { get; set; }
+        /// <summary>
         /// Khối tính tiền
         /// </summary>
         public decimal? VolumePayment { get; set; }
@@ -109,14 +117,14 @@ namespace NhapHangV2.Models
                 {
                     case (int)StatusSmallPackage.DaHuy:
                         return "Đã hủy";
-                    case (int)StatusSmallPackage.MoiDat:
-                        return "Mới đặt";
-                    case (int)StatusSmallPackage.DaVeKhoTQ:
+                    case (int)StatusSmallPackage.MoiTao:
+                        return "Mới tạo";
+                    case (int)StatusSmallPackage.VeKhoTQ:
                         return "Đã về kho TQ";
-                    case (int)StatusSmallPackage.DaVeKhoVN:
+                    case (int)StatusSmallPackage.XuatKhoTQ:
+                        return "Xuất kho TQ";
+                    case (int)StatusSmallPackage.VeKhoVN:
                         return "Đã về kho VN";
-                    case (int)StatusSmallPackage.DaThanhToan:
-                        return "Đã thanh toán";
                     case (int)StatusSmallPackage.DaGiao:
                         return "Đã giao";
                     default:

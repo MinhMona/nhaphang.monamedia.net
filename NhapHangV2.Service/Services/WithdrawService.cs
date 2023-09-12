@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NhapHangV2.Entities;
+using NhapHangV2.Entities.Configuration;
 using NhapHangV2.Entities.Search;
 using NhapHangV2.Extensions;
 using NhapHangV2.Interface.Services;
@@ -25,14 +26,12 @@ namespace NhapHangV2.Service.Services
         protected readonly IUserService userService;
         protected readonly IUserInGroupService userInGroupService;
         private readonly INotificationSettingService notificationSettingService;
-        private readonly INotificationTemplateService notificationTemplateService;
         private readonly ISendNotificationService sendNotificationService;
         public WithdrawService(IServiceProvider serviceProvider, IAppUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
         {
             userService = serviceProvider.GetRequiredService<IUserService>();
             userInGroupService = serviceProvider.GetRequiredService<IUserInGroupService>();
             notificationSettingService = serviceProvider.GetRequiredService<INotificationSettingService>();
-            notificationTemplateService = serviceProvider.GetRequiredService<INotificationTemplateService>();
             sendNotificationService = serviceProvider.GetRequiredService<ISendNotificationService>();
         }
 
@@ -75,9 +74,6 @@ namespace NhapHangV2.Service.Services
             var user = await userService.GetByIdAsync(LoginContext.Instance.CurrentUser.UserId); //User
 
             if (user == null) throw new KeyNotFoundException("Không tìm thấy User");
-
-            var notificationSettingRutTien = await notificationSettingService.GetByIdAsync(4);
-
             switch (status)
             {
                 case (int)WalletStatus.DaDuyet: //Duyệt
@@ -90,11 +86,11 @@ namespace NhapHangV2.Service.Services
                                 //Cập nhật status Đã duyệt
                                 item.Status = (int)WalletStatus.DaDuyet;
                                 unitOfWork.Repository<Withdraw>().Update(item);
-
                                 //Thông báo đã duyệt yêu cầu rút cho user
-                                var notiTemplateRutTien = await notificationTemplateService.GetByIdAsync(6);
-                                await sendNotificationService.SendNotification(notificationSettingRutTien, notiTemplateRutTien, string.Empty, "", String.Format(Transaction_History), item.UID, string.Empty, string.Empty);
-                                //await sendNotificationService.SendNotification(notificationSettingRutTien, notiTemplateRutTien, string.Empty, "", "/user/history-transaction-vnd", item.UID, string.Empty, string.Empty);
+                                var notiSettingRutTien = await notificationSettingService.GetByIdAsync((int)NotificationSettingId.DuyetYeuCauRut);
+                                sendNotificationService.SendNotification(notiSettingRutTien,
+                                    new List<string>() { user.UserName, item.Id.ToString() },
+                                    new UserNotification() { });
                             }
                             else
                             {
@@ -126,16 +122,17 @@ namespace NhapHangV2.Service.Services
                                 Content = "Hủy lệnh rút tiền",
                                 MoneyLeft = userRequest.Wallet, //Vì ở trên có += rồi nên lấy thằng này luôn
                                 Type = (int)DauCongVaTru.Cong,
-                                TradeType = (int)HistoryPayWalletContents.HuyLenhRutTien,
+                                TradeType = (int)HistoryPayWalletContents.HuyRutTien,
                             });
                             item.Status = (int)WalletStatus.Huy;
                             unitOfWork.Repository<Withdraw>().Update(item);
 
                             if (loginUser.UserGroupId != (int)PermissionTypes.User)
                             {
-                                var notiTemplateRutTien = await notificationTemplateService.GetByIdAsync(7);
-                                await sendNotificationService.SendNotification(notificationSettingRutTien, notiTemplateRutTien, string.Empty, "", String.Format(Transaction_History), user.Id, string.Empty, string.Empty);
-                                //await sendNotificationService.SendNotification(notificationSettingRutTien, notiTemplateRutTien, string.Empty, "", "/user/history-transaction-vnd", user.Id, string.Empty, string.Empty);
+                                var notiSettingRutTien = await notificationSettingService.GetByIdAsync((int)NotificationSettingId.HuyYeuCauRut);
+                                sendNotificationService.SendNotification(notiSettingRutTien,
+                                    new List<string>() { item.Id.ToString(), user.UserName  },
+                                    new UserNotification() { UserId = item.UID });
                             }
                             break;
                         default:
@@ -155,21 +152,15 @@ namespace NhapHangV2.Service.Services
         public override async Task<bool> CreateAsync(Withdraw item)
         {
             var user = await userService.GetByIdAsync(item.UID ?? 0);
+            if (user == null) throw new KeyNotFoundException("Không tìm thấy User");
+
             var currentUser = LoginContext.Instance.CurrentUser;
             item.Created = DateTime.Now;
             if (item.UID != currentUser.UserId)
             {
-                item.UpdatedBy = item.CreatedBy = currentUser.UserName;
+                item.UpdatedBy = currentUser.UserName;
                 item.Updated = DateTime.Now;
             }
-            else
-            {
-                item.CreatedBy = user.UserName;
-            }
-            if (user == null) throw new KeyNotFoundException("Không tìm thấy User");
-
-            //item.UID = user.Id;
-
             switch (item.Type)
             {
                 case (int)WithdrawTypes.RutTien: //Rút tiền (VNĐ)
@@ -186,17 +177,17 @@ namespace NhapHangV2.Service.Services
                     {
                         UID = user.Id,
                         Amount = item.Amount,
-                        Content = item.Note, //string.Format("{0} đã được nạp tiền tệ vào tài khoản", user.UserName),
+                        Content = item.Note,
                         MoneyLeft = user.Wallet,
                         Type = (int)DauCongVaTru.Tru,
                         TradeType = (int)HistoryPayWalletContents.RutTien
                     });
 
                     //Thông báo tới admin và manager có yêu cầu rút tiền
-                    var notificationSettingRutTien = await notificationSettingService.GetByIdAsync(4);
-                    var notiTemplateRutTien = await notificationTemplateService.GetByIdAsync(5);
-                    await sendNotificationService.SendNotification(notificationSettingRutTien, notiTemplateRutTien, string.Empty, String.Format(Sub_Money_Admin), "", null, string.Empty, string.Empty);
-                    //await sendNotificationService.SendNotification(notificationSettingRutTien, notiTemplateRutTien, string.Empty, "/manager/money/withdrawal-history", "", null, string.Empty, string.Empty);
+                    var notificationSettingRutTien = await notificationSettingService.GetByIdAsync((int)NotificationSettingId.YeuCauRut);
+                    sendNotificationService.SendNotification(notificationSettingRutTien,
+                        new List<string>() { user.UserName, item.Amount.ToString() },
+                        new UserNotification());
                     break;
                 default:
                     break;

@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NhapHangV2.Entities;
+using NhapHangV2.Entities.Configuration;
 using NhapHangV2.Entities.DomainEntities;
 using NhapHangV2.Entities.Search;
+using NhapHangV2.Extensions;
 using NhapHangV2.Interface.DbContext;
 using NhapHangV2.Interface.Services;
 using NhapHangV2.Interface.Services.Auth;
@@ -29,9 +31,8 @@ namespace NhapHangV2.Service.Services
         protected readonly IConfigurationsService configurationsService;
         protected readonly IUserInGroupService userInGroupService;
         private readonly INotificationSettingService notificationSettingService;
-        private readonly INotificationTemplateService notificationTemplateService;
         private readonly ISendNotificationService sendNotificationService;
-        private readonly ISMSEmailTemplateService sMSEmailTemplateService;
+
 
         public OrderService(IAppUnitOfWork unitOfWork, IMapper mapper, IServiceProvider serviceProvider, IAppDbContext Context) : base(unitOfWork, mapper)
         {
@@ -40,9 +41,7 @@ namespace NhapHangV2.Service.Services
             configurationsService = serviceProvider.GetRequiredService<IConfigurationsService>();
             userInGroupService = serviceProvider.GetRequiredService<IUserInGroupService>();
             notificationSettingService = serviceProvider.GetRequiredService<INotificationSettingService>();
-            notificationTemplateService = serviceProvider.GetRequiredService<INotificationTemplateService>();
             sendNotificationService = serviceProvider.GetRequiredService<ISendNotificationService>();
-            sMSEmailTemplateService = serviceProvider.GetRequiredService<ISMSEmailTemplateService>();
 
         }
 
@@ -58,6 +57,7 @@ namespace NhapHangV2.Service.Services
             {
                 try
                 {
+                    var currentUser = LoginContext.Instance.CurrentUser;
                     unitOfWork.Repository<Order>().Update(item);
                     //Lịch sử thay đổi của đơn hàng
                     await unitOfWork.Repository<HistoryOrderChange>().CreateAsync(item.HistoryOrderChanges);
@@ -179,9 +179,6 @@ namespace NhapHangV2.Service.Services
                     //Tính lại phí bảo hiểm
                     if (mainOrder.IsInsurance == true)
                     {
-                        //Bảo hiểm = tổng tiền hóa đơn * %
-                        //mainOrder.TotalPriceVND -= mainOrder.InsuranceMoney;
-                        //mainOrder.InsuranceMoney = (mainOrder.TotalPriceVND * mainOrder.InsurancePercent) / 100; 
                         mainOrder.InsuranceMoney = (mainOrder.PriceVND * mainOrder.InsurancePercent) / 100; //Bảo hiểm = tiền mua hàng * %
                     }
                     //Tính tổng tiền VNĐ
@@ -215,7 +212,7 @@ namespace NhapHangV2.Service.Services
                             {
                                 MainOrderId = mainOrder.Id,
                                 UID = user.Id,
-                                Status = (int?)StatusPayOrderHistoryContants.SanPhamHetHang,
+                                Status = (int?)StatusPayOrderHistoryContants.HoanTienSanPham,
                                 Amount = moneyLeft,
                                 Type = (int?)TypePayOrderHistoryContants.ViDienTu
                             });
@@ -229,33 +226,19 @@ namespace NhapHangV2.Service.Services
                                 Content = string.Format("Sản phẩm đơn hàng: {0} {1}", mainOrder.Id, item.ProductStatus == 2 ? "hết hàng" : "giảm giá"),
                                 MoneyLeft = user.Wallet,
                                 Type = (int?)DauCongVaTru.Cong,
-                                TradeType = (int?)HistoryPayWalletContents.NhanLaiTienDatCoc,
+                                TradeType = (int?)HistoryPayWalletContents.HoanTienSanPham,
                             });
-
-                            //Thông báo
-                            //Có cập nhật mới về sản phẩm đơn hàng của bạn
-                            var notiTemplate = await notificationTemplateService.GetByIdAsync(11);
-                            var notificationSetting = await notificationSettingService.GetByIdAsync(19);
-                            var emailTemplate = await sMSEmailTemplateService.GetByCodeAsync("UCNMDH");
-                            string subject = emailTemplate.Subject;
-                            string emailContent = string.Format(emailTemplate.Body);
-                            await sendNotificationService.SendNotification(notificationSetting, notiTemplate, item.Id.ToString(), "", String.Format(Detail_MainOrder, item.Id), item.UID, subject, emailContent);
-
                             mainOrder.Deposit = mainOrder.AmountDeposit;
                         }
                         else
                         {
                             mainOrder.AmountDeposit = mainOrder.Deposit;
-                            mainOrder.Status = mainOrder.Deposit == mainOrder.AmountDeposit ? (int)StatusOrderContants.DaDatCoc : (int)StatusOrderContants.ChuaDatCoc;
                         }
                     }
                     else
                     {
-                        mainOrder.Status = (int)StatusOrderContants.ChuaDatCoc;
                         mainOrder.Deposit = 0;
                     }
-
-                    if (mainOrder.TotalPriceVND == 0) mainOrder.Status = (int)StatusOrderContants.ChuaDatCoc;
 
                     mainOrder.IsUpdatePrice = true;
                     mainOrder.AmountDeposit = Math.Round((mainOrder.AmountDeposit ?? 0), 0);

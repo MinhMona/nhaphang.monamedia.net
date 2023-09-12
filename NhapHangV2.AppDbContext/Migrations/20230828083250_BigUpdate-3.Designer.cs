@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NhapHangV2.AppDbContext;
 
@@ -11,9 +12,10 @@ using NhapHangV2.AppDbContext;
 namespace NhapHangV2.AppDbContext.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230828083250_BigUpdate-3")]
+    partial class BigUpdate3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -627,34 +629,10 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("EmailContent")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("EmailSubject")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsEmailAccountant")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsEmailAdmin")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsEmailOrderer")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsEmailSaler")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsEmailStorekeepers")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsEmailUser")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsEmailWarehoue")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsEmailWarehoueFrom")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsNotifyAccountant")
@@ -681,23 +659,8 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<bool>("IsNotifyWarehoueFrom")
                         .HasColumnType("bit");
 
-                    b.Property<string>("ManagerContent")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ManagerEmailContent")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ManagerEmailSubject")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ManagerUrl")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("Type")
-                        .HasColumnType("int");
 
                     b.Property<DateTime?>("Updated")
                         .HasColumnType("datetime2");
@@ -705,12 +668,6 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<string>("UpdatedBy")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("UserContent")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserUrl")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -2757,7 +2714,7 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<bool>("IsRead")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("MainOrderId")
+                    b.Property<int>("MainOrderId")
                         .HasColumnType("int");
 
                     b.Property<string>("NotificationContent")
@@ -2769,7 +2726,7 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<bool>("OfEmployee")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("ToUserId")
+                    b.Property<int>("ToUserId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("Updated")
@@ -2782,7 +2739,7 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<string>("Url")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserGroupId")
+                    b.Property<int>("UserGroupId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using NhapHangV2.Entities;
+using NhapHangV2.Entities.Configuration;
 using NhapHangV2.Entities.Search;
 using NhapHangV2.Extensions;
 using NhapHangV2.Interface.Services;
@@ -16,6 +17,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Net;
 using System.Threading.Tasks;
+using static NhapHangV2.Utilities.CoreContants;
 
 namespace NhapHangV2.API.Controllers
 {
@@ -53,10 +55,10 @@ namespace NhapHangV2.API.Controllers
                 success = await contactUsService.CreateAsync(item);
                 if (success)
                 {
-                    var notificationSetting = await notificationSettingService.GetByIdAsync(21);
-                    var notiTemplateUser = await notificationTemplateService.GetByIdAsync(30);
-                    await sendNotificationService.SendNotification(notificationSetting, notiTemplateUser, null, string.Format(CoreContants.New_Contact_Admin), String.Empty,
-                        null, string.Empty, string.Empty);
+                    var notificationSetting = await notificationSettingService.GetByIdAsync((int)NotificationSettingId.LienHe);
+                    sendNotificationService.SendNotification(notificationSetting,
+                            new List<string>() ,
+                            new UserNotification());
                     appDomainResult.ResultCode = (int)HttpStatusCode.OK;
                     appDomainResult.Data = item;
                 }

@@ -254,7 +254,7 @@ namespace NhapHangV2.Service.Services
         {
             //Còn cập nhật Tên người nhận hàng, Ghi chú nữa đó OutStockSession
             DateTime currentDate = DateTime.Now;
-            var userName = LoginContext.Instance.CurrentUser.UserName;
+            var currentUser = LoginContext.Instance.CurrentUser;
             var item = await this.GetByIdAsync(id);
             if (item == null)
                 throw new KeyNotFoundException("Item không tồn tại");
@@ -262,20 +262,15 @@ namespace NhapHangV2.Service.Services
             var user = await unitOfWork.Repository<Users>().GetQueryable().Where(e => !e.Deleted && e.Id == item.UID).FirstOrDefaultAsync();
             if (user == null)
                 throw new KeyNotFoundException("User không tồn tại");
-
             var wallet = user.Wallet;
-
             //Tổng tiền thanh toán
             decimal? totalMustPay = item.TotalPay;
             if (isPaymentWallet && wallet < totalMustPay)
                 throw new AppException("Không đủ tiền trong tài khoản! Vui lòng nạp thêm tiền");
-
             switch (status)
             {
                 case 2: //Thanh toán
-
                     var mainOrderIds = new List<int>();
-
                     using (var dbContextTransaction = Context.Database.BeginTransaction())
                     {
                         try
@@ -283,18 +278,16 @@ namespace NhapHangV2.Service.Services
                             if (!isPaymentWallet) //Thanh toán trực tiếp (nạp tiền vô rồi trừ)
                             {
                                 user.Wallet += totalMustPay;
-
                                 await unitOfWork.Repository<AdminSendUserWallet>().CreateAsync(new AdminSendUserWallet()
                                 {
                                     UID = item.UID,
                                     Amount = totalMustPay,
                                     Updated = DateTime.UtcNow.AddHours(7),
-                                    UpdatedBy = userName,
+                                    UpdatedBy = currentUser.UserName,
                                     Status = (int)WalletStatus.DaDuyet,
                                     BankId = 100, //Đặt đại
                                     TradeContent = string.Format("{0} đã được nạp tiền vào tài khoản", user.UserName),
                                 });
-
                                 await unitOfWork.Repository<HistoryPayWallet>().CreateAsync(new HistoryPayWallet
                                 {
                                     UID = user.Id,
@@ -303,7 +296,7 @@ namespace NhapHangV2.Service.Services
                                     Content = string.Format("{0} đã được nạp tiền vào tài khoản.", user.UserName),
                                     MoneyLeft = user.Wallet,
                                     Type = (int?)DauCongVaTru.Cong,
-                                    TradeType = (int?)HistoryPayWalletContents.AdminChuyenTien,
+                                    TradeType = (int?)HistoryPayWalletContents.NapTien,
                                 });
                             }
 
@@ -317,7 +310,7 @@ namespace NhapHangV2.Service.Services
                                 Content = string.Format($"{user.UserName} đã thanh toán phiên xuất kho #{id}"),
                                 MoneyLeft = user.Wallet,
                                 Type = (int?)DauCongVaTru.Tru,
-                                TradeType = (int?)HistoryPayWalletContents.ThanhToanHoaDon,
+                                TradeType = (int?)HistoryPayWalletContents.ThanhToanXuatKho,
                             });
                             unitOfWork.Repository<Users>().Update(user);
 
@@ -338,6 +331,15 @@ namespace NhapHangV2.Service.Services
 
                                 if (transOrder != null)
                                 {
+                                    //Lịch sử đơn hàng thay đổi
+                                    await unitOfWork.Repository<HistoryOrderChange>().CreateAsync(new HistoryOrderChange()
+                                    {
+                                        TransportationOrderId = transOrder.Id,
+                                        UID = LoginContext.Instance.CurrentUser.UserId,
+                                        HistoryContent = $"{currentUser.UserName} đã đổi trạng thái của đơn hàng ID là: {transOrder.Id}" +
+                                        $"từ: {transportationOrderService.GetStatusName(transOrder.Status)}, sang: {transportationOrderService.GetStatusName((int)StatusGeneralTransportationOrder.DaThanhToan)}.",
+                                        Type = (int?)TypeHistoryOrderChange.TienDatCoc
+                                    });
                                     transOrder.Status = (int?)StatusGeneralTransportationOrder.DaThanhToan;
                                     if (transOrder.PaidDate == null)
                                         transOrder.PaidDate = DateTime.Now;
@@ -349,7 +351,7 @@ namespace NhapHangV2.Service.Services
                                 //smallPackage.Status = (int)StatusSmallPackage.DaThanhToan;
                                 smallPackage.IsPayment = true;
                                 smallPackage.DateOutWarehouse = currentDate;
-                                smallPackage.StaffVNOutWarehouse = userName;
+                                smallPackage.StaffVNOutWarehouse = currentUser.UserName;
                                 unitOfWork.Repository<SmallPackage>().Update(smallPackage);
                                 await unitOfWork.SaveAsync();
                             }
@@ -363,7 +365,7 @@ namespace NhapHangV2.Service.Services
                                 {
                                     MainOrderId = mo.Id,
                                     UID = LoginContext.Instance.CurrentUser.UserId,
-                                    HistoryContent = String.Format("{0} đã đổi trạng thái của đơn hàng ID là: {1} từ: Đã về kho đích, sang: Khách đã thanh toán.", userName, mo.Id),
+                                    HistoryContent = String.Format("{0} đã đổi trạng thái của đơn hàng ID là: {1} từ: Đã về kho đích, sang: Khách đã thanh toán.", currentUser.UserName, mo.Id),
                                     Type = (int?)TypeHistoryOrderChange.TienDatCoc
                                 });
 
@@ -377,9 +379,10 @@ namespace NhapHangV2.Service.Services
                                     Type = (int?)DauCongVaTru.Tru
                                 });
 
-                                mo.Status = (int?)StatusOrderContants.KhachDaThanhToan;
+                                mo.Status = (int?)StatusOrderContants.DaThanhToan;
                                 mo.Deposit = mo.TotalPriceVND;
-                                mo.PayDate = currentDate;
+                                if (mo.PayDate == null)
+                                    mo.PayDate = currentDate;
 
                                 //Detach
                                 unitOfWork.Repository<MainOrder>().Update(mo);
@@ -387,14 +390,6 @@ namespace NhapHangV2.Service.Services
                                 unitOfWork.Repository<MainOrder>().Detach(mo);
 
                             }
-                            await unitOfWork.Repository<AccountantOutStockPayment>().CreateAsync(new AccountantOutStockPayment()
-                            {
-                                OutStockSessionID = item.Id,
-                                UID = item.UID,
-                                TotalPrice = totalMustPay,
-                                Note = isPaymentWallet ? "Thanh toán bằng ví điện tử" : "Thanh toán bằng tiền mặt"
-                            });
-
                             item.Type = isPaymentWallet ? 1 : 2;
                             item.Status = 2; //Đã xử lý
                             unitOfWork.Repository<OutStockSession>().Update(item);
@@ -505,7 +500,7 @@ namespace NhapHangV2.Service.Services
                             HistoryContent = String.Format("{0} đã đổi trạng thái của đơn hàng ID là: {1} từ: Khách đã thanh toán, sang: Đã hoàn thành.", LoginContext.Instance.CurrentUser.UserName, mainOrder.Id),
                             Type = (int?)TypeHistoryOrderChange.TienDatCoc
                         });
-                        mainOrder.Status = (int)StatusOrderContants.DaHoanThanh;
+                        mainOrder.Status = (int)StatusOrderContants.HoanThanh;
                         unitOfWork.Repository<MainOrder>().Update(mainOrder);
                     }
                 }
@@ -518,6 +513,15 @@ namespace NhapHangV2.Service.Services
                         continue;
                     else
                     {
+                        //Lịch sử đơn hàng thay đổi
+                        await unitOfWork.Repository<HistoryOrderChange>().CreateAsync(new HistoryOrderChange()
+                        {
+                            TransportationOrderId = trans.Id,
+                            UID = LoginContext.Instance.CurrentUser.UserId,
+                            HistoryContent = $"{LoginContext.Instance.CurrentUser.UserName} đã đổi trạng thái của đơn hàng ID là: {trans.Id} " +
+                            $"từ: {transportationOrderService.GetStatusName(trans.Status)}, sang: {transportationOrderService.GetStatusName((int)StatusGeneralTransportationOrder.DaHoanThanh)}.",
+                            Type = (int?)TypeHistoryOrderChange.TienDatCoc
+                        });
                         trans.Status = (int)StatusGeneralTransportationOrder.DaHoanThanh;
                         if (trans.CompleteDate == null)
                             trans.CompleteDate = DateTime.Now;

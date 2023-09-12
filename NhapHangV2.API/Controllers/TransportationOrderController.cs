@@ -149,9 +149,9 @@ namespace NhapHangV2.API.Controllers
                 if (user.Currency > 0)
                     currency = user.Currency ?? 0;
 
-                foreach (var list in itemModel.SmallPackages)
+                List<SmallPackageRequest> listSmallPackages = itemModel.SmallPackages.DistinctBy(x => x.OrderTransactionCode).ToList();
+                foreach (var list in listSmallPackages)
                 {
-
                     TransportationOrder data = new TransportationOrder();
                     data.UID = user.Id;
                     data.Currency = currency;
@@ -182,14 +182,13 @@ namespace NhapHangV2.API.Controllers
                     var getSmallCheck = await smallPackageService.GetSingleAsync(x => !x.Deleted && x.Active
                         && (x.OrderTransactionCode.Equals(list.OrderTransactionCode))
                     );
-                    // Kiểm tra có tồn tại mã vận đơn hay chưa?
+                    //// Kiểm tra có tồn tại mã vận đơn hay chưa?
                     var messageGetSmallCheck = await smallPackageService.GetExistItemMessage(getSmallCheck);
                     if (!string.IsNullOrEmpty(messageGetSmallCheck))
                         throw new KeyNotFoundException(messageGetSmallCheck);
                     var smallPackgeExist = await smallPackageService.GetByOrderTransactionCode(list.OrderTransactionCode);
                     if (smallPackgeExist != null)
                         throw new AppException($"Mã vận đơn {list.OrderTransactionCode} của đơn ký gửi đã tồn tại");
-
                     transportationOrders.Add(data);
                 }
 
@@ -290,7 +289,9 @@ namespace NhapHangV2.API.Controllers
             listTrans.Add(trans);
             success = await transportationOrderService.UpdateAsync(listTrans, (int)StatusGeneralTransportationOrder.Huy, 0);
             if (success)
+            {
                 appDomainResult.ResultCode = (int)HttpStatusCode.OK;
+            }
             else
                 throw new Exception("Lỗi trong quá trình xử lý");
             appDomainResult.Success = success;
