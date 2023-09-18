@@ -84,7 +84,7 @@ namespace NhapHangV2.Service.Services
                             $"INSERT INTO HistoryOrderChange(MainOrderId, UID, HistoryContent,Type,Created,CreatedBy,Deleted,Active) " +
                             $"VALUES ({request.MainOrderId}, {currentUser.UserId}, N'{currentUser.UserName} đã thêm mã vận đơn {smalpackge} vào đơn hàng #{request.MainOrderId} bằng công cụ',11, '{currentDate}', N'{currentUser.UserName}',0,1) " +
                             $"DECLARE @Status{i} INT = (Select Top 1 Status from MainOrder where id = {request.MainOrderId})" +
-                            $"If(@Status{i} < 6) Begin Update MainOrder set Status = 6 where ID = {request.MainOrderId} END " +
+                            $"If(@Status{i} < 5) Begin Update MainOrder set Status = 5 where ID = {request.MainOrderId} END " +
                             $"END ";
                         i++;
                     }

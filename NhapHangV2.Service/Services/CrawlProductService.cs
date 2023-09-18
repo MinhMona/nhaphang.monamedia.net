@@ -27,7 +27,7 @@ namespace NhapHangV2.Service.Services
             if (chromeDriver == null)
             {
                 var chromeOptions = new ChromeOptions();
-                chromeOptions.AddArgument("headless");
+                //chromeOptions.AddArgument("headless");
                 chromeOptions.PageLoadStrategy = PageLoadStrategy.Eager;
                 chromeDriver = new ChromeDriver(Environment.CurrentDirectory, chromeOptions);
                 chromeDriver.Url = "https://user.lovbuy.com/item.php";
@@ -68,19 +68,30 @@ namespace NhapHangV2.Service.Services
             }
             foreach (var requestId in requestIdList)
             {
-                WebDriverWait wait = new WebDriverWait(chromeDriver, TimeSpan.FromSeconds(20));
+                WebDriverWait wait = new WebDriverWait(chromeDriver, TimeSpan.FromSeconds(30));
                 IWebElement resultElement = wait.Until(e => GetWebElement(e, requestId));
                 string data = resultElement.GetDomProperty("value");
                 var json = JObject.Parse(data);
                 var atributesCheck = json["item"]["props_name"].ToString().Split(';');
                 bool isCheck = true;
-                foreach (var item in atributesCheck)
+                if (!string.IsNullOrEmpty(json["item"]["props_name"].ToString()))
                 {
-                    var itemCheck = item.Split(':');
-                    if (string.IsNullOrEmpty(itemCheck[3]))
+                    foreach (var item in atributesCheck)
                     {
-                        isCheck = false;
-                        break;
+                        try
+                        {
+                            var itemCheck = item.Split(':');
+                            if (string.IsNullOrEmpty(itemCheck[3]))
+                            {
+                                isCheck = false;
+                                break;
+                            }
+                        }
+                        catch
+                        {
+                            isCheck = false;
+                            break;
+                        }
                     }
                 }
                 if (isCheck)
