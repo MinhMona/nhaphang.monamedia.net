@@ -63,6 +63,8 @@ namespace NhapHangV2.API.Controllers
             bool success = false;
 
             var item = await this.domainService.GetByIdAsync(itemModel.Id);
+            item.PayHelpDetails = mapper.Map<List<PayHelpDetail>>(itemModel.PayHelpDetails);
+
             if (item != null)
             {
                 success = await payHelpService.UpdateStatus(item, itemModel.Status ?? 0, item.Status ?? 0, item.TotalPriceVND);
@@ -116,6 +118,7 @@ namespace NhapHangV2.API.Controllers
                 item.SalerID = itemModel.SalerID;
                 item.TotalPriceVND += ((itemModel.FeeService ?? 0) - (item.FeeService ?? 0));
                 item.FeeService = itemModel.FeeService;
+                item.PayHelpDetails = mapper.Map<List<PayHelpDetail>>(itemModel.PayHelpDetails);
                 success = await payHelpService.UpdateStatus(item, itemModel.Status ?? 0, item.Status ?? 0, totalPriceVNDOld);
                 if (success)
                     appDomainResult.ResultCode = (int)HttpStatusCode.OK;

@@ -1365,7 +1365,7 @@ namespace NhapHangV2.Service.Services
                             );
                         else
                             smallPackages = await this.GetAsync(x => !x.Deleted && x.Active
-                                && (x.MainOrderId == mainOrder.Id && x.Status == 3)
+                                && (x.MainOrderId == mainOrder.Id && x.Status == (int)StatusSmallPackage.VeKhoVN)
                             );
 
                         foreach (var smallPackage in smallPackages)
@@ -1395,7 +1395,7 @@ namespace NhapHangV2.Service.Services
                             );
                         else
                             smallPackages = await this.GetAsync(x => !x.Deleted && x.Active
-                                && (x.TransportationOrderId == transportationOrder.Id && x.Status == 3)
+                                && (x.TransportationOrderId == transportationOrder.Id && x.Status == (int)StatusSmallPackage.VeKhoVN)
                             );
                         foreach (var smallPackage in smallPackages)
                         {
@@ -1466,7 +1466,7 @@ namespace NhapHangV2.Service.Services
                     {
                         smallPackages = await this.GetAsync(x => !x.Deleted && x.Active
 
-                            && (x.UID == user.Id && x.Status == 3)
+                            && (x.UID == user.Id && x.Status == (int)StatusSmallPackage.VeKhoVN)
                         );
 
                         foreach (var smallPackage in smallPackages)

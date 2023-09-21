@@ -106,6 +106,7 @@ namespace NhapHangV2.Service.Services
                     foreach (var payHelpDetail in model.PayHelpDetails)
                     {
                         unitOfWork.Repository<PayHelpDetail>().Update(payHelpDetail);
+                        await unitOfWork.SaveAsync();
                     }
 
                     if (status == statusOld && totalPriceVNDOld == model.TotalPriceVND)
