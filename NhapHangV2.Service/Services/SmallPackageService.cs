@@ -387,13 +387,16 @@ namespace NhapHangV2.Service.Services
                                         switch (item.Status)
                                         {
                                             case (int)StatusSmallPackage.VeKhoTQ:
-                                                transportationOrder.Status = (int)StatusGeneralTransportationOrder.VeKhoTQ;
+                                                if (transportationOrder.Status < (int)StatusGeneralTransportationOrder.VeKhoTQ)
+                                                    transportationOrder.Status = (int)StatusGeneralTransportationOrder.VeKhoTQ;
                                                 break;
                                             case (int)StatusSmallPackage.XuatKhoTQ:
-                                                transportationOrder.Status = (int)StatusGeneralTransportationOrder.DaThanhToan;
+                                                if (transportationOrder.Status < (int)StatusGeneralTransportationOrder.DangVeVN)
+                                                    transportationOrder.Status = (int)StatusGeneralTransportationOrder.DangVeVN;
                                                 break;
                                             case (int)StatusSmallPackage.VeKhoVN:
-                                                transportationOrder.Status = (int)StatusGeneralTransportationOrder.VeKhoVN;
+                                                if (transportationOrder.Status < (int)StatusGeneralTransportationOrder.VeKhoVN)
+                                                    transportationOrder.Status = (int)StatusGeneralTransportationOrder.VeKhoVN;
                                                 break;
                                             case (int)StatusSmallPackage.DaHuy:
                                                 transportationOrder.Status = (int)StatusGeneralTransportationOrder.Huy;
@@ -462,7 +465,6 @@ namespace NhapHangV2.Service.Services
                                 if (mainOrder != null && mainOrder.Id != 0)
                                 {
                                     mainOrder.OldStatus = mainOrder.Status;
-                                    mainOrder.Status = (int)StatusOrderContants.VeTQ;
                                     if (mainOrder.DateTQ == null)
                                         mainOrder.DateTQ = currentDate;
 
@@ -501,14 +503,17 @@ namespace NhapHangV2.Service.Services
                                             Type = (int)TypeHistoryOrderChange.MaVanDon
                                         });
                                     }
-
-                                    historyOrderChanges.Add(new HistoryOrderChange()
+                                    if (mainOrder.Status < (int)StatusOrderContants.VeTQ)
                                     {
-                                        MainOrderId = mainOrder.Id,
-                                        UID = user.Id,
-                                        HistoryContent = String.Format("{0} đã đổi trạng thái của đơn hàng Id là: {1}, là \"Đã về kho TQ\"", user.UserName, mainOrder.Id),
-                                        Type = (int)TypeHistoryOrderChange.MaVanDon
-                                    });
+                                        mainOrder.Status = (int)StatusOrderContants.VeTQ;
+                                        historyOrderChanges.Add(new HistoryOrderChange()
+                                        {
+                                            MainOrderId = mainOrder.Id,
+                                            UID = user.Id,
+                                            HistoryContent = String.Format("{0} đã đổi trạng thái của đơn hàng Id là: {1}, là \"Đã về kho TQ\"", user.UserName, mainOrder.Id),
+                                            Type = (int)TypeHistoryOrderChange.MaVanDon
+                                        });
+                                    }
 
                                     mainOrderList.Add(mainOrder);
                                     mainOrderUpdateds.Add(mainOrderList.LastOrDefault());
@@ -522,7 +527,8 @@ namespace NhapHangV2.Service.Services
                                     if (transportationOrder.Status == (int)StatusGeneralTransportationOrder.ChoDuyet)
                                         throw new AppException("Đơn ký gửi chưa được duyệt");
                                     var transportationOrderOld = transportationOrder;
-                                    transportationOrder.Status = (int)StatusGeneralTransportationOrder.VeKhoTQ;
+                                    if (transportationOrder.Status < (int)StatusGeneralTransportationOrder.VeKhoTQ)
+                                        transportationOrder.Status = (int)StatusGeneralTransportationOrder.VeKhoTQ;
                                     if (transportationOrder.TQDate == null)
                                         transportationOrder.TQDate = DateTime.Now;
                                     smallPackages = await unitOfWork.Repository<SmallPackage>().GetQueryable().Where(x => !x.Deleted && x.TransportationOrderId == transportationOrder.Id).ToListAsync();
@@ -584,7 +590,6 @@ namespace NhapHangV2.Service.Services
                                 if (mainOrder != null && mainOrder.Id != 0)
                                 {
                                     mainOrder.OldStatus = mainOrder.Status;
-                                    mainOrder.Status = (int)StatusOrderContants.DangVeVN;
                                     if (mainOrder.DateComingVN == null)
                                         mainOrder.DateComingVN = currentDate;
 
@@ -623,14 +628,18 @@ namespace NhapHangV2.Service.Services
                                             Type = (int)TypeHistoryOrderChange.MaVanDon
                                         });
                                     }
-
-                                    historyOrderChanges.Add(new HistoryOrderChange()
+                                    if (mainOrder.Status < (int)StatusOrderContants.DangVeVN)
                                     {
-                                        MainOrderId = mainOrder.Id,
-                                        UID = user.Id,
-                                        HistoryContent = String.Format("{0} đã đổi trạng thái của đơn hàng Id là: {1}, là \"Đang về kho VN\"", user.UserName, mainOrder.Id),
-                                        Type = (int)TypeHistoryOrderChange.MaVanDon
-                                    });
+                                        mainOrder.Status = (int)StatusOrderContants.DangVeVN;
+                                        historyOrderChanges.Add(new HistoryOrderChange()
+                                        {
+                                            MainOrderId = mainOrder.Id,
+                                            UID = user.Id,
+                                            HistoryContent = String.Format("{0} đã đổi trạng thái của đơn hàng Id là: {1}, là \"Đang về kho VN\"", user.UserName, mainOrder.Id),
+                                            Type = (int)TypeHistoryOrderChange.MaVanDon
+                                        });
+                                    }
+
 
                                     mainOrderList.Add(mainOrder);
                                     mainOrderUpdateds.Add(mainOrderList.LastOrDefault());
@@ -644,7 +653,8 @@ namespace NhapHangV2.Service.Services
                                     if (transportationOrder.Status == (int)StatusGeneralTransportationOrder.ChoDuyet)
                                         throw new AppException("Đơn ký gửi chưa được duyệt");
                                     var transportationOrderOld = transportationOrder;
-                                    transportationOrder.Status = (int)StatusGeneralTransportationOrder.DangVeVN;
+                                    if (transportationOrder.Status < (int)StatusGeneralTransportationOrder.DangVeVN)
+                                        transportationOrder.Status = (int)StatusGeneralTransportationOrder.DangVeVN;
                                     if (transportationOrder.ComingVNDate == null)
                                         transportationOrder.ComingVNDate = DateTime.Now;
                                     smallPackages = await unitOfWork.Repository<SmallPackage>().GetQueryable().Where(x => !x.Deleted && x.TransportationOrderId == transportationOrder.Id).ToListAsync();
@@ -708,7 +718,6 @@ namespace NhapHangV2.Service.Services
                                 if (mainOrder != null && mainOrder.Id != 0)
                                 {
                                     mainOrder.OldStatus = mainOrder.Status;
-                                    mainOrder.Status = (int)StatusOrderContants.VeVN;
                                     if (mainOrder.DateVN == null)
                                         mainOrder.DateVN = currentDate;
 
@@ -747,13 +756,18 @@ namespace NhapHangV2.Service.Services
                                             Type = (int)TypeHistoryOrderChange.MaVanDon
                                         });
                                     }
-                                    historyOrderChanges.Add(new HistoryOrderChange()
+                                    if (mainOrder.Status < (int)StatusOrderContants.VeVN)
                                     {
-                                        MainOrderId = mainOrder.Id,
-                                        UID = user.Id,
-                                        HistoryContent = String.Format("{0} đã đổi trạng thái của đơn hàng Id là: {1}, là \"Đã về kho VN\"", user.UserName, mainOrder.Id),
-                                        Type = (int)TypeHistoryOrderChange.MaVanDon
-                                    });
+                                        mainOrder.Status = (int)StatusOrderContants.VeVN;
+                                        historyOrderChanges.Add(new HistoryOrderChange()
+                                        {
+                                            MainOrderId = mainOrder.Id,
+                                            UID = user.Id,
+                                            HistoryContent = String.Format("{0} đã đổi trạng thái của đơn hàng Id là: {1}, là \"Đã về kho VN\"", user.UserName, mainOrder.Id),
+                                            Type = (int)TypeHistoryOrderChange.MaVanDon
+                                        });
+                                    }
+
                                     //Detach
                                     mainOrderList.Add(mainOrder);
                                     mainOrderUpdateds.Add(mainOrderList.LastOrDefault());
@@ -765,7 +779,8 @@ namespace NhapHangV2.Service.Services
                                 {
                                     if (transportationOrder == null || transportationOrder.Id == 0) break;
                                     var transportationOrderOld = transportationOrder;
-                                    transportationOrder.Status = (int)StatusGeneralTransportationOrder.VeKhoVN;
+                                    if (transportationOrder.Status < (int)StatusGeneralTransportationOrder.VeKhoVN)
+                                        transportationOrder.Status = (int)StatusGeneralTransportationOrder.VeKhoVN;
                                     if (transportationOrder.VNDate == null)
                                         transportationOrder.VNDate = DateTime.Now;
                                     smallPackages = await unitOfWork.Repository<SmallPackage>().GetQueryable().Where(x => !x.Deleted && x.TransportationOrderId == transportationOrder.Id).ToListAsync();
@@ -1570,13 +1585,16 @@ namespace NhapHangV2.Service.Services
                     Type = (int)TypeHistoryOrderChange.MaVanDon
                 });
             }
-            historyOrderChanges.Add(new HistoryOrderChange()
+            if (item.Status != oldItem.Status)
             {
-                TransportationOrderId = transportationOrder.Id,
-                UID = user.Id,
-                HistoryContent = $"{user.UserName} đã đổi trạng thái của đơn hàng ID: {transportationOrder.Id} từ {transportationOrderService.GetStatusName(transportationOrderOld.Status)} sang {transportationOrderService.GetStatusName(transportationOrder.Status)}",
-                Type = (int)TypeHistoryOrderChange.MaVanDon
-            });
+                historyOrderChanges.Add(new HistoryOrderChange()
+                {
+                    TransportationOrderId = transportationOrder.Id,
+                    UID = user.Id,
+                    HistoryContent = $"{user.UserName} đã đổi trạng thái của đơn hàng ID: {transportationOrder.Id} từ {transportationOrderService.GetStatusName(transportationOrderOld.Status)} sang {transportationOrderService.GetStatusName(transportationOrder.Status)}",
+                    Type = (int)TypeHistoryOrderChange.MaVanDon
+                });
+            }
             return historyOrderChanges;
         }
     }

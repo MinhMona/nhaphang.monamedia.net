@@ -11,6 +11,9 @@ namespace NhapHangV2.Entities
 {
     public class OrderShopTemp : DomainEntities.AppDomain
     {
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal? FeeBuyProPercent { get; set; } = 0;
+
         /// <summary>
         /// ID user
         /// </summary>
@@ -162,7 +165,7 @@ namespace NhapHangV2.Entities
         public List<OrderTemp> OrderTemps { get; set; } = new List<OrderTemp>();
 
         [NotMapped]
-        public string OrderTempsJson { get; set; } 
+        public string OrderTempsJson { get; set; }
 
     }
 }

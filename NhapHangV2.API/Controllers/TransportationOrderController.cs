@@ -174,21 +174,6 @@ namespace NhapHangV2.API.Controllers
                     data.TotalPriceVND = Math.Round(data.TotalPriceVND ?? 0, 0);
                     data.SalerID = itemModel.SalerID;
 
-                    // Kiểm tra item có tồn tại chưa?
-                    var messageUserCheck = await this.domainService.GetExistItemMessage(data);
-                    if (!string.IsNullOrEmpty(messageUserCheck))
-                        throw new KeyNotFoundException(messageUserCheck);
-
-                    var getSmallCheck = await smallPackageService.GetSingleAsync(x => !x.Deleted && x.Active
-                        && (x.OrderTransactionCode.Equals(list.OrderTransactionCode))
-                    );
-                    //// Kiểm tra có tồn tại mã vận đơn hay chưa?
-                    var messageGetSmallCheck = await smallPackageService.GetExistItemMessage(getSmallCheck);
-                    if (!string.IsNullOrEmpty(messageGetSmallCheck))
-                        throw new KeyNotFoundException(messageGetSmallCheck);
-                    var smallPackgeExist = await smallPackageService.GetByOrderTransactionCode(list.OrderTransactionCode);
-                    if (smallPackgeExist != null)
-                        throw new AppException($"Mã vận đơn {list.OrderTransactionCode} của đơn ký gửi đã tồn tại");
                     transportationOrders.Add(data);
                 }
 

@@ -903,6 +903,8 @@ namespace NhapHangV2.Service.Services
                     await unitOfWork.Repository<SmallPackage>().CreateAsync(smallPackage);
                     await unitOfWork.SaveAsync();
                     unitOfWork.Repository<SmallPackage>().Detach(smallPackage);
+                    if (item.Status < (int)StatusOrderContants.ShopPhatHang)
+                        item.Status = (int)StatusOrderContants.ShopPhatHang;
                 }
                 else
                 {

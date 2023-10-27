@@ -419,17 +419,17 @@ namespace NhapHangV2.API.Controllers
                 if (feeBuyPro != null)
                 {
                     decimal feePercent = feeBuyPro.FeePercent > 0 ? (feeBuyPro.FeePercent ?? 0) : 0;
-                    servicefee = feePercent / 100;
+                    servicefee = feePercent ;
                 }
                 decimal feebpnotdc = 0;
                 decimal feebuypropt = 0;
                 if (users.FeeBuyPro > 0)
                 {
-                    feebpnotdc = priceVND * (users.FeeBuyPro ?? 0) / 100;
+                    servicefee = (users.FeeBuyPro ?? 0);
                     feebuypropt = users.FeeBuyPro ?? 0;
                 }
-                else
-                    feebpnotdc = priceVND * servicefee;
+
+                feebpnotdc = priceVND * servicefee / 100;
                 decimal subfeebp = cKFeeBuyPro > 0 ? (feebpnotdc * cKFeeBuyPro / 100) : 0;
                 decimal feebp = feebpnotdc - subfeebp;
                 //Phí mua hàng tối thiểu
@@ -598,6 +598,8 @@ namespace NhapHangV2.API.Controllers
 
                 MainOrder mainOrder = new MainOrder
                 {
+                    EditedFeeBuyProPercent = servicefee,
+
                     UID = users.Id,
                     ShopId = "",
                     ShopName = "",
@@ -637,7 +639,7 @@ namespace NhapHangV2.API.Controllers
                     Status = (int)StatusOrderContants.ChoBaoGia,
                     Deposit = 0,
                     CurrentCNYVN = currency,
-                    TotalPriceVND = Math.Round(totalPriceVND, 0),
+                    TotalPriceVND = totalPriceVND,
 
                     SalerId = salerId,
                     DatHangId = datHangId,
@@ -1031,6 +1033,15 @@ namespace NhapHangV2.API.Controllers
                             break;
                     }
 
+                    //Lịch sử phần trăm phí mua hàng
+                    if ((item.EditedFeeBuyProPercent ?? 0) != (itemModel.EditedFeeBuyProPercent ?? 0))
+                    {
+                        itemModel.IsEditFeeBuyProPercent = true;
+                        string historyContent = $"{user.UserName} đã đổi phần trăm phí mua hàng từ {item.EditedFeeBuyProPercent ?? 0} sang {itemModel.EditedFeeBuyProPercent ?? 0}";
+                        updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
+                            $"VALUES({item.Id},{user.Id},N'{historyContent}',{0},'{DateTime.Now}','{user.UserName}',0,1)";
+                    }
+
                     //Lịch sử phí mua hàng
                     if ((item.FeeBuyPro ?? 0) != (itemModel.FeeBuyPro ?? 0))
                     {
@@ -1038,6 +1049,7 @@ namespace NhapHangV2.API.Controllers
                         updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
                             $"VALUES({item.Id},{user.Id},N'{historyContent}',{0},'{DateTime.Now}','{user.UserName}',0,1)";
                     }
+                    
                     //Trạng thái đơn hàng
                     if (item.Status != itemModel.Status)
                     {

@@ -218,7 +218,11 @@ namespace NhapHangV2.API.Controllers.Catalogue
                     var smallPackage = await smallPackageService.GetByIdAsync(item.Id);
                     if (smallPackage != null)
                     {
-                        smallPackage.BigPackageId = null;
+                        smallPackage.Status = status;
+                        if (status == (int)StatusSmallPackage.DaHuy)
+                        {
+                            smallPackage.BigPackageId = null;
+                        }
                         success = await smallPackageService.UpdateAsync(smallPackage);
                     }
                 }

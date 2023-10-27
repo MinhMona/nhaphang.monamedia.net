@@ -274,10 +274,40 @@ namespace NhapHangV2.Service.Services
             {
                 try
                 {
-                    foreach (var item in items)
+                    var currentUser = LoginContext.Instance.CurrentUser;
+                    for (int i = 0; i < items.Count; i++)
                     {
-                        //var smallPackage = await unitOfWork.Repository<SmallPackage>().GetQueryable().FirstOrDefaultAsync(x=>x.OrderTransactionCode == item.OrderTransactionCode);
-                        //if()
+                        var item = items[i];
+                        var smallPackage = await unitOfWork.Repository<SmallPackage>().GetQueryable().FirstOrDefaultAsync(x => x.OrderTransactionCode == item.OrderTransactionCode && x.Status != (int)StatusSmallPackage.DaHuy);
+                        if (smallPackage != null)
+                        {
+                            if ((smallPackage?.MainOrderId ?? 0) == 0 && (smallPackage?.TransportationOrderId ?? 0) == 0)
+                            {
+                                switch (smallPackage.Status)
+                                {
+                                    case (int)StatusSmallPackage.MoiTao:
+                                        item.Status = (int)StatusGeneralTransportationOrder.DonMoi;
+                                        break;
+                                    case (int)StatusSmallPackage.VeKhoTQ:
+                                        item.Status = (int)StatusGeneralTransportationOrder.VeKhoTQ;
+                                        break;
+                                    case (int)StatusSmallPackage.XuatKhoTQ:
+                                        item.Status = (int)StatusGeneralTransportationOrder.DangVeVN;
+                                        break;
+                                    case (int)StatusSmallPackage.VeKhoVN:
+                                        item.Status = (int)StatusGeneralTransportationOrder.VeKhoVN;
+                                        break;
+                                    default:
+                                        break;
+                                }
+
+                                item.SmallPackageId = smallPackage.Id;
+                            }
+                            else if (smallPackage?.Id > 0)
+                            {
+                                throw new AppException("Mã vận đơn đã tồn tại trong hệ thống");
+                            }
+                        }
                         await unitOfWork.Repository<TransportationOrder>().CreateAsync(item);
                         await unitOfWork.SaveAsync();
                         //Tính hoa hồng
@@ -285,6 +315,29 @@ namespace NhapHangV2.Service.Services
                         if (staffInCome != null)
                             await unitOfWork.Repository<StaffIncome>().CreateAsync(staffInCome);
 
+                        if (smallPackage != null)
+                        {
+                            smallPackage.TransportationOrderId = item.Id;
+                            await unitOfWork.Repository<SmallPackage>().UpdateFieldsSaveAsync(smallPackage, new Expression<Func<SmallPackage, object>>[]
+                            {
+                                x => x.TransportationOrderId,
+                                x => x.Updated,
+                                x => x.UpdatedBy,
+                            });
+                            item.SmallPackages.Add(smallPackage);
+                            item = await PriceAdjustment(item);
+                            unitOfWork.Repository<TransportationOrder>().Update(item);
+                            await unitOfWork.SaveAsync();
+                            unitOfWork.Repository<TransportationOrder>().Detach(item);
+
+                            await unitOfWork.Repository<HistoryOrderChange>().CreateAsync(new HistoryOrderChange()
+                            {
+                                TransportationOrderId = item.Id,
+                                UID = currentUser.UserId,
+                                HistoryContent = $"{currentUser.UserName} đã tạo đơn với kiện trôi nổi, trạng thái: {GetStatusName(item.Status)}.",
+                                Type = (int?)TypeHistoryOrderChange.MaDonHang
+                            });
+                        }
                         //Thông báo có đơn đặt hàng mới
                         var notificationSetting = await notificationSettingService.GetByIdAsync((int)NotificationSettingId.TaoDonKyGui);
                         sendNotificationService.SendNotification(notificationSetting,

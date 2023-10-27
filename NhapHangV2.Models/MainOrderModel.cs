@@ -12,6 +12,9 @@ namespace NhapHangV2.Models
 {
     public class MainOrderModel : AppDomainModel
     {
+        public bool? IsEditFeeBuyProPercent { get; set; }
+        public decimal? EditedFeeBuyProPercent { get; set; }
+
         /// <summary>
         /// Ngày shop phát hàng
         /// </summary>

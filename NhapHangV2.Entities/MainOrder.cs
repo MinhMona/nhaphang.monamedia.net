@@ -12,6 +12,12 @@ namespace NhapHangV2.Entities
 {
     public class MainOrder : DomainEntities.AppDomain
     {
+        public bool? IsEditFeeBuyProPercent { get; set; } = false;
+        /// <summary>
+        /// Phí bảo hiểm (%)
+        /// </summary>
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal? EditedFeeBuyProPercent { get; set; } = 0;
         /// <summary>
         /// Ngày shop phát hàng
         /// </summary>

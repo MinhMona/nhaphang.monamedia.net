@@ -118,18 +118,24 @@ namespace NhapHangV2.Service.Services
 
                     decimal serviceFee = 0;
                     decimal feebpnotdc = 0;
-                    var feeBuyPro = await unitOfWork.Repository<FeeBuyPro>().GetQueryable().Where(x => mainOrder.PriceVND >= x.PriceFrom && mainOrder.PriceVND <= x.PriceTo).FirstOrDefaultAsync();
-                    if (feeBuyPro != null)
+                    if (mainOrder.IsEditFeeBuyProPercent == true)
                     {
-                        decimal feePercent = feeBuyPro.FeePercent > 0 ? (feeBuyPro.FeePercent ?? 0) : 0;
-                        serviceFee = feePercent / 100;
+                        feebpnotdc = (mainOrder.PriceVND ?? 0) * (mainOrder.EditedFeeBuyProPercent ?? 0) / 100;
                     }
-
-                    if (user.FeeBuyPro > 0)
-                        feebpnotdc = (mainOrder.PriceVND ?? 0) * (user.FeeBuyPro ?? 0) / 100;
                     else
-                        feebpnotdc = (mainOrder.PriceVND ?? 0) * serviceFee;
+                    {
+                        var feeBuyPro = await unitOfWork.Repository<FeeBuyPro>().GetQueryable().Where(x => mainOrder.PriceVND >= x.PriceFrom && mainOrder.PriceVND <= x.PriceTo).FirstOrDefaultAsync();
+                        if (feeBuyPro != null)
+                        {
+                            decimal feePercent = feeBuyPro.FeePercent > 0 ? (feeBuyPro.FeePercent ?? 0) : 0;
+                            serviceFee = feePercent / 100;
+                        }
 
+                        if (user.FeeBuyPro > 0)
+                            feebpnotdc = (mainOrder.PriceVND ?? 0) * (user.FeeBuyPro ?? 0) / 100;
+                        else
+                            feebpnotdc = (mainOrder.PriceVND ?? 0) * serviceFee;
+                    }
                     decimal subfeebp = feebpnotdc * (cKFeeBuyPro / 100);
                     decimal feebp = feebpnotdc - subfeebp;
 

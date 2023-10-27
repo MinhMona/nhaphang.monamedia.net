@@ -447,12 +447,64 @@ namespace NhapHangV2.Service.Services
             return orderTemp;
         }
 
+        protected decimal GetPriceStep(string StepPrice, int quantity)
+        {
+            decimal price_update = 0;
+            if (!string.IsNullOrEmpty(StepPrice))
+            {
+                string[] items = StepPrice.Split('|');
+                if (items.Length - 1 > 0)
+                {
+                    decimal checkto = 0;
+                    for (int i = 0; i < items.Length - 1; i++)
+                    {
+                        var item = items[i];
+                        string[] elements = item.Split(':');
+                        string amountft = elements[0];
+                        string[] ft = amountft.Split('-');
+
+                        double from = 0;
+                        if (i != 0)
+                            from = Convert.ToDouble(ft[0]);
+                        double to = Convert.ToDouble(ft[1]);
+                        decimal price = Convert.ToDecimal(elements[1]);
+                        if (quantity >= from && quantity <= to)
+                        {
+                            price_update = price;
+                        }
+                    }
+
+                }
+
+            }
+            return price_update;
+        }
+
         public async Task<OrderShopTemp> UpdatePrice(OrderShopTemp item)
         {
             var user = await unitOfWork.Repository<Users>().GetQueryable().Where(x => x.Id == item.UID).FirstOrDefaultAsync();
-            var existOrderTemp = await unitOfWork.Repository<OrderTemp>().GetQueryable().Where(x => !x.Deleted && x.UID == item.UID && x.OrderShopTempId == item.Id).ToListAsync();
+            var orderTempsNews = await unitOfWork.Repository<OrderTemp>().GetQueryable().Where(x => x.UID == item.UID && x.OrderShopTempId == item.Id && !x.Deleted).ToListAsync();
 
-            var orderTemps = existOrderTemp;
+            foreach (var orderTempsNew in orderTempsNews)
+            {
+                if (!string.IsNullOrEmpty(orderTempsNew.StepPrice))
+                {
+                    int countQuantity = orderTempsNews.Where(x => x.CategoryId == orderTempsNew.CategoryId
+                    && x.StepPrice.ToLower().Equals(orderTempsNew.StepPrice.ToLower()))
+                        .Sum(x => x.Quantity.Value);
+                    decimal priceUpdate = 0;
+                    priceUpdate = GetPriceStep(orderTempsNew.StepPrice, countQuantity);
+                    orderTempsNew.PriceOrigin = priceUpdate;
+                    orderTempsNew.PricePromotion = priceUpdate;
+                    unitOfWork.Repository<OrderTemp>().Update(orderTempsNew);
+                    await unitOfWork.SaveAsync();
+                    unitOfWork.Repository<OrderTemp>().Detach(orderTempsNew);
+                }
+            }
+
+            var orderTempsFinals = await unitOfWork.Repository<OrderTemp>().GetQueryable().Where(x => x.UID == item.UID && x.OrderShopTempId == item.Id && !x.Deleted).ToListAsync();
+            item.OrderTemps = orderTempsFinals;
+            var orderTemps = item.OrderTemps;
             var conf = await unitOfWork.Repository<Entities.Configurations>()
                 .GetQueryable()
                 .OrderByDescending(x => x.Id)
