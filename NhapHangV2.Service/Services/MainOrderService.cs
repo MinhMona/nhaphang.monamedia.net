@@ -904,7 +904,13 @@ namespace NhapHangV2.Service.Services
                     await unitOfWork.SaveAsync();
                     unitOfWork.Repository<SmallPackage>().Detach(smallPackage);
                     if (item.Status < (int)StatusOrderContants.ShopPhatHang)
+                    {
                         item.Status = (int)StatusOrderContants.ShopPhatHang;
+                        if(item.DateSendGoods != null)
+                        {
+                            item.DateSendGoods = currentDate;
+                        }
+                    }
                 }
                 else
                 {
@@ -1021,7 +1027,6 @@ namespace NhapHangV2.Service.Services
                 case (int)StatusOrderContants.VeVN:
                     if (item.DateVN == null)
                         item.DateVN = currentDate;
-                    //Thông báo
                     break;
                 case (int)StatusOrderContants.DaThanhToan:
                     if (item.PayDate == null)

@@ -501,6 +501,8 @@ namespace NhapHangV2.Service.Services
                             Type = (int?)TypeHistoryOrderChange.TienDatCoc
                         });
                         mainOrder.Status = (int)StatusOrderContants.HoanThanh;
+                        if (mainOrder.CompleteDate == null)
+                            mainOrder.CompleteDate = currentDate;
                         unitOfWork.Repository<MainOrder>().Update(mainOrder);
                     }
                 }

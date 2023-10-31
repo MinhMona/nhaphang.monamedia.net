@@ -39,6 +39,10 @@ namespace NhapHangV2.Service.Services
                 throw new AppException("Mã đơn hàng đã tồn tại");
             var mainOrder = await unitOfWork.Repository<MainOrder>().GetQueryable().Where(x => x.Id == item.MainOrderID).FirstOrDefaultAsync();
             mainOrder.Status = (int?)StatusOrderContants.DaMuaHang;
+            if(mainOrder.DateBuy == null)
+            {
+                mainOrder.DateBuy = DateTime.Now;
+            }
             await unitOfWork.Repository<MainOrderCode>().CreateAsync(item);
             unitOfWork.Repository<MainOrder>().Update(mainOrder);
             await unitOfWork.Repository<HistoryOrderChange>().CreateAsync(new HistoryOrderChange()

@@ -756,17 +756,14 @@ namespace NhapHangV2.Service.Services
                                             Type = (int)TypeHistoryOrderChange.MaVanDon
                                         });
                                     }
-                                    if (mainOrder.Status < (int)StatusOrderContants.VeVN)
+                                    mainOrder.Status = (int)StatusOrderContants.VeVN;
+                                    historyOrderChanges.Add(new HistoryOrderChange()
                                     {
-                                        mainOrder.Status = (int)StatusOrderContants.VeVN;
-                                        historyOrderChanges.Add(new HistoryOrderChange()
-                                        {
-                                            MainOrderId = mainOrder.Id,
-                                            UID = user.Id,
-                                            HistoryContent = String.Format("{0} đã đổi trạng thái của đơn hàng Id là: {1}, là \"Đã về kho VN\"", user.UserName, mainOrder.Id),
-                                            Type = (int)TypeHistoryOrderChange.MaVanDon
-                                        });
-                                    }
+                                        MainOrderId = mainOrder.Id,
+                                        UID = user.Id,
+                                        HistoryContent = String.Format("{0} đã đổi trạng thái của đơn hàng Id là: {1}, là \"Đã về kho VN\"", user.UserName, mainOrder.Id),
+                                        Type = (int)TypeHistoryOrderChange.MaVanDon
+                                    });
 
                                     //Detach
                                     mainOrderList.Add(mainOrder);
@@ -1362,11 +1359,11 @@ namespace NhapHangV2.Service.Services
                 case 1:
                     if (OrderID > 0)
                         mainOrders = await mainOrderService.GetAsync(x => !x.Deleted && x.Active
-                            && (x.UID == user.Id && x.Id == OrderID)
+                            && (x.UID == user.Id && x.Id == OrderID) && x.Status == (int)StatusOrderContants.VeVN
                         ); //getById
                     else
                         mainOrders = await mainOrderService.GetAsync(x => !x.Deleted && x.Active
-                            && (x.UID == user.Id)
+                            && (x.UID == user.Id) && x.Status == (int)StatusOrderContants.VeVN
                         );
 
                     if (!mainOrders.Any())
@@ -1376,7 +1373,7 @@ namespace NhapHangV2.Service.Services
                     {
                         if (OrderID > 0)
                             smallPackages = await this.GetAsync(x => !x.Deleted && x.Active
-                                && (x.MainOrderId == mainOrder.Id)
+                                && (x.MainOrderId == mainOrder.Id && x.Status == (int)StatusSmallPackage.VeKhoVN)
                             );
                         else
                             smallPackages = await this.GetAsync(x => !x.Deleted && x.Active
@@ -1398,15 +1395,15 @@ namespace NhapHangV2.Service.Services
                     break;
                 case 2:
                     if (OrderID > 0)
-                        transportationOrders = await unitOfWork.Repository<TransportationOrder>().GetQueryable().Where(e => !e.Deleted && e.UID == user.Id && e.Id == OrderID).ToListAsync();
+                        transportationOrders = await unitOfWork.Repository<TransportationOrder>().GetQueryable().Where(e => !e.Deleted && e.UID == user.Id && e.Id == OrderID && e.Status == (int)StatusGeneralTransportationOrder.VeKhoVN).ToListAsync();
                     else
-                        transportationOrders = await unitOfWork.Repository<TransportationOrder>().GetQueryable().Where(e => !e.Deleted && e.UID == user.Id).ToListAsync();
+                        transportationOrders = await unitOfWork.Repository<TransportationOrder>().GetQueryable().Where(e => !e.Deleted && e.UID == user.Id && e.Status == (int)StatusGeneralTransportationOrder.VeKhoVN).ToListAsync();
 
                     foreach (var transportationOrder in transportationOrders)
                     {
                         if (OrderID > 0)
                             smallPackages = await this.GetAsync(x => !x.Deleted && x.Active
-                                && (x.TransportationOrderId == transportationOrder.Id)
+                                && (x.TransportationOrderId == transportationOrder.Id && x.Status == (int)StatusSmallPackage.VeKhoVN)
                             );
                         else
                             smallPackages = await this.GetAsync(x => !x.Deleted && x.Active
@@ -1429,7 +1426,7 @@ namespace NhapHangV2.Service.Services
                     if (OrderID > 0)
                     {
                         mainOrders = await mainOrderService.GetAsync(x => !x.Deleted && x.Active
-                            && (x.UID == user.Id && x.Id == OrderID)
+                            && (x.UID == user.Id && x.Id == OrderID) && x.Status == (int)StatusOrderContants.VeVN
                         ); //getById
 
                         if (mainOrders.Any()) //Có tồn tại
@@ -1437,7 +1434,7 @@ namespace NhapHangV2.Service.Services
                             foreach (var mainOrder in mainOrders)
                             {
                                 smallPackages = await this.GetAsync(x => !x.Deleted && x.Active
-                                    && (x.MainOrderId == mainOrder.Id)
+                                    && (x.MainOrderId == mainOrder.Id && x.Status == (int)StatusSmallPackage.VeKhoVN)
                                 );
                                 foreach (var smallPackage in smallPackages)
                                 {
@@ -1457,12 +1454,12 @@ namespace NhapHangV2.Service.Services
                         }
                         else
                         {
-                            transportationOrders = await unitOfWork.Repository<TransportationOrder>().GetQueryable().Where(e => !e.Deleted && e.UID == user.Id && e.Id == OrderID).ToListAsync();
+                            transportationOrders = await unitOfWork.Repository<TransportationOrder>().GetQueryable().Where(e => !e.Deleted && e.UID == user.Id && e.Id == OrderID && e.Status == (int)StatusGeneralTransportationOrder.VeKhoVN).ToListAsync();
 
                             foreach (var transportationOrder in transportationOrders)
                             {
                                 smallPackages = await this.GetAsync(x => !x.Deleted && x.Active
-                                    && (x.TransportationOrderId == transportationOrder.Id)
+                                    && (x.TransportationOrderId == transportationOrder.Id) && x.Status == (int)StatusSmallPackage.VeKhoVN
                                 );
                                 foreach (var smallPackage in smallPackages)
                                 {
