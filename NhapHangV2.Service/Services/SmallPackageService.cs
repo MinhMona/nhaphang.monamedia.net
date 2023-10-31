@@ -526,7 +526,7 @@ namespace NhapHangV2.Service.Services
                                     if (transportationOrder == null || transportationOrder.Id == 0) break;
                                     if (transportationOrder.Status == (int)StatusGeneralTransportationOrder.ChoDuyet)
                                         throw new AppException("Đơn ký gửi chưa được duyệt");
-                                    var transportationOrderOld = transportationOrder;
+                                    var transportationOrderOld = await unitOfWork.Repository<TransportationOrder>().GetQueryable().FirstOrDefaultAsync(x => x.Id == transportationOrder.Id);
                                     if (transportationOrder.Status < (int)StatusGeneralTransportationOrder.VeKhoTQ)
                                         transportationOrder.Status = (int)StatusGeneralTransportationOrder.VeKhoTQ;
                                     if (transportationOrder.TQDate == null)
@@ -548,6 +548,8 @@ namespace NhapHangV2.Service.Services
                                     transportationOrder = await transportationOrderService.PriceAdjustment(transportationOrder);
 
                                     historyOrderChanges.AddRange(CreateHistoryTransOrderScanWareHouse(user, transportationOrder, transportationOrderOld, item, oldItem));
+                                    if (historyOrderChanges.Any())
+                                        await unitOfWork.Repository<HistoryOrderChange>().CreateAsync(historyOrderChanges);
                                     //Detach
                                     if (!transportationOrderList.Select(e => e.Id).Contains(transportationOrder.Id))
                                     {
@@ -652,7 +654,7 @@ namespace NhapHangV2.Service.Services
                                     if (transportationOrder == null || transportationOrder.Id == 0) break;
                                     if (transportationOrder.Status == (int)StatusGeneralTransportationOrder.ChoDuyet)
                                         throw new AppException("Đơn ký gửi chưa được duyệt");
-                                    var transportationOrderOld = transportationOrder;
+                                    var transportationOrderOld = await unitOfWork.Repository<TransportationOrder>().GetQueryable().FirstOrDefaultAsync(x => x.Id == transportationOrder.Id);
                                     if (transportationOrder.Status < (int)StatusGeneralTransportationOrder.DangVeVN)
                                         transportationOrder.Status = (int)StatusGeneralTransportationOrder.DangVeVN;
                                     if (transportationOrder.ComingVNDate == null)
@@ -673,6 +675,8 @@ namespace NhapHangV2.Service.Services
                                     //Tính tiền
                                     transportationOrder = await transportationOrderService.PriceAdjustment(transportationOrder);
                                     historyOrderChanges.AddRange(CreateHistoryTransOrderScanWareHouse(user, transportationOrder, transportationOrderOld, item, oldItem));
+                                    if (historyOrderChanges.Any())
+                                        await unitOfWork.Repository<HistoryOrderChange>().CreateAsync(historyOrderChanges);
                                     //Detach
                                     if (!transportationOrderList.Select(e => e.Id).Contains(transportationOrder.Id))
                                     {
@@ -775,7 +779,7 @@ namespace NhapHangV2.Service.Services
                                 else
                                 {
                                     if (transportationOrder == null || transportationOrder.Id == 0) break;
-                                    var transportationOrderOld = transportationOrder;
+                                    var transportationOrderOld = await unitOfWork.Repository<TransportationOrder>().GetQueryable().FirstOrDefaultAsync(x=>x.Id == transportationOrder.Id);
                                     if (transportationOrder.Status < (int)StatusGeneralTransportationOrder.VeKhoVN)
                                         transportationOrder.Status = (int)StatusGeneralTransportationOrder.VeKhoVN;
                                     if (transportationOrder.VNDate == null)
@@ -794,7 +798,8 @@ namespace NhapHangV2.Service.Services
                                     //Tính tiền
                                     transportationOrder = await transportationOrderService.PriceAdjustment(transportationOrder);
                                     historyOrderChanges.AddRange(CreateHistoryTransOrderScanWareHouse(user, transportationOrder, transportationOrderOld, item, oldItem));
-
+                                    if (historyOrderChanges.Any())
+                                        await unitOfWork.Repository<HistoryOrderChange>().CreateAsync(historyOrderChanges);
                                     //Detach
                                     if (!transportationOrderList.Select(e => e.Id).Contains(transportationOrder.Id))
                                     {
@@ -837,22 +842,7 @@ namespace NhapHangV2.Service.Services
                             default:
                                 break;
                         }
-                        //var userNotification = new UserNotification();
-                        //if (mainOrder != null && mainOrder.Id != 0)
-                        //{
-                        //    userNotification.UserId = mainOrder.UID;
-                        //    userNotification.SaleId = mainOrder.SalerId;
-                        //    userNotification.OrdererId = mainOrder.DatHangId;
-                        //}
-                        //else
-                        //{
-                        //    userNotification.UserId = transportationOrder.UID;
-                        //    userNotification.SaleId = transportationOrder.SalerID;
-                        //}
-                        //var notificationSetting = await notificationSettingService.GetByIdAsync((int)NotificationSettingId.TrangThaiMaVanDon);
-                        //sendNotificationService.SendNotification(notificationSetting,
-                        //    new List<string>() { item.OrderTransactionCode, GetStatusName(item.Status) },
-                        //    userNotification);
+;
                         unitOfWork.Repository<SmallPackage>().Update(item);
                         await unitOfWork.SaveAsync();
                     }
@@ -1359,11 +1349,11 @@ namespace NhapHangV2.Service.Services
                 case 1:
                     if (OrderID > 0)
                         mainOrders = await mainOrderService.GetAsync(x => !x.Deleted && x.Active
-                            && (x.UID == user.Id && x.Id == OrderID) && x.Status == (int)StatusOrderContants.VeVN
+                            && (x.UID == user.Id && x.Id == OrderID) && x.Status >= (int)StatusOrderContants.VeVN
                         ); //getById
                     else
                         mainOrders = await mainOrderService.GetAsync(x => !x.Deleted && x.Active
-                            && (x.UID == user.Id) && x.Status == (int)StatusOrderContants.VeVN
+                            && (x.UID == user.Id) && x.Status >= (int)StatusOrderContants.VeVN
                         );
 
                     if (!mainOrders.Any())
@@ -1395,9 +1385,9 @@ namespace NhapHangV2.Service.Services
                     break;
                 case 2:
                     if (OrderID > 0)
-                        transportationOrders = await unitOfWork.Repository<TransportationOrder>().GetQueryable().Where(e => !e.Deleted && e.UID == user.Id && e.Id == OrderID && e.Status == (int)StatusGeneralTransportationOrder.VeKhoVN).ToListAsync();
+                        transportationOrders = await unitOfWork.Repository<TransportationOrder>().GetQueryable().Where(e => !e.Deleted && e.UID == user.Id && e.Id == OrderID && e.Status >= (int)StatusGeneralTransportationOrder.VeKhoVN).ToListAsync();
                     else
-                        transportationOrders = await unitOfWork.Repository<TransportationOrder>().GetQueryable().Where(e => !e.Deleted && e.UID == user.Id && e.Status == (int)StatusGeneralTransportationOrder.VeKhoVN).ToListAsync();
+                        transportationOrders = await unitOfWork.Repository<TransportationOrder>().GetQueryable().Where(e => !e.Deleted && e.UID == user.Id && e.Status >= (int)StatusGeneralTransportationOrder.VeKhoVN).ToListAsync();
 
                     foreach (var transportationOrder in transportationOrders)
                     {
@@ -1426,7 +1416,7 @@ namespace NhapHangV2.Service.Services
                     if (OrderID > 0)
                     {
                         mainOrders = await mainOrderService.GetAsync(x => !x.Deleted && x.Active
-                            && (x.UID == user.Id && x.Id == OrderID) && x.Status == (int)StatusOrderContants.VeVN
+                            && (x.UID == user.Id && x.Id == OrderID) && x.Status >= (int)StatusOrderContants.VeVN
                         ); //getById
 
                         if (mainOrders.Any()) //Có tồn tại
@@ -1454,7 +1444,7 @@ namespace NhapHangV2.Service.Services
                         }
                         else
                         {
-                            transportationOrders = await unitOfWork.Repository<TransportationOrder>().GetQueryable().Where(e => !e.Deleted && e.UID == user.Id && e.Id == OrderID && e.Status == (int)StatusGeneralTransportationOrder.VeKhoVN).ToListAsync();
+                            transportationOrders = await unitOfWork.Repository<TransportationOrder>().GetQueryable().Where(e => !e.Deleted && e.UID == user.Id && e.Id == OrderID && e.Status >= (int)StatusGeneralTransportationOrder.VeKhoVN).ToListAsync();
 
                             foreach (var transportationOrder in transportationOrders)
                             {
@@ -1553,13 +1543,16 @@ namespace NhapHangV2.Service.Services
         public List<HistoryOrderChange> CreateHistoryTransOrderScanWareHouse(Users user, TransportationOrder transportationOrder, TransportationOrder transportationOrderOld, SmallPackage item, SmallPackage oldItem)
         {
             var historyOrderChanges = new List<HistoryOrderChange>();
-            historyOrderChanges.Add(new HistoryOrderChange()
+            if (oldItem.Status != item.Status)
             {
-                TransportationOrderId = transportationOrder.Id,
-                UID = user.Id,
-                HistoryContent = $"{user.UserName} đã đổi trạng thái của mã vận đơn: {item.OrderTransactionCode} của đơn hàng ID: {transportationOrder.Id} từ {GetStatusName(oldItem.Status)} sang {GetStatusName(item.Status)}",
-                Type = (int)TypeHistoryOrderChange.MaVanDon
-            });
+                historyOrderChanges.Add(new HistoryOrderChange()
+                {
+                    TransportationOrderId = transportationOrder.Id,
+                    UID = user.Id,
+                    HistoryContent = $"{user.UserName} đã đổi trạng thái của mã vận đơn: {item.OrderTransactionCode} của đơn hàng ID: {transportationOrder.Id} từ {GetStatusName(oldItem.Status)} sang {GetStatusName(item.Status)}",
+                    Type = (int)TypeHistoryOrderChange.MaVanDon
+                });
+            }
             if (item.Weight != oldItem.Weight)
             {
                 historyOrderChanges.Add(new HistoryOrderChange()

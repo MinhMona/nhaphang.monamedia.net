@@ -72,19 +72,19 @@ namespace NhapHangV2.API.Controllers
                 throw new KeyNotFoundException("id không tồn tại");
             }
             var item = await this.domainService.GetByIdAsync(id);
-            decimal? totalOrderPrice = 0;
-            decimal? totalPaidPrice = 0;
-            decimal? totalUnPaidPrice = 0;
+            //decimal? totalOrderPrice = 0;
+            //decimal? totalPaidPrice = 0;
+            //decimal? totalUnPaidPrice = 0;
 
-            var mainOrders = await mainOrderService.GetTotalOrderPriceByUID(id);
-            totalOrderPrice += mainOrders.TotalOrderPrice ?? 0;
-            totalPaidPrice += mainOrders.TotalPaidPrice ?? 0;
-            var payHelps = await payHelpService.GetTotalOrderPriceByUID(id);
-            totalOrderPrice += payHelps.TotalOrderPrice ?? 0;
-            totalPaidPrice += payHelps.TotalPaidPrice ?? 0;
-            var transportationOrders = await transportationOrderService.GetTotalOrderPriceByUID(id);
-            totalOrderPrice += transportationOrders.TotalOrderPrice ?? 0;
-            totalUnPaidPrice = (totalOrderPrice - totalPaidPrice) ?? 0;
+            //var mainOrders = await mainOrderService.GetTotalOrderPriceByUID(id);
+            //totalOrderPrice += mainOrders.TotalOrderPrice ?? 0;
+            //totalPaidPrice += mainOrders.TotalPaidPrice ?? 0;
+            //var payHelps = await payHelpService.GetTotalOrderPriceByUID(id);
+            //totalOrderPrice += payHelps.TotalOrderPrice ?? 0;
+            //totalPaidPrice += payHelps.TotalPaidPrice ?? 0;
+            //var transportationOrders = await transportationOrderService.GetTotalOrderPriceByUID(id);
+            //totalOrderPrice += transportationOrders.TotalOrderPrice ?? 0;
+            //totalUnPaidPrice = (totalOrderPrice - totalPaidPrice) ?? 0;
 
             if (item != null)
             {
@@ -93,9 +93,9 @@ namespace NhapHangV2.API.Controllers
                     var itemModel = mapper.Map<UserModel>(item);
 
                     itemModel.ConfirmPassWord = item.Password;
-                    itemModel.TotalOrderPrice = totalOrderPrice;
-                    itemModel.TotalPaidPrice = totalPaidPrice;
-                    itemModel.TotalUnPaidPrice = totalUnPaidPrice;
+                    //itemModel.TotalOrderPrice = totalOrderPrice;
+                    //itemModel.TotalPaidPrice = totalPaidPrice;
+                    //itemModel.TotalUnPaidPrice = totalUnPaidPrice;
 
                     appDomainResult = new AppDomainResult()
                     {
