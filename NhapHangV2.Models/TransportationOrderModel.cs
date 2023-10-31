@@ -303,6 +303,10 @@ namespace NhapHangV2.Models
         /// </summary>
         public DateTime? ComplainDate { get; set; }
         /// <summary>
+        /// Ngày về VN
+        /// </summary>
+        public DateTime? ComingVNDate { get; set; }
+        /// <summary>
         /// Chi phí vận chuyển thực tế
         /// </summary>
         public decimal? ActualShippingCost { get; set; } 

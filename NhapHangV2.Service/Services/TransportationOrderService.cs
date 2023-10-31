@@ -180,7 +180,30 @@ namespace NhapHangV2.Service.Services
                             }
                             else
                             {
-                                throw new AppException("Mã vận đơn đã tồn tại ở đơn ký gửi khác");
+                                item.SmallPackageId = smallPackage.Id;
+                                switch (smallPackage.Status)
+                                {
+                                    case (int)StatusSmallPackage.VeKhoTQ:
+                                        item.Status = (int)StatusGeneralTransportationOrder.VeKhoTQ;
+                                        if (item.TQDate == null)
+                                            item.TQDate = DateTime.Now;
+                                        break;
+                                    case (int)StatusSmallPackage.XuatKhoTQ:
+                                        item.Status = (int)StatusGeneralTransportationOrder.DangVeVN;
+                                        if (item.ComingVNDate == null)
+                                            item.ComingVNDate = DateTime.Now;
+                                        break;
+                                    case (int)StatusSmallPackage.VeKhoVN:
+                                        item.Status = (int)StatusGeneralTransportationOrder.VeKhoVN;
+                                        if (item.VNDate == null)
+                                            item.VNDate = DateTime.Now;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                smallPackage.TransportationOrderId = item.Id;
+                                unitOfWork.Repository<SmallPackage>().Update(smallPackage);
+                                unitOfWork.Repository<TransportationOrder>().Update(item);
                             }
                         }
                         await unitOfWork.SaveAsync();
@@ -780,8 +803,10 @@ namespace NhapHangV2.Service.Services
                         unitOfWork.Repository<Users>().Update(users);
 
                         item.Status = (int?)StatusGeneralTransportationOrder.DaThanhToan;
-                        item.DateExport = currentDate;
-                        item.PaidDate = currentDate;
+                        if (item.PaidDate == null)
+                        {
+                            item.PaidDate = currentDate;
+                        }
                         item.Updated = currentDate;
                         item.UpdatedBy = username;
 
