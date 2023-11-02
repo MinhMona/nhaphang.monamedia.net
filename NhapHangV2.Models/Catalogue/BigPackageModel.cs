@@ -33,12 +33,14 @@ namespace NhapHangV2.Models.Catalogue
             {
                 switch (Status)
                 {
+                    case 0:
+                        return "Đã hủy";
                     case 1:
                         return "Bao hàng ở Trung Quốc";
                     case 2:
-                        return "Đã nhận hàng tại Việt Nam";
+                        return "Trên đường về VN";
                     case 3:
-                        return "Hủy";
+                        return "Trong kho VN";
                     default:
                         return string.Empty;
                 }

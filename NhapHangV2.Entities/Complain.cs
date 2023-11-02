@@ -42,7 +42,7 @@ namespace NhapHangV2.Entities
         /// <summary>
         /// Trạng thái
         /// </summary>
-        public int? Status { get; set; } = (int)StatusComplain.ChuaDuyet;
+        public int? Status { get; set; } = (int)StatusComplain.MoiTao;
 
         /// <summary>
         /// UserName
@@ -55,5 +55,10 @@ namespace NhapHangV2.Entities
         /// </summary>
         [NotMapped]
         public decimal? CurrentCNYVN { get; set; } = 0;
+
+        /// <summary>
+        /// Id đơn ký gửi
+        /// </summary>
+        public int? TransportationOrderId { get; set; } = 0;
     }
 }

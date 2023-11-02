@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NhapHangV2.BaseAPI.Controllers;
 using NhapHangV2.Entities;
+using NhapHangV2.Entities.Configuration;
 using NhapHangV2.Entities.DomainEntities;
 using NhapHangV2.Entities.Search;
 using NhapHangV2.Extensions;
@@ -74,6 +75,11 @@ namespace NhapHangV2.API.Controllers
 
                 if (item != null)
                 {
+                    var mainOrder = await mainOrderService.GetByIdAsync(item.MainOrderId ?? 0);
+                    if (mainOrder == null)
+                    {
+                        throw new AppException("Không tìm thấy đơn hàng");
+                    }
                     // Kiểm tra item có tồn tại chưa?
                     var messageUserCheck = await this.domainService.GetExistItemMessage(item);
                     if (!string.IsNullOrEmpty(messageUserCheck))
@@ -82,16 +88,6 @@ namespace NhapHangV2.API.Controllers
                     {
                         itemModel.Quantity = 0; //Số lượng = 0
                         itemModel.PriceOrigin = itemModel.RealPrice = 0; //Giá sản phẩm, giá mua thực tế = 0
-
-                        //Thông báo cho người dùng sản phẩm đã hết hàng
-                        var notiTemplate = await notificationTemplateService.GetByIdAsync(18);
-                        var notiSetting = await notificationSettingService.GetByIdAsync(19);
-
-                        var emailTemplate = await sMSEmailTemplateService.GetByCodeAsync("UCSPBX");
-                        string subject = emailTemplate.Subject;
-                        string emailContent = string.Format(emailTemplate.Body); //Thông báo Email
-                        await sendNotificationService.SendNotification(notiSetting, notiTemplate, item.Id.ToString(),"", String.Format(Detail_MainOrder, item.Id), item.UID, subject, emailContent);
-                        //await sendNotificationService.SendNotification(notiSetting, notiTemplate, item.Id.ToString(),"", $"/user/order-list/{item.Id}", item.UID, subject, emailContent);
                     }
 
                     decimal price = item.PriceOrigin ?? 0;
@@ -99,6 +95,8 @@ namespace NhapHangV2.API.Controllers
                         price = item.PricePromotion ?? 0;
 
                     item.HistoryOrderChanges = new List<HistoryOrderChange>();
+                    var notificationSetting = await notificationSettingService.GetByIdAsync((int)NotificationSettingId.SanPhamMuaHo);
+
                     if (itemModel.PriceOrigin != price)
                     {
                         item.HistoryOrderChanges.Add(new HistoryOrderChange()
@@ -108,6 +106,10 @@ namespace NhapHangV2.API.Controllers
                             HistoryContent = String.Format("{0} đã đổi giá sản phẩm ID #{1}, Từ: {2}, Sang: {3}.", user.UserName, item.Id, price.ToString(), itemModel.PriceOrigin.ToString()),
                             Type = (int?)TypeHistoryOrderChange.TienDatCoc
                         });
+                        //Thông báo
+                        sendNotificationService.SendNotification(notificationSetting,
+                            new List<string>() { item.MainOrderId.ToString(), user.UserName, item.Id.ToString() },
+                            new UserNotification() { UserId = mainOrder.UID, OrdererId = mainOrder.DatHangId, SaleId = mainOrder.SalerId });
                     }
 
                     if (itemModel.Quantity != item.Quantity)
@@ -119,6 +121,9 @@ namespace NhapHangV2.API.Controllers
                             HistoryContent = String.Format("{0} đã đổi số lượng sản phẩm ID #{1}, Từ: {2}, Sang: {3}.", user.UserName, item.Id, item.Quantity.ToString(), itemModel.Quantity.ToString()),
                             Type = (int?)TypeHistoryOrderChange.TienDatCoc
                         });
+                        sendNotificationService.SendNotification(notificationSetting,
+                            new List<string>() { item.MainOrderId.ToString(), user.UserName, item.Id.ToString() },
+                            new UserNotification() { UserId = mainOrder.UID, OrdererId = mainOrder.DatHangId, SaleId = mainOrder.SalerId });
                     }
 
                     if (itemModel.ProductStatus != item.ProductStatus)
@@ -156,6 +161,9 @@ namespace NhapHangV2.API.Controllers
                             HistoryContent = String.Format("{0} đã đổi trạng thái sản phẩm của đơn hàng ID là: {1}, Từ: {2}, Sang: {3}.", user.UserName, item.MainOrderId, productStatusOld, productStatusNew),
                             Type = (int?)TypeHistoryOrderChange.TienDatCoc
                         });
+                        sendNotificationService.SendNotification(notificationSetting,
+                            new List<string>() { item.MainOrderId.ToString(), user.UserName, item.Id.ToString() },
+                            new UserNotification() { UserId = mainOrder.UID, OrdererId = mainOrder.DatHangId, SaleId = mainOrder.SalerId });
                     }
                     item.PriceCNY = itemModel.PriceOrigin * itemModel.Quantity;
                     item.PriceVND = (itemModel.PriceOrigin * itemModel.Quantity) * item.CurrentCNYVN;

@@ -11,6 +11,8 @@ namespace NhapHangV2.Request
 {
     public class MainOrderRequest : AppDomainRequest
     {
+        public bool? IsEditFeeBuyProPercent { get; set; }
+        public decimal? EditedFeeBuyProPercent { get; set; }
         /// <summary>
         /// Trạng thái
         /// </summary>

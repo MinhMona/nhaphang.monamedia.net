@@ -1,30 +1,17 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NhapHangV2.BaseAPI.Controllers;
 using NhapHangV2.Entities;
-using NhapHangV2.Entities.Auth;
-using NhapHangV2.Entities.Catalogue;
 using NhapHangV2.Entities.Search;
 using NhapHangV2.Extensions;
 using NhapHangV2.Interface.Services;
-using NhapHangV2.Interface.Services.Auth;
-using NhapHangV2.Interface.Services.Catalogue;
-using NhapHangV2.Interface.Services.Configuration;
-using NhapHangV2.Interface.UnitOfWork;
 using NhapHangV2.Models;
 using NhapHangV2.Request;
-using NhapHangV2.Service;
-using NhapHangV2.Service.Services.Auth;
-using NhapHangV2.Service.Services.Configurations;
 using NhapHangV2.Utilities;
-using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -32,7 +19,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using static NhapHangV2.Utilities.CoreContants;
 
 namespace NhapHangV2.API.Controllers
 {
@@ -44,23 +30,15 @@ namespace NhapHangV2.API.Controllers
     {
         protected readonly IComplainService complainService;
         private readonly IConfiguration configuration;
-        protected IUserInGroupService userInGroupService;
-        private readonly INotificationSettingService notificationSettingService;
-        private readonly INotificationTemplateService notificationTemplateService;
-        private readonly ISendNotificationService sendNotificationService;
-        private readonly ISMSEmailTemplateService sMSEmailTemplateService;
         private readonly IMainOrderService mainOrderService;
+        private readonly ITransportationOrderService transportationOrderService;
         public ComplainController(IServiceProvider serviceProvider, ILogger<BaseController<Complain, ComplainModel, ComplainRequest, ComplainSearch>> logger, IWebHostEnvironment env, IConfiguration configuration) : base(serviceProvider, logger, env)
         {
             this.domainService = this.serviceProvider.GetRequiredService<IComplainService>();
             complainService = serviceProvider.GetRequiredService<IComplainService>();
             this.configuration = configuration;
-            userInGroupService = serviceProvider.GetRequiredService<IUserInGroupService>();
-            notificationSettingService = serviceProvider.GetRequiredService<INotificationSettingService>();
-            notificationTemplateService = serviceProvider.GetRequiredService<INotificationTemplateService>();
-            sendNotificationService = serviceProvider.GetRequiredService<ISendNotificationService>();
             mainOrderService = serviceProvider.GetRequiredService<IMainOrderService>();
-            sMSEmailTemplateService = serviceProvider.GetRequiredService<ISMSEmailTemplateService>();
+            transportationOrderService = serviceProvider.GetRequiredService<ITransportationOrderService>();
 
         }
 
@@ -78,10 +56,25 @@ namespace NhapHangV2.API.Controllers
             bool success = false;
             if (ModelState.IsValid)
             {
-                var mainOrderComplain = await mainOrderService.GetByIdAsync(itemModel.MainOrderId ?? 0);
-                if (mainOrderComplain == null)
+                decimal? maxAmountRequest = 0;
+
+                var mainOrderComplain = new MainOrder();
+                var transOrderComplain = new TransportationOrder();
+                if (itemModel.MainOrderId > 0)
+                {
+                    mainOrderComplain = await mainOrderService.GetByIdAsync(itemModel?.MainOrderId ?? 0);
+                }
+                else if (itemModel.TransportationOrderId > 0)
+                {
+                    transOrderComplain = await transportationOrderService.GetByIdAsync(itemModel?.TransportationOrderId ?? 0);
+                }
+                if (mainOrderComplain == null && transOrderComplain == null)
                     throw new KeyNotFoundException("Đơn hàng không tồn tại");
-                decimal? maxAmountRequest = mainOrderComplain.TotalPriceVND;
+                else if (mainOrderComplain != null)
+                    maxAmountRequest = mainOrderComplain.TotalPriceVND;
+                else if (transOrderComplain != null)
+                    maxAmountRequest = transOrderComplain.TotalPriceVND;
+
                 if (itemModel.Amount > maxAmountRequest)
                     throw new AppException("Số tiền yêu cầu lớn hơn tổng tiền đơn hàng");
                 var item = mapper.Map<Complain>(itemModel);
@@ -95,18 +88,6 @@ namespace NhapHangV2.API.Controllers
                     success = await this.domainService.CreateAsync(item);
                     if (success)
                     {
-                        #region Thông báo khiếu nại cho Admin và Manager
-                        var notificationSetting = await notificationSettingService.GetByIdAsync(10);
-                        var notiTemplate = await notificationTemplateService.GetByIdAsync(2);
-                        if (notiTemplate != null && notificationSetting.Active)
-                        {
-                            var emailTemplate = await sMSEmailTemplateService.GetByCodeAsync("AKNM");
-                            string subject = emailTemplate.Subject;
-                            string emailContent = string.Format(emailTemplate.Body);
-                            await sendNotificationService.SendNotification(notificationSetting, notiTemplate, item.MainOrderId.ToString(), string.Format(Complain_Admin), "", null, subject, emailContent); //Thông báo Email
-                            //await sendNotificationService.SendNotification(notificationSetting, notiTemplate, item.MainOrderId.ToString(), "/manager/order/complain-list", "", null, subject, emailContent); //Thông báo Email
-                        }
-                        #endregion
                         appDomainResult.ResultCode = (int)HttpStatusCode.OK;
                     }
                     appDomainResult.Success = success;

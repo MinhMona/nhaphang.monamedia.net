@@ -95,16 +95,20 @@ namespace NhapHangV2.Models.Report
                         return "Hủy";
                     case (int)StatusGeneralTransportationOrder.ChoDuyet:
                         return "Chờ duyệt";
-                    case (int)StatusGeneralTransportationOrder.DaDuyet:
-                        return "Đã duyệt";
+                    case (int)StatusGeneralTransportationOrder.DonMoi:
+                        return "Đơn mới";
                     case (int)StatusGeneralTransportationOrder.VeKhoTQ:
                         return "Đã về kho TQ";
+                    case (int)StatusGeneralTransportationOrder.DangVeVN:
+                        return "Đang về VN";
                     case (int)StatusGeneralTransportationOrder.VeKhoVN:
                         return "Đã về kho VN";
                     case (int)StatusGeneralTransportationOrder.DaThanhToan:
                         return "Đã thanh toán";
                     case (int)StatusGeneralTransportationOrder.DaHoanThanh:
                         return "Đã hoàn thành";
+                    case (int)StatusGeneralTransportationOrder.DaKhieuNai:
+                        return "Đã khiếu nại";
                     default:
                         return string.Empty;
                 }

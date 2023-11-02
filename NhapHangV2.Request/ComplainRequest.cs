@@ -39,6 +39,11 @@ namespace NhapHangV2.Request
         /// <summary>
         /// Trạng thái
         /// </summary>
-        public int? Status { get; set; } = (int)StatusComplain.ChuaDuyet;
+        public int? Status { get; set; } = (int)StatusComplain.MoiTao;
+
+        /// <summary>
+        /// Id đơn ký gửi
+        /// </summary>
+        public int? TransportationOrderId { get; set; }
     }
 }

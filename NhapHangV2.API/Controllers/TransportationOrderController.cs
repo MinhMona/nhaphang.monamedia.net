@@ -149,9 +149,9 @@ namespace NhapHangV2.API.Controllers
                 if (user.Currency > 0)
                     currency = user.Currency ?? 0;
 
-                foreach (var list in itemModel.SmallPackages)
+                List<SmallPackageRequest> listSmallPackages = itemModel.SmallPackages.DistinctBy(x => x.OrderTransactionCode).ToList();
+                foreach (var list in listSmallPackages)
                 {
-
                     TransportationOrder data = new TransportationOrder();
                     data.UID = user.Id;
                     data.Currency = currency;
@@ -173,22 +173,6 @@ namespace NhapHangV2.API.Controllers
                     data.TotalPriceVND = list.FeeShip * currency;
                     data.TotalPriceVND = Math.Round(data.TotalPriceVND ?? 0, 0);
                     data.SalerID = itemModel.SalerID;
-
-                    // Kiểm tra item có tồn tại chưa?
-                    var messageUserCheck = await this.domainService.GetExistItemMessage(data);
-                    if (!string.IsNullOrEmpty(messageUserCheck))
-                        throw new KeyNotFoundException(messageUserCheck);
-
-                    var getSmallCheck = await smallPackageService.GetSingleAsync(x => !x.Deleted && x.Active
-                        && (x.OrderTransactionCode.Equals(list.OrderTransactionCode))
-                    );
-                    // Kiểm tra có tồn tại mã vận đơn hay chưa?
-                    var messageGetSmallCheck = await smallPackageService.GetExistItemMessage(getSmallCheck);
-                    if (!string.IsNullOrEmpty(messageGetSmallCheck))
-                        throw new KeyNotFoundException(messageGetSmallCheck);
-                    var smallPackgeExist = await smallPackageService.GetByOrderTransactionCode(list.OrderTransactionCode);
-                    if (smallPackgeExist != null)
-                        throw new AppException($"Mã vận đơn {list.OrderTransactionCode} của đơn ký gửi đã tồn tại");
 
                     transportationOrders.Add(data);
                 }
@@ -262,6 +246,7 @@ namespace NhapHangV2.API.Controllers
         public async Task<AppDomainResult> CancelItem(int id, string note)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
+            var currentDate = DateTime.Now;
             bool success = false;
             if (string.IsNullOrEmpty(note))
                 throw new AppException("Chưa nhập lý do hủy đơn hàng");
@@ -280,14 +265,18 @@ namespace NhapHangV2.API.Controllers
 
             trans.Status = (int?)StatusGeneralTransportationOrder.Huy;
             trans.CancelReason = note;
-            trans.Updated = DateTime.Now;
+            if (trans.CancelDate == null)
+                trans.CancelDate = currentDate;
+            trans.Updated = currentDate;
             trans.UpdatedBy = LoginContext.Instance.CurrentUser.UserName;
 
             List<TransportationOrder> listTrans = new List<TransportationOrder>();
             listTrans.Add(trans);
             success = await transportationOrderService.UpdateAsync(listTrans, (int)StatusGeneralTransportationOrder.Huy, 0);
             if (success)
+            {
                 appDomainResult.ResultCode = (int)HttpStatusCode.OK;
+            }
             else
                 throw new Exception("Lỗi trong quá trình xử lý");
             appDomainResult.Success = success;
@@ -368,6 +357,8 @@ namespace NhapHangV2.API.Controllers
                 x.DateExportRequest = DateTime.Now;
                 x.ShippingTypeVN = shippingType;
                 x.Status = (int?)StatusGeneralTransportationOrder.DaThanhToan;
+                if (x.PaidDate == null)
+                    x.PaidDate = DateTime.Now;
                 //Còn gán thằng TotalPrice thì trong Service đó
             });
 

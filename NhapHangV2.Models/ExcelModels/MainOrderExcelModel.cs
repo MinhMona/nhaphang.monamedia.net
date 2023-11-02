@@ -93,32 +93,32 @@ namespace NhapHangV2.Models.ExcelModels
         {
             get
             {
-                if (OrderType == 3 && IsCheckNotiPrice == false)
-                    return "Chờ báo giá";
                 switch (Status)
                 {
-                    case (int)StatusOrderContants.ChuaDatCoc:
-                        return "Chưa đặt cọc";
-                    case (int)StatusOrderContants.Huy:
+                    case (int)StatusOrderContants.DonHuy:
                         return "Hủy";
-                    case (int)StatusOrderContants.DaDatCoc:
+                    case (int)StatusOrderContants.ChoBaoGia:
+                        return "Chờ báo giá";
+                    case (int)StatusOrderContants.DonMoi:
+                        return "Đơn mới";
+                    case (int)StatusOrderContants.DaCoc:
                         return "Đã đặt cọc";
-                    case (int)StatusOrderContants.ChoDuyetDon:
-                        return "Chờ duyệt đơn";
-                    case (int)StatusOrderContants.DaDuyetDon:
-                        return "Đã duyệt đơn";
                     case (int)StatusOrderContants.DaMuaHang:
                         return "Đã mua hàng";
-                    case (int)StatusOrderContants.DaVeKhoTQ:
+                    case (int)StatusOrderContants.ShopPhatHang:
+                        return "Shop phát hàng";
+                    case (int)StatusOrderContants.VeTQ:
                         return "Đã về kho TQ";
-                    case (int)StatusOrderContants.DaVeKhoVN:
+                    case (int)StatusOrderContants.DangVeVN:
+                        return "Đang về kho VN";
+                    case (int)StatusOrderContants.VeVN:
                         return "Đã về kho VN";
-                    case (int)StatusOrderContants.ChoThanhToan:
-                        return "Chờ thanh toán";
-                    case (int)StatusOrderContants.KhachDaThanhToan:
-                        return "Khách đã thanh toán";
-                    case (int)StatusOrderContants.DaHoanThanh:
+                    case (int)StatusOrderContants.DaThanhToan:
+                        return "Đã thanh toán";
+                    case (int)StatusOrderContants.HoanThanh:
                         return "Đã hoàn thành";
+                    case (int)StatusOrderContants.KhieuNai:
+                        return "Đã khiếu nại";
                     default:
                         return string.Empty;
                 }

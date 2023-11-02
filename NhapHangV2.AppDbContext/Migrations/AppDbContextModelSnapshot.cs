@@ -573,6 +573,12 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("PageId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PageTypeId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("Parent")
                         .HasColumnType("int");
 
@@ -621,10 +627,34 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("EmailContent")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmailSubject")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsEmailAccountant")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsEmailAdmin")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsEmailOrderer")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsEmailSaler")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsEmailStorekeepers")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsEmailUser")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsEmailWarehoue")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsEmailWarehoueFrom")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsNotifyAccountant")
@@ -651,8 +681,23 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<bool>("IsNotifyWarehoueFrom")
                         .HasColumnType("bit");
 
+                    b.Property<string>("ManagerContent")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ManagerEmailContent")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ManagerEmailSubject")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ManagerUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Type")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("Updated")
                         .HasColumnType("datetime2");
@@ -660,6 +705,12 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<string>("UpdatedBy")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("UserContent")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -806,6 +857,9 @@ namespace NhapHangV2.AppDbContext.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("MenuId")
+                        .HasColumnType("int");
 
                     b.Property<string>("MetaDescription")
                         .HasColumnType("nvarchar(max)");
@@ -1203,6 +1257,9 @@ namespace NhapHangV2.AppDbContext.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TransportationOrderId")
                         .HasColumnType("int");
 
                     b.Property<int?>("UID")
@@ -2113,6 +2170,9 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<int?>("MainOrderId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("TransportationOrderId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("Type")
                         .HasColumnType("int");
 
@@ -2402,6 +2462,9 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<DateTime?>("CancelDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("ComplainDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("CompleteDate")
                         .HasColumnType("datetime2");
 
@@ -2419,6 +2482,12 @@ namespace NhapHangV2.AppDbContext.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("DateBuy")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateComingVN")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateSendGoods")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DateTQ")
@@ -2439,6 +2508,9 @@ namespace NhapHangV2.AppDbContext.Migrations
 
                     b.Property<DateTime?>("DepositDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("EditedFeeBuyProPercent")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime?>("ExpectedDate")
                         .HasColumnType("datetime2");
@@ -2510,6 +2582,9 @@ namespace NhapHangV2.AppDbContext.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool?>("IsDoneSmallPackage")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsEditFeeBuyProPercent")
                         .HasColumnType("bit");
 
                     b.Property<bool?>("IsFastDelivery")
@@ -2688,7 +2763,7 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<bool>("IsRead")
                         .HasColumnType("bit");
 
-                    b.Property<int>("MainOrderId")
+                    b.Property<int?>("MainOrderId")
                         .HasColumnType("int");
 
                     b.Property<string>("NotificationContent")
@@ -2700,7 +2775,7 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<bool>("OfEmployee")
                         .HasColumnType("bit");
 
-                    b.Property<int>("ToUserId")
+                    b.Property<int?>("ToUserId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("Updated")
@@ -2713,7 +2788,7 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<string>("Url")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserGroupId")
+                    b.Property<int?>("UserGroupId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -3009,6 +3084,9 @@ namespace NhapHangV2.AppDbContext.Migrations
 
                     b.Property<decimal?>("FeeBuyPro")
                         .HasColumnType("decimal(18,0)");
+
+                    b.Property<decimal?>("FeeBuyProPercent")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal?>("InsuranceMoney")
                         .HasColumnType("decimal(18,0)");
@@ -3342,6 +3420,9 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<bool?>("IsHidden")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("MenuId")
+                        .HasColumnType("int");
+
                     b.Property<string>("MetaDescription")
                         .HasColumnType("nvarchar(max)");
 
@@ -3467,6 +3548,15 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime?>("CancelDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("CompleteDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ConfirmDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("Created")
                         .HasColumnType("datetime2");
 
@@ -3486,12 +3576,18 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<decimal?>("Deposit")
                         .HasColumnType("decimal(18,0)");
 
+                    b.Property<decimal?>("FeeService")
+                        .HasColumnType("decimal(18,0)");
+
                     b.Property<bool?>("IsComplete")
                         .HasColumnType("bit");
 
                     b.Property<string>("Note")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime?>("PaidDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("SalerID")
                         .HasColumnType("int");
@@ -3534,6 +3630,9 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
+                    b.Property<string>("AdminImage")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("Created")
                         .HasColumnType("datetime2");
 
@@ -3559,6 +3658,9 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<string>("UpdatedBy")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("UserImage")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -3809,6 +3911,9 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<DateTime?>("DateInVNTemp")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("DateOutTQ")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("DateOutWarehouse")
                         .HasColumnType("datetime2");
 
@@ -3889,6 +3994,9 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<string>("StaffNoteCheck")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("StaffOutTQ")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("StaffTQWarehouse")
                         .HasMaxLength(50)
@@ -4048,6 +4156,9 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
+                    b.Property<decimal?>("ActualShippingCost")
+                        .HasColumnType("decimal(18,0)");
+
                     b.Property<decimal?>("Amount")
                         .HasColumnType("decimal(18,0)");
 
@@ -4057,6 +4168,9 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<decimal?>("CODFeeTQ")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<DateTime?>("CancelDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("CancelReason")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
@@ -4064,6 +4178,18 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<string>("Category")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime?>("ComingVNDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ComplainDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("CompleteDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ConfirmDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("Created")
                         .HasColumnType("datetime2");
@@ -4128,6 +4254,9 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<string>("OrderTransactionCode")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("PaidDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int?>("SalerID")
                         .HasColumnType("int");
 
@@ -4147,6 +4276,9 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<int?>("Status")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("TQDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<decimal?>("TotalPriceCNY")
                         .HasColumnType("decimal(18,2)");
 
@@ -4162,6 +4294,9 @@ namespace NhapHangV2.AppDbContext.Migrations
                     b.Property<string>("UpdatedBy")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("VNDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("WareHouseFromId")
                         .HasColumnType("int");

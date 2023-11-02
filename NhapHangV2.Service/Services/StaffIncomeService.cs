@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NhapHangV2.Entities;
@@ -105,23 +106,29 @@ namespace NhapHangV2.Service.Services
                     await unitOfWork.SaveAsync();
                     unitOfWork.Repository<Users>().Detach(user);
                     //Lịch sử ví tiền VNĐ
-                    int? mainOrderId = 0;
+                    int tradeType = 0;
+                    string content = "";
                     if (staffIncome.MainOrderId > 0)
-                        mainOrderId = staffIncome.MainOrderId;
-                    if (staffIncome.TransportationOrderId > 0)
-                        mainOrderId = staffIncome.TransportationOrderId;
-                    if (staffIncome.PayHelpOrderId > 0)
-                        mainOrderId = staffIncome.PayHelpOrderId;
-
+                    {
+                        content = string.Format("{0} đã nhận được hoa hồng của đơn mua hộ: {1}.", user.UserName, staffIncome.MainOrderId);
+                        tradeType = (int)HistoryPayWalletContents.HoaHongMuaHo;
+                    }
+                    if (staffIncome.TransportationOrderId > 0) {
+                        content = string.Format("{0} đã nhận được hoa hồng của đơn ký gửi: {1}.", user.UserName, staffIncome.TransportationOrderId);
+                        tradeType = (int)HistoryPayWalletContents.HoaHongKyGui;
+                    }
+                    if (staffIncome.PayHelpOrderId > 0) {
+                        content = string.Format("{0} đã nhận được hoa hồng của đơn thanh toán hộ: {1}.", user.UserName, staffIncome.PayHelpOrderId);
+                        tradeType = (int)HistoryPayWalletContents.HoaHongThanhToanHo;
+                    }
                     await unitOfWork.Repository<HistoryPayWallet>().CreateAsync(new HistoryPayWallet
                     {
                         UID = user.Id,
-                        MainOrderId = mainOrderId,
                         MoneyLeft = wallet,
                         Amount = staffIncome.TotalPriceReceive,
                         Type = (int)DauCongVaTru.Cong,
-                        TradeType = (int)HistoryPayWalletContents.HoaHong,
-                        Content = string.Format("{0} đã nhận được hoa hồng của đơn hàng: {1}.", user.UserName, mainOrderId),
+                        TradeType = tradeType,
+                        Content = content,
                         Deleted = false,
                         Active = true,
                         Created = currentDate,

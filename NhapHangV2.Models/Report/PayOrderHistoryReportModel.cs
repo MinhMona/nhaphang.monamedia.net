@@ -34,13 +34,14 @@ namespace NhapHangV2.Models.Report
             {
                 switch (Status)
                 {
-                    case (int)StatusPayOrderHistoryContants.DatCoc2:
-                    case (int)StatusPayOrderHistoryContants.DatCoc3:
+                    case (int)StatusPayOrderHistoryContants.DatCoc:
                         return "Đặt cọc";
                     case (int)StatusPayOrderHistoryContants.ThanhToan:
                         return "Thanh toán đơn hàng";
-                    case (int)StatusPayOrderHistoryContants.SanPhamHetHang:
+                    case (int)StatusPayOrderHistoryContants.HoanTienSanPham:
                         return "Sản phẩm hết hàng";
+                    case (int)StatusPayOrderHistoryContants.HoanTienHuyDon:
+                        return "Hoàn tiền đã trả";
                     default:
                         return String.Empty;
                 }

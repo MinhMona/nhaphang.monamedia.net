@@ -1,0 +1,182 @@
+@import url("../assets/font/Themify/stylesheet.css");
+@import url("../assets/font/Roboto/stylesheet.css");
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%;
+  scroll-behavior: smooth;
+
+  @media screen and (min-width: 2000px) {
+    font-size: 100%;
+  }
+}
+
+body {
+  font-family: "Roboto", Times, serif;
+  font-size: 16px;
+  line-height: 1.55;
+  font-weight: 400;
+  color: #000000;
+  overflow: hidden auto;
+
+  @media screen and (min-width: 2000px) {
+    font-size: 20px;
+  }
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button,
+select {
+  border: none;
+  outline: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+button {
+  padding: 0;
+  background-color: transparent;
+}
+
+input,
+textarea {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  @include font-pri;
+}
+
+.main {
+  min-height: 68vh;
+  // padding-top: var(--size-hd);
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.over {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.no-scroll {
+  touch-action: none;
+  -webkit-overflow-scrolling: none;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+.main {
+  overflow: hidden;
+}
+
+iframe {
+  vertical-align: middle;
+}
+
+.load-item {
+  display: none;
+}
+
+.show-hide-toggle {
+  cursor: pointer;
+}
+
+img {
+  max-width: 100%;
+  border-radius: inherit;
+  height: auto;
+}
+
+.global-title {
+  max-width: 0;
+  max-height: 0;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.wow {
+  animation-duration: 1s;
+}
+
+.wow {
+  visibility: hidden;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.main-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: $color-border-03;
+
+  transition: all 0.3s ease-in-out;
+  opacity: 0;
+  z-index: -1;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.main-overlay.active {
+  opacity: 1;
+  z-index: 100;
+  visibility: visible;
+  pointer-events: all;
+}
+
+
+.sec {
+  position: relative;
+  z-index: 4;
+}
+
+.sub-title {
+  color: $color-pri;
+  text-transform: uppercase;
+  text-align: center;
+  font-weight: bold;
+}
+
+.main-title{
+  color: #333;
+  font-size: 48px;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+}
+
+.main-des {
+  color: #333;
+  text-align: center;
+  width: 50%;
+  margin: 0 auto;
+}
+
+@media (max-width: 580px) {
+  .main-title {
+    font-size: 30px;
+  }
+
+  .sub-title {
+    font-size: 18px;
+  }
+}

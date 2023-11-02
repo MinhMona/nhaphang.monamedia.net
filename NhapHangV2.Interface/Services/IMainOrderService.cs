@@ -27,12 +27,12 @@ namespace NhapHangV2.Interface.Services
         Task<bool> UpdateIsCheckNotiPrice(MainOrder mainOrder);
         void UpdateMainOrderFromSql(string commandText);
         List<NumberOfOrders> GetNumberOfOrders(MainOrderSearch mainOrderSearch);
-        byte[] GetMainOrdersExcel(MainOrderSearch mainOrderSearch);
         CountAllOrder GetCountAllOrder(MainOrderSearch mainOrderSearch);
         PriceInMonth GetPriceInMonth(MainOrderSearch mainOrderSearch);
         Task<bool> UpdateMainOrderWeight(int id, decimal weight);
         Task<bool> UpdateMainOrderDelivery(int id, decimal deliveryPrice);
         Task<bool> UpdateCurrency(int id, decimal currency);
         Task<PagedList<MainOrderTool>> GetPagedListOfOrderStaff(MainOrderToolSearch search);
+        string GetStatusName(int? status);
     }
 }

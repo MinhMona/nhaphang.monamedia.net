@@ -35,7 +35,11 @@ namespace NhapHangV2.Service.Services
             this.coreDbContext = coreDbContext;
             orderShopTempService = serviceProvider.GetRequiredService<IOrderShopTempService>();
         }
-
+        public async Task<string> GetSaleName(int? saleId)
+        {
+            var sale = await unitOfWork.Repository<Users>().GetQueryable().FirstOrDefaultAsync(x => x.Id == saleId);
+            return sale != null ? sale.UserName : "Chưa xác định";
+        }
         protected override string GetStoreProcName()
         {
             return "User_GetPagingData";

@@ -6,11 +6,13 @@ using NhapHangV2.Models.Catalogue;
 using NhapHangV2.Request;
 using NhapHangV2.Utilities;
 using Polly.Caching;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Net;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace NhapHangV2.API.Controllers
 {
@@ -29,6 +31,21 @@ namespace NhapHangV2.API.Controllers
             this.memoryCache = memoryCache;
         }
 
+        [HttpGet("get-full-link")]
+        public string GetFullLink(string url)
+        {
+            var client = new RestClient(url);
+            var request = new RestRequest();
+            IRestResponse response = client.Execute(request);
+            if (response.Content.Contains("wireless1688://ma.m.1688.com/plugin?url="))
+            {
+                var urlRed = HttpUtility.UrlDecode(response.Content.Replace("wireless1688://ma.m.1688.com/plugin?url=", ""));
+                return urlRed;
+
+            }
+            return response.Content;
+        }
+
         [HttpPost]
         public AppDomainResult SearchContent(SearchRequest searchRequest)
         {
@@ -36,10 +53,11 @@ namespace NhapHangV2.API.Controllers
         }
 
         [HttpGet]
-        public async Task<AppDomainResult> CrawlProduct([FromQuery] long id, [FromQuery] string web)
+        public async Task<AppDomainResult> CrawlProduct([FromQuery] long id, [FromQuery] string web, [FromQuery] bool isDev)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
             string result = string.Empty;
+
             result = await crawlProductService.CrawlProduct(id, web);
             if (!string.IsNullOrEmpty(result))
             {

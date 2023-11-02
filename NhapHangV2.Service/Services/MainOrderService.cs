@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
-using ClosedXML.Excel;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NhapHangV2.Entities;
 using NhapHangV2.Entities.Catalogue;
-using NhapHangV2.Entities.DomainEntities;
+using NhapHangV2.Entities.Configuration;
 using NhapHangV2.Entities.Search;
 using NhapHangV2.Entities.SQLEntities;
 using NhapHangV2.Extensions;
@@ -15,14 +13,11 @@ using NhapHangV2.Interface.Services.Auth;
 using NhapHangV2.Interface.Services.Catalogue;
 using NhapHangV2.Interface.Services.Configuration;
 using NhapHangV2.Interface.UnitOfWork;
-using NhapHangV2.Models.ExcelModels;
 using NhapHangV2.Service.Services.DomainServices;
 using NhapHangV2.Utilities;
-using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -37,12 +32,6 @@ namespace NhapHangV2.Service.Services
 
     public class MainOrderService : DomainService<MainOrder, MainOrderSearch>, IMainOrderService
     {
-        private readonly string[] MainOrderExcelColumns = new string[] { "OrderID", "Username", "Tổng tiền", "Tiền đã trả",
-            "Tiền còn lại", "Tiền hàng trên Web", "Phí dịch vụ", "Phí ship TQ", "TPhí kiểm hàng", "Phí đóng gỗ",
-            "Phí bảo hiểm", "Phụ phí", "Phí vận chuyển", "Cân nặng","Trạng thái", "NV kinh doanh", "NV đặt hàng",
-            "Ngày tạo","Ngày đặt cọc", "Ngày mua hàng", "Ngày về kho TQ", "Ngày về kho VN","Ngày hoàn thành"
-        };
-
         protected readonly IAppDbContext Context;
         protected readonly IOrderShopTempService orderShopTempService;
         protected readonly IUserService userService;
@@ -153,7 +142,7 @@ namespace NhapHangV2.Service.Services
                     Content = $"{currentUser.UserName} đã hoàn tiền khi thay đổi tỷ giá đơn #{mainOrder.Id} số tiền {string.Format("{0:N0}", refundAmount)}.",
                     MoneyLeft = newWallet,
                     Type = (int?)DauCongVaTru.Cong,
-                    TradeType = (int?)HistoryPayWalletContents.NhanLaiTienDatCoc,
+                    TradeType = (int?)HistoryPayWalletContents.HoanTienDaTraMuaHo,
                     Deleted = false,
                     Active = true,
                     CreatedBy = currentUser.UserName,
@@ -183,7 +172,7 @@ namespace NhapHangV2.Service.Services
                 MainOrderId = id,
                 UID = currentUser.UserId,
                 HistoryContent = $"{currentUser.UserName} đã đổi tỷ giá đơn #{id} từ {string.Format("{0:N0}", oldCurrency)} sang {string.Format("{0:N0}", currency)}",
-                Type = (int?)TypeHistoryOrderChange.TienDatCoc
+                Type = 0
             });
 
             await unitOfWork.SaveAsync();
@@ -197,8 +186,12 @@ namespace NhapHangV2.Service.Services
                 .FirstOrDefault(e => e.Id == id);
             if (exists != null)
             {
-                exists.Status = (int)StatusOrderContants.Huy;
+                exists.Status = (int)StatusOrderContants.DonHuy;
                 unitOfWork.Repository<MainOrder>().Update(exists);
+                var notificationSetting = await notificationSettingService.GetByIdAsync((int)NotificationSettingId.TrangThaiMaVanDon);
+                sendNotificationService.SendNotification(notificationSetting,
+                    new List<string>() { LoginContext.Instance.CurrentUser.UserName, exists.Id.ToString(), GetStatusName((int)StatusOrderContants.DonHuy) },
+                    new UserNotification() { UserId = exists.UID, SaleId = exists.SalerId, OrdererId = exists.DatHangId });
                 await unitOfWork.SaveAsync();
                 return true;
             }
@@ -219,7 +212,7 @@ namespace NhapHangV2.Service.Services
             var users = await unitOfWork.Repository<Users>().GetQueryable().Where(x => x.UserName == userName).FirstOrDefaultAsync();
 
             decimal wallet = users.Wallet ?? 0;
-            if (wallet <= 0 && status != (int?)StatusOrderContants.DaDatCoc)
+            if (wallet <= 0 && status != (int?)StatusOrderContants.DaCoc)
                 throw new AppException("Số dư trong tài khoản không đủ. Vui lòng nạp thêm tiền");
 
             if (!listID.Any())
@@ -235,57 +228,18 @@ namespace NhapHangV2.Service.Services
             {
                 try
                 {
+                    string newStatus = "";
                     switch (status)
                     {
-                        case 1: //Hủy
-
-                            //Kiểm tra đơn hàng đủ điều kiện hay không
-                            checkStatus = mainOrders.Where(x => x.Status == (int?)StatusOrderContants.ChuaDatCoc).Count();
-                            if (mainOrders.Count() != checkStatus) //Nếu số lượng khác nhau
-                            {
-                                List<int> listError = mainOrders.Where(x => x.Status != (int?)StatusOrderContants.ChuaDatCoc).Select(x => x.Id).ToList();
-                                throw new AppException(string.Format("Đơn này bị sai trạng thái Đặt cọc, vui lòng kiểm tra lại"));
-                            }
-
-                            foreach (var item in mainOrders)
-                            {
-                                //Cập nhật cộng tiền trong account
-                                users.Wallet += item.Deposit ?? 0;
-                                users.Updated = currentDate;
-                                users.UpdatedBy = userName;
-                                unitOfWork.Repository<Users>().Update(users);
-
-                                //Cập nhật lại trạng thái của đơn hang
-                                item.Deposit = 0;
-                                item.Status = (int?)StatusOrderContants.Huy;
-                                item.Updated = currentDate;
-                                item.UpdatedBy = userName;
-                                unitOfWork.Repository<MainOrder>().Update(item);
-
-                                //Thêm lịch sử đơn hàng thay đổi
-                                await unitOfWork.Repository<HistoryOrderChange>().CreateAsync(new HistoryOrderChange()
-                                {
-                                    MainOrderId = item.Id,
-                                    UID = users.Id,
-                                    HistoryContent = String.Format("{0} đã đổi trạng thái của đơn hàng ID là: {1} từ: Chờ đặt cọc, sang: Hủy đơn hàng.", users.UserName, item.Id),
-                                    Type = (int?)TypeHistoryOrderChange.TienDatCoc
-                                });
-                            }
-
-                            break;
-
                         case 2: //Đã đặt cọc
-
                             //Kiểm tra đơn hàng đủ điều kiện hay không
-                            checkStatus = mainOrders.Where(x => x.Status == (int?)StatusOrderContants.ChuaDatCoc).Count();
+                            checkStatus = mainOrders.Where(x => x.Status == (int?)StatusOrderContants.DonMoi).Count();
                             if (mainOrders.Count() != checkStatus) //Nếu số lượng khác nhau
                             {
-                                List<int> listError = mainOrders.Where(x => x.Status != (int?)StatusOrderContants.ChuaDatCoc).Select(x => x.Id).ToList();
-                                throw new AppException(string.Format("Những đơn có là: {0} bị sai trạng thái Hủy, vui lòng kiểm tra lại", listError));
+                                List<int> listError = mainOrders.Where(x => x.Status != (int?)StatusOrderContants.DonMoi).Select(x => x.Id).ToList();
+                                throw new AppException(string.Format("Những đơn có là: {0} bị sai trạng thái Hủy, vui lòng kiểm tra lại", listError.ToString()));
                             }
-
                             totalMustPay = mainOrders.Sum(x => x.AmountDeposit - x.Deposit) ?? 0; //Tính tổng tiền đặt cọc
-
                             if (wallet < totalMustPay)
                                 throw new AppException("Số dư trong tài khoản không đủ. Vui lòng nạp thêm tiền");
 
@@ -304,16 +258,10 @@ namespace NhapHangV2.Service.Services
                                 users = await userService.CreateUserTransactionMoney(users, mustDeposit);
                                 unitOfWork.Repository<Users>().Update(users);
                                 //Cập nhật lại trạng thái, tiền cọc, ngày cọc, ngày dự kiến của đơn hàng
-                                item.Status = (int?)StatusOrderContants.DaDatCoc;
+                                item.Status = (int?)StatusOrderContants.DaCoc;
                                 item.Deposit = amountDeposit;
-                                item.DepositDate = currentDate;
-
-                                var warehouse = await unitOfWork.CatalogueRepository<Warehouse>().GetQueryable().Where(x => x.Id == item.ReceivePlace).FirstOrDefaultAsync();
-                                if (warehouse != null)
-                                    item.ExpectedDate = currentDate.AddDays(Convert.ToInt32(warehouse.ExpectedDate));
-
-                                item.Updated = currentDate;
-                                item.UpdatedBy = userName;
+                                if (item.DepositDate == null)
+                                    item.DepositDate = currentDate;
                                 unitOfWork.Repository<MainOrder>().Update(item);
                                 await unitOfWork.SaveAsync();
 
@@ -326,7 +274,7 @@ namespace NhapHangV2.Service.Services
                                     Content = string.Format("{0} đã đặt cọc đơn hàng: {1}.", users.UserName, item.Id),
                                     MoneyLeft = wallet - amountDeposit,
                                     Type = (int?)DauCongVaTru.Tru,
-                                    TradeType = (int?)HistoryPayWalletContents.DatCoc,
+                                    TradeType = (int?)HistoryPayWalletContents.DatCocMuaHo,
                                     Deleted = false,
                                     Active = true,
                                     CreatedBy = users.UserName,
@@ -339,43 +287,31 @@ namespace NhapHangV2.Service.Services
                                 {
                                     MainOrderId = item.Id,
                                     UID = users.Id,
-                                    Status = (int?)StatusPayOrderHistoryContants.DatCoc2,
+                                    Status = (int?)StatusPayOrderHistoryContants.DatCoc,
                                     Amount = mustDeposit,
                                     Type = (int?)TypePayOrderHistoryContants.ViDienTu
                                 });
-
-                                //Thông báo
-                                //Đơn hàng được đặt cọc
-                                var notificationSettingDC = await notificationSettingService.GetByIdAsync(6);
-                                var notiTemplateAdmin = await notificationTemplateService.GetByIdAsync(13);
-                                var emailTemplate = await sMSEmailTemplateService.GetByCodeAsync("ADHDC");
-                                string subject = emailTemplate.Subject;
-                                string emailContent = string.Format(emailTemplate.Body);
-                                await sendNotificationService.SendNotification(notificationSettingDC, notiTemplateAdmin, item.Id.ToString(), string.Format(Detail_MainOrder_Admin, item.Id), "", null, subject, emailContent);
                             }
                             break;
 
                         case 7: //Thanh toán
 
                             //Kiểm tra đơn hàng đủ điều kiện hay không
-                            checkStatus = mainOrders.Where(x => x.Status == (int?)StatusOrderContants.DaVeKhoVN).Count();
+                            checkStatus = mainOrders.Where(x => x.Status == (int?)StatusOrderContants.VeVN).Count();
                             if (mainOrders.Count() != checkStatus) //Nếu số lượng khác nhau
                             {
-                                List<int> listError = mainOrders.Where(x => x.Status != (int?)StatusOrderContants.DaVeKhoVN).Select(x => x.Id).ToList();
-                                throw new AppException(string.Format("Những đơn có là: {0} bị sai trạng thái Thanh toán, vui lòng kiểm tra lại", listError));
+                                List<int> listError = mainOrders.Where(x => x.Status != (int?)StatusOrderContants.VeVN).Select(x => x.Id).ToList();
+                                throw new AppException(string.Format("Những đơn có là: {0} bị sai trạng thái Thanh toán, vui lòng kiểm tra lại", listError.ToString()));
                             }
-
-                            totalMustPay = mainOrders.Sum(x => (x.TotalPriceVND + x.FeeInWareHouse) - x.Deposit) ?? 0; //Tính tổng tiền thanh toán
-
+                            totalMustPay = mainOrders.Sum(x => (x.TotalPriceVND ?? 0) - (x.Deposit ?? 0)); //Tính tổng tiền thanh toán
                             if (wallet < totalMustPay)
                                 throw new AppException("Số dư trong tài khoản không đủ. Vui lòng nạp thêm tiền");
 
                             foreach (var item in mainOrders)
                             {
                                 decimal deposit = item.Deposit ?? 0;
-                                decimal feeWarehouse = item.FeeInWareHouse ?? 0;
                                 decimal totalPriceVND = item.TotalPriceVND ?? 0;
-                                decimal moneyLeft = (totalPriceVND + feeWarehouse) - deposit;
+                                decimal moneyLeft = totalPriceVND - deposit;
 
                                 //Cập nhật trừ số tiền trong account
                                 users.Wallet -= moneyLeft;
@@ -386,16 +322,10 @@ namespace NhapHangV2.Service.Services
                                 unitOfWork.Repository<Users>().Update(users);
 
                                 //Cập nhật lại trạng thái, tiền cọc (tổng tiền), ngày thanh toán, ngày dự kiến của Đơn hàng
-                                item.Status = (int?)StatusOrderContants.KhachDaThanhToan;
+                                item.Status = (int?)StatusOrderContants.DaThanhToan;
                                 item.Deposit = moneyLeft + deposit;
-                                item.PayDate = currentDate;
-
-                                var warehouse = await unitOfWork.CatalogueRepository<Warehouse>().GetQueryable().Where(x => x.Id == item.ReceivePlace).FirstOrDefaultAsync();
-                                if (warehouse != null)
-                                    item.ExpectedDate = currentDate.AddDays(Convert.ToInt32(warehouse.ExpectedDate));
-
-                                item.Updated = currentDate;
-                                item.UpdatedBy = userName;
+                                if (item.PayDate == null)
+                                    item.PayDate = currentDate;
                                 unitOfWork.Repository<MainOrder>().Update(item);
 
                                 //Thêm lịch sử của ví tiền
@@ -407,7 +337,7 @@ namespace NhapHangV2.Service.Services
                                     Content = string.Format("{0} đã thanh toán đơn hàng: {1}.", users.UserName, item.Id),
                                     MoneyLeft = wallet - moneyLeft,
                                     Type = (int?)DauCongVaTru.Tru,
-                                    TradeType = (int?)HistoryPayWalletContents.ThanhToanHoaDon,
+                                    TradeType = (int?)HistoryPayWalletContents.ThanhToanMuaHo,
                                     Deleted = false,
                                     Active = true,
                                     CreatedBy = users.UserName,
@@ -420,7 +350,7 @@ namespace NhapHangV2.Service.Services
                                 {
                                     MainOrderId = item.Id,
                                     UID = users.Id,
-                                    HistoryContent = String.Format("{0} đã đổi trạng thái của đơn hàng ID là: {1} từ: Chờ thanh toán, sang: Khách đã thanh toán.", users.UserName, item.Id),
+                                    HistoryContent = String.Format("{0} đã đổi trạng thái của đơn hàng ID là: {1} từ: Đã về kho VN, sang: Đã thanh toán.", users.UserName, item.Id),
                                     Type = (int?)TypeHistoryOrderChange.TienDatCoc
                                 });
 
@@ -437,17 +367,7 @@ namespace NhapHangV2.Service.Services
                                     CreatedBy = users.UserName,
                                     Created = currentDate
                                 });
-
-                                //Thông báo
-                                //Đơn hàng được thanh toán
-                                var notificationSettingTT = await notificationSettingService.GetByIdAsync(11);
-                                var notiTemplate = await notificationTemplateService.GetByIdAsync(15);
-                                var emailTemplate = await sMSEmailTemplateService.GetByCodeAsync("ADHDTT");
-                                string subject = emailTemplate.Subject;
-                                string emailContent = string.Format(emailTemplate.Body);
-                                await sendNotificationService.SendNotification(notificationSettingTT, notiTemplate, item.Id.ToString(), string.Format(Detail_MainOrder_Admin, item.Id), "", null, subject, emailContent);
                             }
-
                             break;
                         default:
                             break;
@@ -489,19 +409,15 @@ namespace NhapHangV2.Service.Services
                             await orderShopTempService.DeleteAsync(data.ShopTempId);
 
                         //Thông báo có đơn đặt hàng mới
-                        int notiTemplateId = 9; //Đơn mới
-                        string emailTemplateCode = "ADHM";
+                        string orderType = "mua hộ "; //Đơn mới
                         if (isAnother)
                         {
-                            notiTemplateId = 10; //Đơn TMĐT mới
-                            emailTemplateCode = "ATMDKM";
+                            orderType = "mua hộ khác "; //Đơn TMĐT mới
                         }
-                        var emailTemplate = await sMSEmailTemplateService.GetByCodeAsync(emailTemplateCode);
-                        string subject = emailTemplate.Subject;
-                        string emailContent = string.Format(emailTemplate.Body);
-                        var notiTemplate = await notificationTemplateService.GetByIdAsync(notiTemplateId);
-                        var notificationSetting = await notificationSettingService.GetByIdAsync(5);
-                        await sendNotificationService.SendNotification(notificationSetting, notiTemplate, data.Id.ToString(), string.Format(Detail_MainOrder_Admin, data.Id), "", null, string.Empty, string.Empty);
+                        var notificationSetting = await notificationSettingService.GetByIdAsync((int)NotificationSettingId.TaoDonMuaHo);
+                        sendNotificationService.SendNotification(notificationSetting,
+                            new List<string>() { data.Id.ToString(), orderType },
+                            new UserNotification() { SaleId = data.SalerId, OrdererId = data.DatHangId });
                     }
 
                     await dbContextTransaction.CommitAsync();
@@ -573,7 +489,7 @@ namespace NhapHangV2.Service.Services
                                         Content = string.Format("{0} đã được nạp tiền vào tài khoản.", userMainOrder.UserName),
                                         MoneyLeft = userMainOrder.Wallet + amount,
                                         Type = (int?)DauCongVaTru.Cong,
-                                        TradeType = (int?)HistoryPayWalletContents.AdminChuyenTien,
+                                        TradeType = (int?)HistoryPayWalletContents.NapTien,
                                     });
 
                                     //Thêm lịch sử của ví tiền
@@ -585,16 +501,13 @@ namespace NhapHangV2.Service.Services
                                         Content = string.Format("{0} đã đặt cọc đơn hàng: {1}.", userMainOrder.UserName, mainOrder.Id),
                                         MoneyLeft = userMainOrder.Wallet,
                                         Type = (int?)DauCongVaTru.Tru,
-                                        TradeType = (int?)HistoryPayWalletContents.DatCoc
+                                        TradeType = (int?)HistoryPayWalletContents.DatCocMuaHo
                                     });
                                     break;
                                 case 2: //Ví điện tử
                                     if (wallet < amount)
                                         throw new AppException("Số tiền trong ví của khách hàng không đủ để đặt cọc");
-
                                     depositPayment = deposit + amount;
-                                    //depositPayment = wallet - amount;
-
                                     //Cập nhật trừ số tiền trong account
                                     userMainOrder.Wallet -= amount;
                                     //Tính tiền tích lũy
@@ -610,7 +523,7 @@ namespace NhapHangV2.Service.Services
                                         Content = string.Format("{0} đã đặt cọc đơn hàng: {1}.", userMainOrder.UserName, mainOrder.Id),
                                         MoneyLeft = userMainOrder.Wallet,
                                         Type = (int?)DauCongVaTru.Tru,
-                                        TradeType = (int?)HistoryPayWalletContents.DatCoc
+                                        TradeType = (int?)HistoryPayWalletContents.DatCocMuaHo
                                     });
 
                                     break;
@@ -627,7 +540,7 @@ namespace NhapHangV2.Service.Services
                                 MainOrderId = mainOrder.Id,
                                 UID = LoginContext.Instance.CurrentUser.UserId,
                                 HistoryContent = String.Format("{0} đã đổi tiền đặt cọc của đơn hàng ID là: {1} từ: {2}, sang: {3}.", LoginContext.Instance.CurrentUser.UserName, mainOrder.Id, deposit, depositPayment),
-                                Type = (int?)TypeHistoryOrderChange.PhiGiaoTanNha
+                                Type = (int?)TypeHistoryOrderChange.TienDatCoc
                             });
 
                             //Thêm lịch sử thanh toán mua hộ
@@ -635,7 +548,7 @@ namespace NhapHangV2.Service.Services
                             {
                                 MainOrderId = mainOrder.Id,
                                 UID = LoginContext.Instance.CurrentUser.UserId,
-                                Status = (int?)StatusPayOrderHistoryContants.DatCoc2,
+                                Status = (int?)StatusPayOrderHistoryContants.DatCoc,
                                 Amount = amount,
                                 Type = (int?)TypePayOrderHistoryContants.ViDienTu
                             });
@@ -644,14 +557,15 @@ namespace NhapHangV2.Service.Services
                             {
                                 MainOrderId = mainOrder.Id,
                                 UID = LoginContext.Instance.CurrentUser.UserId,
-                                Status = (int?)StatusPayOrderHistoryContants.DatCoc2,
+                                Status = (int?)StatusPayOrderHistoryContants.DatCoc,
                                 Note = note,
                                 Amount = amount
                             });
 
                             mainOrder.Deposit = depositPayment;
-                            mainOrder.Status = (int)StatusOrderContants.DaDatCoc;
-                            mainOrder.DepositDate = currentDate;
+                            mainOrder.Status = (int)StatusOrderContants.DaCoc;
+                            if (mainOrder.Deposit == null)
+                                mainOrder.DepositDate = currentDate;
                             unitOfWork.Repository<MainOrder>().Update(mainOrder);
 
                             break;
@@ -700,7 +614,7 @@ namespace NhapHangV2.Service.Services
                                         Content = string.Format("{0} đã được nạp tiền vào tài khoản.", userMainOrder.UserName),
                                         MoneyLeft = userMainOrder.Wallet + amount,
                                         Type = (int?)DauCongVaTru.Cong,
-                                        TradeType = (int?)HistoryPayWalletContents.AdminChuyenTien,
+                                        TradeType = (int?)HistoryPayWalletContents.NapTien,
                                     });
 
                                     //Thêm lịch sử của ví tiền
@@ -712,7 +626,7 @@ namespace NhapHangV2.Service.Services
                                         Content = string.Format("{0} đã thanh toán đơn hàng: {1}.", userMainOrder.UserName, mainOrder.Id),
                                         MoneyLeft = userMainOrder.Wallet,
                                         Type = (int?)DauCongVaTru.Tru,
-                                        TradeType = (int?)HistoryPayWalletContents.ThanhToanHoaDon
+                                        TradeType = (int?)HistoryPayWalletContents.ThanhToanMuaHo
                                     });
 
                                     break;
@@ -742,13 +656,8 @@ namespace NhapHangV2.Service.Services
                                         Content = string.Format("{0} đã thanh toán đơn hàng: {1}.", userMainOrder.UserName, mainOrder.Id),
                                         MoneyLeft = walletLeft,
                                         Type = (int?)DauCongVaTru.Tru,
-                                        TradeType = (int?)HistoryPayWalletContents.ThanhToanHoaDon
+                                        TradeType = (int?)HistoryPayWalletContents.ThanhToanMuaHo
                                     });
-
-                                    //Cập nhật ngày dự kiến
-                                    var warehouse = await unitOfWork.Repository<Warehouse>().GetQueryable().Where(e => e.Id == mainOrder.ReceivePlace).FirstOrDefaultAsync();
-                                    mainOrder.ExpectedDate = warehouse == null ? null : currentDate.AddDays(Convert.ToInt32(warehouse.ExpectedDate));
-
                                     break;
                                 default:
                                     break;
@@ -776,7 +685,7 @@ namespace NhapHangV2.Service.Services
                                 Type = (int?)TypePayOrderHistoryContants.ViDienTu
                             });
 
-                            mainOrder.Status = (int)StatusOrderContants.KhachDaThanhToan;
+                            mainOrder.Status = (int)StatusOrderContants.DaThanhToan;
                             mainOrder.PayDate = currentDate;
                             unitOfWork.Repository<MainOrder>().Update(mainOrder);
 
@@ -850,19 +759,18 @@ namespace NhapHangV2.Service.Services
                 mainOrder.SalerUserName = saler.UserName;
 
             //Lịch sử thay đổi
-            var historyOrderChanges = await unitOfWork.Repository<HistoryOrderChange>().GetQueryable().Where(x => !x.Deleted && x.Active
-                && (x.MainOrderId == id)).OrderByDescending(o => o.Id).ToListAsync();
-            if (historyOrderChanges.Any())
-            {
-                foreach (var historyOrderChange in historyOrderChanges)
-                {
-                    var userHistoryOrderChange = await userService.GetByIdAsync(historyOrderChange.UID ?? 0);
-                    if (userHistoryOrderChange == null) continue;
-                    historyOrderChange.UserGroupName = userHistoryOrderChange.UserGroupName;
-                }
-
-                mainOrder.HistoryOrderChanges = historyOrderChanges;
-            }
+            //var historyOrderChanges = await unitOfWork.Repository<HistoryOrderChange>().GetQueryable().Where(x => !x.Deleted && x.Active
+            //    && (x.MainOrderId == id)).OrderByDescending(o => o.Id).ToListAsync();
+            //if (historyOrderChanges.Any())
+            //{
+            //    foreach (var historyOrderChange in historyOrderChanges)
+            //    {
+            //        var userHistoryOrderChange = await userService.GetByIdAsync(historyOrderChange.UID ?? 0);
+            //        if (userHistoryOrderChange == null) continue;
+            //        historyOrderChange.UserGroupName = userHistoryOrderChange.UserGroupName;
+            //    }
+            //    mainOrder.HistoryOrderChanges = historyOrderChanges;
+            //}
 
             //Lịch sử thanh toán
             var payOrderHistories = await unitOfWork.Repository<PayOrderHistory>().GetQueryable().Where(x => !x.Deleted && x.Active
@@ -873,14 +781,14 @@ namespace NhapHangV2.Service.Services
             //Lịch sử khiếu nại
             var complains = await unitOfWork.Repository<Complain>().GetQueryable().Where(x => !x.Deleted && x.Active
                 && (x.MainOrderId == id)).OrderByDescending(o => o.Id).ToListAsync();
-            if (historyOrderChanges.Any())
+            if (complains.Any())
                 mainOrder.Complains = complains;
 
             //Nhắn tin với khách hàng, với nội bộ
-            var orderComments = await unitOfWork.Repository<OrderComment>().GetQueryable().Where(x => !x.Deleted && x.Active
-                && (x.MainOrderId == id)).OrderByDescending(o => o.Id).ToListAsync();
-            if (orderComments.Any())
-                mainOrder.OrderComments = orderComments;
+            //var orderComments = await unitOfWork.Repository<OrderComment>().GetQueryable().Where(x => !x.Deleted && x.Active
+            //    && (x.MainOrderId == id)).OrderByDescending(o => o.Id).ToListAsync();
+            //if (orderComments.Any())
+            //    mainOrder.OrderComments = orderComments;
 
             //Kho TQ, Kho VN, Phương thức VC
             var warehouseFrom = await unitOfWork.CatalogueRepository<WarehouseFrom>().GetQueryable().Where(x => x.Id == mainOrder.FromPlace).FirstOrDefaultAsync();
@@ -901,9 +809,9 @@ namespace NhapHangV2.Service.Services
             {
                 mainOrder.FeeSupports = feeSupports;
                 mainOrder.Surcharge = feeSupports.Sum(e => e.SupportInfoVND);
-                unitOfWork.Repository<MainOrder>().Update(mainOrder);
-                await unitOfWork.SaveAsync();
-                unitOfWork.Repository<MainOrder>().Detach(mainOrder);
+                //unitOfWork.Repository<MainOrder>().Update(mainOrder);
+                //await unitOfWork.SaveAsync();
+                //unitOfWork.Repository<MainOrder>().Detach(mainOrder);
             }
 
             return mainOrder;
@@ -913,7 +821,8 @@ namespace NhapHangV2.Service.Services
         {
             //Bên SmallPackage cũng có tính toán nữa đó
             DateTime currentDate = DateTime.Now;
-            var oldMainOrderStatus = (await unitOfWork.Repository<MainOrder>().GetQueryable().Where(e => e.Id == item.Id).FirstOrDefaultAsync()).Status;
+            var currentUser = LoginContext.Instance.CurrentUser;
+            int? oldMainOrderStatus = (await unitOfWork.Repository<MainOrder>().GetQueryable().Where(e => e.Id == item.Id).FirstOrDefaultAsync()).Status;
 
             var configurations = await configurationsService.GetSingleAsync();
             var userMainOrder = await unitOfWork.Repository<Users>().GetQueryable().Where(e => e.Id == item.UID).FirstOrDefaultAsync();
@@ -952,7 +861,6 @@ namespace NhapHangV2.Service.Services
 
                 if (volumeFee != null)
                     volumeFeePrice = volumeFee.Price;
-                //decimal? smPriceWeight = totalWeight * warehouseFeePrice;
                 decimal? smPriceWeight = 0;
                 if ((userMainOrder.FeeTQVNPerWeight ?? 0) > 0)
                     smPriceWeight = smallPackage.PayableWeight * userMainOrder.FeeTQVNPerWeight;
@@ -960,7 +868,6 @@ namespace NhapHangV2.Service.Services
                     smPriceWeight = smallPackage.PayableWeight * warehouseFeePrice;
                 feeWeight += smPriceWeight;
 
-                //decimal? smPriceVolume = totalVolume * volumeFeePrice;
                 decimal? smPriceVolume = 0;
                 if ((userMainOrder.FeeTQVNPerVolume ?? 0) > 0)
                     smPriceVolume = smallPackage.VolumePayment * userMainOrder.FeeTQVNPerVolume;
@@ -972,17 +879,14 @@ namespace NhapHangV2.Service.Services
 
                 switch (smallPackage.Status)
                 {
-                    case (int)StatusSmallPackage.DaVeKhoTQ:
-
+                    case (int)StatusSmallPackage.VeKhoTQ:
                         smallPackage.DateInTQWarehouse = currentDate;
                         smallPackage.StaffTQWarehouse = user.UserName;
-
                         break;
-                    case (int)StatusSmallPackage.DaVeKhoVN:
+                    case (int)StatusSmallPackage.VeKhoVN:
                         smallPackage.DateInLasteWareHouse = currentDate;
                         smallPackage.StaffVNWarehouse = user.UserName;
                         break;
-
                     default:
                         break;
                 }
@@ -999,20 +903,21 @@ namespace NhapHangV2.Service.Services
                     await unitOfWork.Repository<SmallPackage>().CreateAsync(smallPackage);
                     await unitOfWork.SaveAsync();
                     unitOfWork.Repository<SmallPackage>().Detach(smallPackage);
+                    if (item.Status < (int)StatusOrderContants.ShopPhatHang)
+                        item.Status = (int)StatusOrderContants.ShopPhatHang;
                 }
                 else
                 {
-                    int totalPackageWaiting = unitOfWork.Repository<SmallPackage>().GetQueryable().Where(x => x.Status >= (int)StatusSmallPackage.MoiDat && x.FloatingStatus <= (int)StatusConfirmSmallPackage.DangChoXacNhan).Count();
-                    if (totalPackageWaiting == 0)
-                    {
-                        var bigPackage = await unitOfWork.Repository<BigPackage>().GetQueryable().Where(x => x.Id == smallPackage.BigPackageId).FirstOrDefaultAsync();
-                        if (bigPackage != null)
-                        {
-                            bigPackage.Status = (int)StatusBigPackage.DaNhanHang;
-                            await unitOfWork.Repository<BigPackage>().CreateAsync(bigPackage);
-                        }
-                    }
-
+                    //int totalPackageWaiting = unitOfWork.Repository<SmallPackage>().GetQueryable().Where(x => x.Status >= (int)StatusSmallPackage.MoiDat && x.FloatingStatus <= (int)StatusConfirmSmallPackage.DangChoXacNhan).Count();
+                    //if (totalPackageWaiting == 0)
+                    //{
+                    //    var bigPackage = await unitOfWork.Repository<BigPackage>().GetQueryable().Where(x => x.Id == smallPackage.BigPackageId).FirstOrDefaultAsync();
+                    //    if (bigPackage != null)
+                    //    {
+                    //        bigPackage.Status = (int)StatusBigPackage.DaNhanHang;
+                    //        await unitOfWork.Repository<BigPackage>().CreateAsync(bigPackage);
+                    //    }
+                    //}
                     unitOfWork.Repository<SmallPackage>().Update(smallPackage);
                 }
             }
@@ -1040,15 +945,15 @@ namespace NhapHangV2.Service.Services
                 item.FromPlace = user.Id;
 
             //Cập nhật thông tin của đơn hàng
-            if (item.Status == (int)StatusOrderContants.Huy)
+            if (item.Status == (int)StatusOrderContants.DonHuy)
             {
-                item.CancelDate = currentDate;
+                if (item.CancelDate == null)
+                    item.CancelDate = currentDate;
                 if (item.Deposit > 0)
                 {
                     //Cập nhật số tiền trong account
                     userMainOrder.Wallet += item.Deposit;
                     unitOfWork.Repository<Users>().Update(userMainOrder);
-
                     //Thêm lịch sử của ví tiền
                     await unitOfWork.Repository<HistoryPayWallet>().CreateAsync(new HistoryPayWallet()
                     {
@@ -1058,7 +963,7 @@ namespace NhapHangV2.Service.Services
                         Content = string.Format("Đơn hàng {0} bị hủy và hoàn tiền cọc cho khách.", item.Id),
                         MoneyLeft = userMainOrder.Wallet,
                         Type = (int?)DauCongVaTru.Cong,
-                        TradeType = (int?)HistoryPayWalletContents.NhanLaiTienDatCoc,
+                        TradeType = (int?)HistoryPayWalletContents.HoanTienDaTraMuaHo,
                     });
 
                     //Thêm lịch sử thanh toán mua hộ
@@ -1066,11 +971,10 @@ namespace NhapHangV2.Service.Services
                     {
                         MainOrderId = item.Id,
                         UID = userMainOrder.Id,
-                        Status = (int?)StatusPayOrderHistoryContants.HuyHoanTien,
+                        Status = (int?)StatusPayOrderHistoryContants.HoanTienHuyDon,
                         Amount = item.Deposit,
                         Type = (int?)TypePayOrderHistoryContants.ViDienTu,
                     });
-
                     item.Deposit = 0;
                 }
 
@@ -1093,47 +997,34 @@ namespace NhapHangV2.Service.Services
 
             switch (item.Status)
             {
-                case (int)StatusOrderContants.DaDatCoc:
-                    if (oldMainOrderStatus != item.Status)
-                        item.DepositDate = currentDate; break;
+                case (int)StatusOrderContants.DaCoc:
+                    if (item.DepositDate == null)
+                        item.DepositDate = currentDate;
+                    break;
                 case (int)StatusOrderContants.DaMuaHang:
-                    item.DateBuy = currentDate;
-
-                    //Thông báo
-                    //Đơn hàng đã được mua
-                    var notiTemplate = await notificationTemplateService.GetByIdAsync(14);
-                    var notifcationSetting = await notificationSettingService.GetByIdAsync(7);
-                    var emailTemplate = await sMSEmailTemplateService.GetByCodeAsync("ADHDMH");
-                    string subject = emailTemplate.Subject;
-                    string emailContent = string.Format(emailTemplate.Body);
-                    await sendNotificationService.SendNotification(notifcationSetting, notiTemplate, item.Id.ToString(), "", string.Format(Detail_MainOrder, item.Id), item.UID, subject, emailContent);
+                    if (item.DateBuy == null)
+                        item.DateBuy = currentDate;
                     break;
-                case (int)StatusOrderContants.DaVeKhoTQ:
-                    if (oldMainOrderStatus != item.Status)
+                case (int)StatusOrderContants.ShopPhatHang:
+                    if (item.DateSendGoods == null)
+                        item.DateSendGoods = currentDate;
+                    break;
+                case (int)StatusOrderContants.VeTQ:
+                    if (item.DateTQ == null)
                         item.DateTQ = currentDate;
-                    //Thông báo
-                    //Đơn hàng đã đến kho TQ
-                    var notiTemplateTQ = await notificationTemplateService.GetByIdAsync(20);
-                    var notiicationSettingTQ = await notificationSettingService.GetByIdAsync(8);
-                    var emailTemplateTQ = await sMSEmailTemplateService.GetByCodeAsync("UDDVTQ");
-                    string subjectTQ = emailTemplateTQ.Subject;
-                    string emailContentTQ = string.Format(emailTemplateTQ.Body);
-                    await sendNotificationService.SendNotification(notiicationSettingTQ, notiTemplateTQ, item.Id.ToString(), string.Format(Detail_MainOrder_Admin, item.Id), string.Format(Detail_MainOrder, item.Id), item.UID, subjectTQ, emailContentTQ);
                     break;
-                case (int)StatusOrderContants.DaVeKhoVN:
-                    if (oldMainOrderStatus != item.Status)
+
+                case (int)StatusOrderContants.DangVeVN:
+                    if (item.DateComingVN == null)
+                        item.DateComingVN = currentDate;
+                    break;
+                case (int)StatusOrderContants.VeVN:
+                    if (item.DateVN == null)
                         item.DateVN = currentDate;
                     //Thông báo
-                    //Đơn hàng đã đến kho VN
-                    var notiTemplateVN = await notificationTemplateService.GetByIdAsync(19);
-                    var notiicationSettingVN = await notificationSettingService.GetByIdAsync(9);
-                    var emailTemplateVN = await sMSEmailTemplateService.GetByCodeAsync("UDDVVN");
-                    string subjectVN = emailTemplateVN.Subject;
-                    string emailContentVN = string.Format(emailTemplateVN.Body);
-                    await sendNotificationService.SendNotification(notiicationSettingVN, notiTemplateVN, item.Id.ToString(), string.Format(Detail_MainOrder_Admin, item.Id), string.Format(Detail_MainOrder, item.Id), item.UID, subjectVN, emailContentVN);
                     break;
-                case (int)StatusOrderContants.KhachDaThanhToan:
-                    if (oldMainOrderStatus != item.Status)
+                case (int)StatusOrderContants.DaThanhToan:
+                    if (item.PayDate == null)
                         item.PayDate = currentDate;
                     var smallPackagePaid = item.SmallPackages;
                     if (smallPackagePaid.Count > 0)
@@ -1145,8 +1036,8 @@ namespace NhapHangV2.Service.Services
                         }
                     }
                     break;
-                case (int)StatusOrderContants.DaHoanThanh:
-                    if (oldMainOrderStatus != item.Status)
+                case (int)StatusOrderContants.HoanThanh:
+                    if (item.CompleteDate == null)
                         item.CompleteDate = currentDate;
                     var smallPackageUpdates = item.SmallPackages;
                     if (smallPackageUpdates.Count > 0)
@@ -1157,6 +1048,10 @@ namespace NhapHangV2.Service.Services
                             unitOfWork.Repository<SmallPackage>().Update(smallPackage);
                         }
                     }
+                    break;
+                case (int)StatusOrderContants.KhieuNai:
+                    if (item.ComplainDate == null)
+                        item.ComplainDate = currentDate;
                     break;
                 default:
                     break;
@@ -1172,16 +1067,18 @@ namespace NhapHangV2.Service.Services
                     unitOfWork.Repository<StaffIncome>().Delete(staffIncome);
                     continue;
                 }
-
                 if (staffIncome.Id == 0)
                     await unitOfWork.Repository<StaffIncome>().CreateAsync(staffIncome);
                 else
                     unitOfWork.Repository<StaffIncome>().Update(staffIncome);
             }
-
-            //Lịch sử thay đổi của đơn hàng
-            await unitOfWork.Repository<HistoryOrderChange>().CreateAsync(item.HistoryOrderChanges);
-
+            if (item.Status != oldMainOrderStatus)
+            {
+                var notificationSetting = await notificationSettingService.GetByIdAsync((int)NotificationSettingId.TrangThaiMuaHo);
+                sendNotificationService.SendNotification(notificationSetting,
+                    new List<string>() { item.Id.ToString(), currentUser.UserName, GetStatusName(oldMainOrderStatus), GetStatusName(item.Status) },
+                    new UserNotification() { UserId = item.UID, OrdererId = item.DatHangId, SaleId = item.SalerId });
+            }
             unitOfWork.Repository<MainOrder>().Update(item);
             await unitOfWork.SaveAsync();
             unitOfWork.Repository<MainOrder>().Detach(item);
@@ -1330,30 +1227,6 @@ namespace NhapHangV2.Service.Services
             decimal? totalWeight = smallPackages.Sum(e => e.PayableWeight);
             decimal? totalVolume = smallPackages.Sum(e => e.VolumePayment);
 
-            #region Tính phí vận chuyển của tổng cân nặng
-            ////Fix lấy warehouseFee 
-            //var warehouseFee = await unitOfWork.Repository<WarehouseFee>().GetQueryable()
-            //    .Where(e => !e.Deleted &&
-            //    e.WarehouseFromId == item.FromPlace &&
-            //    e.WarehouseId == item.ReceivePlace &&
-            //    e.ShippingTypeToWareHouseId == item.ShippingType &&
-            //    e.IsHelpMoving == false &&
-            //    (e.WeightFrom < totalWeight && e.WeightTo >= totalWeight)).FirstOrDefaultAsync();
-
-            //decimal? warehouseFeePrice = warehouseFee == null ? 1 : warehouseFee.Price;
-
-            //decimal? feeWeight = 0;
-            //if (user.FeeTQVNPerWeight > 0)
-            //{
-            //    feeWeight = totalWeight * user.FeeTQVNPerWeight;
-            //    smallPackages.ForEach(e => { e.PriceWeight = user.FeeTQVNPerWeight; e.DonGia = user.FeeTQVNPerWeight; e.TotalPrice = totalWeight * warehouseFeePrice; });
-            //}
-            //else
-            //{
-            //    feeWeight = totalWeight * warehouseFeePrice;
-            //    smallPackages.ForEach(e => { e.PriceWeight = warehouseFeePrice; e.DonGia = warehouseFeePrice; e.TotalPrice = totalWeight * warehouseFeePrice; });
-            //}
-            #endregion
             #region Tính phí vận chuyển của từng mã vận đơn rồi cộng lại
             decimal? feeDelivery = 0;
             decimal? totalFeeWeight = 0;
@@ -1652,74 +1525,37 @@ namespace NhapHangV2.Service.Services
             return data.FirstOrDefault();
         }
 
-        //Code ngu cần sửa lại, dùng cho xuất tất cả
-        public byte[] GetMainOrdersExcel(MainOrderSearch mainOrderSearch)
+
+        public string GetStatusName(int? status)
         {
-            var storeService = serviceProvider.GetRequiredService<IStoreSqlService<MainOrderExcelModel>>();
-            List<SqlParameter> sqlParameters = new List<SqlParameter>();
-            sqlParameters.Add(new SqlParameter("@UID", mainOrderSearch.UID));
-            sqlParameters.Add(new SqlParameter("@RoleID", mainOrderSearch.RoleID));
-            sqlParameters.Add(new SqlParameter("@Status", mainOrderSearch.Status));
-            sqlParameters.Add(new SqlParameter("@OrderType", mainOrderSearch.OrderType));
-            sqlParameters.Add(new SqlParameter("@FromDate", mainOrderSearch.FromDate));
-            sqlParameters.Add(new SqlParameter("@ToDate", mainOrderSearch.ToDate));
-            SqlParameter[] parameters = sqlParameters.ToArray();
-            var data = storeService.GetDataTableFromStore(parameters, "ExcelMainOrder");
-            using (var workBook = new XLWorkbook())
+            switch (status)
             {
-                var worksheet = workBook.Worksheets.Add();
-                worksheet.ColumnWidth = 20;
-                var currentRow = 1;
-                for (int i = 0; i < MainOrderExcelColumns.Length; i++)
-                {
-                    worksheet.Cell(currentRow, i + 1).Style.Font.Bold = true;
-                    worksheet.Cell(currentRow, i + 1).Style.Font.FontSize = 14;
-                    worksheet.Cell(currentRow, i + 1).Value = MainOrderExcelColumns[i];
-                }
-                foreach (DataRow item in data.Rows)
-                {
-                    currentRow++;
-                    worksheet.Cell(currentRow, 1).Value = item["Id"].ToString();
-                    worksheet.Cell(currentRow, 2).Value = item["UserName"].ToString();
-                    worksheet.Cell(currentRow, 3).Style.NumberFormat.Format = "#,##0";
-                    worksheet.Cell(currentRow, 3).Value = item["TotalPriceVND"];
-                    worksheet.Cell(currentRow, 4).Style.NumberFormat.Format = "#,##0";
-                    worksheet.Cell(currentRow, 4).Value = item["Deposit"];
-                    worksheet.Cell(currentRow, 5).Style.NumberFormat.Format = "#,##0";
-                    worksheet.Cell(currentRow, 5).Value = item["RemainingAmount"];
-                    worksheet.Cell(currentRow, 6).Style.NumberFormat.Format = "#,##0";
-                    worksheet.Cell(currentRow, 6).Value = item["PriceVND"];
-                    worksheet.Cell(currentRow, 7).Style.NumberFormat.Format = "#,##0";
-                    worksheet.Cell(currentRow, 7).Value = item["FeeBuyProPT"];
-                    worksheet.Cell(currentRow, 8).Style.NumberFormat.Format = "#,##0";
-                    worksheet.Cell(currentRow, 8).Value = item["FeeShipCN"];
-                    worksheet.Cell(currentRow, 9).Style.NumberFormat.Format = "#,##0";
-                    worksheet.Cell(currentRow, 9).Value = item["IsCheckProductPrice"];
-                    worksheet.Cell(currentRow, 10).Style.NumberFormat.Format = "#,##0";
-                    worksheet.Cell(currentRow, 10).Value = item["IsPackedPrice"];
-                    worksheet.Cell(currentRow, 11).Style.NumberFormat.Format = "#,##0";
-                    worksheet.Cell(currentRow, 11).Value = item["InsuranceMoney"];
-                    worksheet.Cell(currentRow, 12).Style.NumberFormat.Format = "#,##0";
-                    worksheet.Cell(currentRow, 12).Value = item["Surcharge"];
-                    worksheet.Cell(currentRow, 13).Style.NumberFormat.Format = "#,##0";
-                    worksheet.Cell(currentRow, 13).Value = item["FeeWeight"];
-                    worksheet.Cell(currentRow, 14).Value = item["OrderWeight"].ToString();
-                    worksheet.Cell(currentRow, 15).Value = item["StatusName"].ToString();
-                    worksheet.Cell(currentRow, 16).Value = item["SalerUserName"].ToString();
-                    worksheet.Cell(currentRow, 17).Value = item["OrdererUserName"].ToString();
-                    worksheet.Cell(currentRow, 18).Value = item["Created"].ToString();
-                    worksheet.Cell(currentRow, 19).Value = item["DepositDate"].ToString();
-                    worksheet.Cell(currentRow, 20).Value = item["DateBuy"].ToString();
-                    worksheet.Cell(currentRow, 21).Value = item["DateTQ"].ToString();
-                    worksheet.Cell(currentRow, 22).Value = item["DateVN"].ToString();
-                    worksheet.Cell(currentRow, 23).Value = item["CompleteDate"].ToString();
-                }
-                using (var stream = new MemoryStream())
-                {
-                    workBook.SaveAs(stream);
-                    var content = stream.ToArray();
-                    return content;
-                }
+                case (int)StatusOrderContants.DonHuy:
+                    return "Hủy";
+                case (int)StatusOrderContants.ChoBaoGia:
+                    return "Chờ báo giá";
+                case (int)StatusOrderContants.DonMoi:
+                    return "Đơn mới";
+                case (int)StatusOrderContants.DaCoc:
+                    return "Đã đặt cọc";
+                case (int)StatusOrderContants.DaMuaHang:
+                    return "Đã mua hàng";
+                case (int)StatusOrderContants.ShopPhatHang:
+                    return "Shop phát hàng";
+                case (int)StatusOrderContants.VeTQ:
+                    return "Đã về kho TQ";
+                case (int)StatusOrderContants.DangVeVN:
+                    return "Đang về kho VN";
+                case (int)StatusOrderContants.VeVN:
+                    return "Đã về kho VN";
+                case (int)StatusOrderContants.DaThanhToan:
+                    return "Đã thanh toán";
+                case (int)StatusOrderContants.HoanThanh:
+                    return "Đã hoàn thành";
+                case (int)StatusOrderContants.KhieuNai:
+                    return "Đã khiếu nại";
+                default:
+                    return string.Empty;
             }
         }
     }

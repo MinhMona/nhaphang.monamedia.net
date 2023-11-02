@@ -266,5 +266,44 @@ namespace NhapHangV2.Entities
         [Column(TypeName = "decimal(18,0)")]
         public decimal? FeeService { get; set; } = 0;
 
+        /// <summary>
+        /// Ngày xác nhận
+        /// </summary>
+        public DateTime? ConfirmDate { get; set; }
+        /// <summary>
+        /// Ngày về TQ
+        /// </summary>
+        public DateTime? TQDate { get; set; }
+        /// <summary>
+        /// Ngày xuất TQ
+        /// </summary>
+        public DateTime? ComingVNDate { get; set; }
+        /// <summary>
+        /// Ngày về VN
+        /// </summary>
+        public DateTime? VNDate { get; set; }
+        /// <summary>
+        /// Ngày thanh toán
+        /// </summary>
+        public DateTime? PaidDate { get; set; }
+        /// <summary>
+        /// Ngày hoàn thành
+        /// </summary>
+        public DateTime? CompleteDate { get; set; }
+        /// <summary>
+        /// Ngày hủy
+        /// </summary>
+        public DateTime? CancelDate { get; set; }
+
+        /// <summary>
+        /// Ngày khiếu nại
+        /// </summary>
+        public DateTime? ComplainDate { get; set; }
+
+        /// <summary>
+        /// Chi phí vận chuyển thực tế
+        /// </summary>
+        [Column(TypeName = "decimal(18,0)")]
+        public decimal? ActualShippingCost { get; set; } = 0;
     }
 }

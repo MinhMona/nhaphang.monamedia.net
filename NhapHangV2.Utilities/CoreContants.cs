@@ -30,24 +30,33 @@ namespace NhapHangV2.Utilities
 
         public const string GET_TOTAL_NOTIFICATION = "get-total-notification";
 
-        //Url thông báo user
-        public const string Add_Product_Success = "/user/cart";
-        public const string Complain_List = "/user/report";
-        public const string Detail_MainOrder = "/user/order-list/detail?id={0}";
-        public const string Detail_Payhelp = "/user/request-list/detail?id={0}";
-        public const string Detail_Transportorder = "/user/deposit-list";
-        public const string Transaction_History = "/user/history-transaction-vnd";
-        public const string Widthdraw_History = "/user/withdrawal-vnd";
-        public const string Recharge_History = "/user/recharge-vnd";
-        //Url thông báo manager
-        public const string New_Contact_Admin = "/manager/client/contact";
-        public const string New_User_Admin = "/manager/client/client-list/detail?id={0}";
-        public const string Complain_Admin = "/manager/order/complain-list";
-        public const string Detail_MainOrder_Admin = "/manager/order/order-list/detail?id={0}";
-        public const string Detail_Payhelp_Admin = "/manager/order/request-payment/detail?id={0}";
-        public const string Detail_Transportorder_Admin = "/manager/deposit/deposit-list/detail?id={0}";
-        public const string Add_Money_Admin = "/manager/money/recharge-history";
-        public const string Sub_Money_Admin = "/manager/money/withdrawal-history";
+        public enum NotificationSettingId
+        {
+            DangKy = 1,
+            LienHe = 2,
+            YeuCauNap = 3,
+            HuyYeuCauNap = 4,
+            DuyetYeuCauNap = 5,
+            YeuCauRut = 6,
+            HuyYeuCauRut = 7,
+            DuyetYeuCauRut = 8,
+            AdminChuyenTien = 9,
+            AdminRutTien = 10,
+            TaoDonMuaHo = 11,
+            DatCocMuaHo = 12,
+            ThanhToanMuaHo = 13,
+            TrangThaiMuaHo = 14,
+            SanPhamMuaHo = 15,
+            TaoDonKyGui = 16,
+            ThanhToanKyGui = 17,
+            TrangThaiKyGui = 18,
+            TaoThanhToanHo = 19,
+            ThanhToanThanhToanHo = 20,
+            TrangThaiThanhToanHo = 21,
+            TaoKhieuNai = 22,
+            TrangThaiKhieuNai = 23,
+            TrangThaiMaVanDon = 24,
+        }
 
         /// <summary>
         /// Trạng thái của hoa hồng
@@ -162,16 +171,24 @@ namespace NhapHangV2.Utilities
         /// </summary>
         public enum HistoryPayWalletContents
         {
-            DatCoc = 1,
-            NhanLaiTienDatCoc = 2,
-            ThanhToanHoaDon = 3,
-            AdminChuyenTien = 4,
-            RutTien = 5,
-            HuyLenhRutTien = 6,
-            HoanTienKhieuNai = 7,
-            ThanhToanVanChuyenHo = 8,
-            ThanhToanHo = 9,
-            HoaHong = 14,
+            NapTien = 1,
+            RutTien = 2,
+            DatCocMuaHo = 3,
+            ThanhToanMuaHo = 4,
+            ThanhToanKyGui = 5,
+            ThanhToanThanhToanHo = 6,
+            HoanTienKhieuNaiMuaHo = 7,
+            HoanTienKhieuNaiKyGui = 8,
+            HoanTienThanhToanHo = 9,
+            HoanTienSanPham = 10,
+            HoanTienDaTraMuaHo = 11,
+            HoanTienDaTraKyGui = 12,
+            HoaHongMuaHo = 13,
+            HoaHongKyGui = 14,
+            HoaHongThanhToanHo = 15,
+            HuyRutTien = 16,
+            ThanhToanXuatKho = 17,
+
         }
 
         /// <summary>
@@ -189,29 +206,18 @@ namespace NhapHangV2.Utilities
         /// </summary>
         public enum StatusOrderContants
         {
-            ChuaDatCoc = 0,
-            Huy = 1,
-            DaDatCoc = 2,
-            ChoDuyetDon = 3,
-            DaDuyetDon = 4,
-            DaMuaHang = 5,
-            DaVeKhoTQ = 6,
-            DaVeKhoVN = 7,
-            ChoThanhToan = 8,
-            KhachDaThanhToan = 9,
-            DaHoanThanh = 10,
-            DaKhieuNai = 11,
-            ChoBaoGia = 100 //Cho đơn mua hộ khác
-            //DonMoi = 1,
-            //DaCoc = 2,
-            //DaMuaHang = 3,
-            //ShopPhatHang = 4,
-            //HangVeTQ = 5,
-            //HangVeVN = 6,
-            //DaThanhToan = 7,
-            //HoanThanh = 8,
-            //KhieuNai = 9,
-            //Huy = 10,
+            DonHuy = 0,
+            ChoBaoGia = 1,
+            DonMoi = 2,
+            DaCoc = 3,
+            DaMuaHang = 4,
+            ShopPhatHang = 5,
+            VeTQ = 6,
+            DangVeVN = 7,
+            VeVN = 8,
+            DaThanhToan = 9,
+            HoanThanh = 10,
+            KhieuNai = 11,
         }
 
         /// <summary>
@@ -219,11 +225,10 @@ namespace NhapHangV2.Utilities
         /// </summary>
         public enum StatusPayOrderHistoryContants
         {
-            DatCoc2 = 2,
-            DatCoc3 = 3,
-            HuyHoanTien = 4,
-            ThanhToan = 9,
-            SanPhamHetHang = 12
+            DatCoc = 1,
+            ThanhToan = 2,
+            HoanTienSanPham = 3,
+            HoanTienHuyDon = 4
         }
 
         /// <summary>
@@ -240,13 +245,15 @@ namespace NhapHangV2.Utilities
         /// </summary>
         public enum StatusGeneralTransportationOrder
         {
-            Huy = 1,
-            ChoDuyet = 2,
-            DaDuyet = 3,
-            VeKhoTQ = 4,
+            Huy = 0,
+            ChoDuyet = 1,
+            DonMoi = 2,
+            VeKhoTQ = 3,
+            DangVeVN = 4,
             VeKhoVN = 5,
             DaThanhToan = 6,
-            DaHoanThanh = 7
+            DaHoanThanh = 7,
+            DaKhieuNai = 8
         }
 
         /// <summary>
@@ -254,17 +261,11 @@ namespace NhapHangV2.Utilities
         /// </summary>
         public enum StatusPayHelp
         {
-            ChuaThanhToan = 1,
-            DaThanhToan = 2,
-            DaHuy = 3,
+            DonHuy = 0,
+            ChoDuyet = 1,
+            DaDuyet = 2,
+            DaThanhToan = 3,
             DaHoanThanh = 4,
-            DaXacNhan = 5
-
-            //ChoDuyet = 1,
-            //DaDuyet = 2,
-            //DaThanhToan = 3,
-            //HoanThanh = 4,
-            //Huy = 5
         }
 
         /// <summary>
@@ -273,29 +274,22 @@ namespace NhapHangV2.Utilities
         public enum StatusSmallPackage
         {
             DaHuy = 0,
-            MoiDat = 1,
-            DaVeKhoTQ = 2,
-            DaVeKhoVN = 3,
-            DaThanhToan = 4,
-            DaGiao = 5
-            //MoiDat = 1,
-            //ShopPhatHang = 2,
-            //DaVeKhoTQ = 3,
-            //DaVeKhoVN = 4,
-            //DaThanhToan = 5,
-            //DaGiao = 6,
-            //DaHuy = 7,
-
+            MoiTao = 1,
+            VeKhoTQ = 2,
+            XuatKhoTQ = 3,
+            VeKhoVN = 4,
+            DaGiao = 5,
         }
 
         /// <summary>
-        /// Trạng thái của kiện trôi nổi
+        /// Trạng thái bao lon
         /// </summary>
         public enum StatusBigPackage
         {
-            DangChuyenVe = 1,
-            DaNhanHang = 2,
-            Huy = 3,
+            DaHuy = 0,
+            MoiTao = 1,
+            XuatKhoTQ = 2,
+            TrongKhoVN = 3,
         }
 
         /// <summary>
@@ -314,9 +308,10 @@ namespace NhapHangV2.Utilities
         public enum StatusComplain
         {
             DaHuy = 0,
-            ChuaDuyet = 1,
-            DangXuLy = 2,
-            DaXuLy = 3
+            MoiTao = 1,
+            DaXacNhan = 2,
+            DangXuLy = 3,
+            HoanThanh = 4
         }
 
         public enum WalletStatus
@@ -395,11 +390,6 @@ namespace NhapHangV2.Utilities
             VanChuyen = 1,
             ThanhToanHo = 2
         }
-
-        #region Catalogue Name
-
-        #endregion
-
         #region SMS Template
         /// <summary>
         /// Xác nhận OTP SMS
@@ -407,7 +397,5 @@ namespace NhapHangV2.Utilities
         public const string SMS_XNOTP = "XNOTP";
         #endregion
 
-        #region Email Template
-        #endregion
     }
 }

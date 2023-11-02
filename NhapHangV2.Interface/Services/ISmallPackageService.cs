@@ -21,7 +21,7 @@ namespace NhapHangV2.Interface.Services
 
         Task<List<SmallPackage>> CheckBarCode(List<SmallPackage> items, bool isAssign);
 
-        Task<AppDomainImportResult> ImportTemplateFile(Stream stream, int? bigPackageId, string createdBy);
+        Task<AppDomainImportResult> ImportTemplateFile(Stream stream, int? bigPackageId, string createdBy, int? type);
 
         Task<SmallPackage> GetByOrderTransactionCode(string code);
 
@@ -29,5 +29,6 @@ namespace NhapHangV2.Interface.Services
         Task<List<SmallPackage>> GetAllByTransportationOrderId(int transportationOrderId);
         Task<List<SmallPackage>> GetInVietNamByMainOrderId(int mainOrderId);
         void CreateSmallPackageTool(List<SmallPackageToolRequest> requests);
+        Task AssignBigPackage(AssignBigPackageRequest request);
     }
 }

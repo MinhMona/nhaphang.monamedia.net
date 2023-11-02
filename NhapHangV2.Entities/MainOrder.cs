@@ -12,6 +12,22 @@ namespace NhapHangV2.Entities
 {
     public class MainOrder : DomainEntities.AppDomain
     {
+        public bool? IsEditFeeBuyProPercent { get; set; } = false;
+        /// <summary>
+        /// Phí bảo hiểm (%)
+        /// </summary>
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal? EditedFeeBuyProPercent { get; set; } = 0;
+        /// <summary>
+        /// Ngày shop phát hàng
+        /// </summary>
+        public DateTime? DateSendGoods { get; set; }
+
+        /// <summary>
+        /// Ngày đang về VN
+        /// </summary>
+        public DateTime? DateComingVN { get; set; }
+
         /// <summary>
         /// ID User người đặt hàng
         /// </summary>
@@ -310,6 +326,11 @@ namespace NhapHangV2.Entities
         public DateTime? CancelDate { get; set; }
 
         /// <summary>
+        /// Ngày khiếu nại
+        /// </summary>
+        public DateTime? ComplainDate { get; set; }
+
+        /// <summary>
         /// Bảo hiểm
         /// </summary>
         public bool? IsInsurance { get; set; } = false;
@@ -597,5 +618,8 @@ namespace NhapHangV2.Entities
         /// </summary>
         [NotMapped]
         public int ShopTempId { get; set; } = 0;
+
+        [NotMapped]
+        public int? OldStatus { get; set; }
     }
 }

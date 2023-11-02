@@ -13,6 +13,8 @@ namespace NhapHangV2.Entities
     {
         public int? MainOrderId { get; set; } = 0;
 
+        public int? TransportationOrderId { get; set; } = 0;
+
         public int? UID { get; set; } = 0;
 
         /// <summary>

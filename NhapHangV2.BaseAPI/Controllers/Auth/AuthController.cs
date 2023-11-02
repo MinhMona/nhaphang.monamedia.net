@@ -32,6 +32,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Users = NhapHangV2.Entities.Users;
 using Microsoft.Win32;
+using static NhapHangV2.Utilities.CoreContants;
 
 namespace NhapHangV2.BaseAPI.Controllers.Auth
 {
@@ -433,17 +434,10 @@ namespace NhapHangV2.BaseAPI.Controllers.Auth
                     await this.userService.UpdateUserToken(userModel.Id, token, true);
 
                     //Thông báo cho admin có người dùng mới
-                    var notificationSetting = await notificationSettingService.GetByIdAsync(1);
-                    var notiTemplate = await notificationTemplateService.GetByIdAsync(1);
-                    var emailTemplate = await sMSEmailTemplateService.GetByCodeAsync("ACNDM");
-                    string subject = emailTemplate.Subject;
-                    string emailContent = string.Format(emailTemplate.Body, userModel.UserName, userModel.Email, userModel.Phone);
-
-                    if (notiTemplate != null && notificationSetting.Active)
-                    {
-                        await sendNotificationService.SendNotification(notificationSetting, notiTemplate, user.UserName, $"/manager/client/client-list/detail?id={userModel.Id}", "", null, subject, emailContent);
-                    }
-
+                    var notificationSetting = await notificationSettingService.GetByIdAsync((int)NotificationSettingId.DangKy);
+                    sendNotificationService.SendNotification(notificationSetting,
+                            new List<string>() { userModel.Id.ToString() },
+                            new UserNotification());
                     appDomainResult = new AppDomainResult()
                     {
                         Success = true,

@@ -506,6 +506,7 @@ namespace NhapHangV2.API.Controllers
 
                     MainOrder mainOrder = new MainOrder
                     {
+                        EditedFeeBuyProPercent = orderShopTemp.FeeBuyProPercent,
                         UID = UID,
                         ShopId = shopId,
                         ShopName = shopName,
@@ -531,10 +532,10 @@ namespace NhapHangV2.API.Controllers
                         DeliveryAddress = address,
                         ReceiverEmail = email,
                         ReceiverPhone = phone,
-                        Status = (int)StatusOrderContants.ChuaDatCoc,
+                        Status = (int)StatusOrderContants.DonMoi,
                         Deposit = deposit,
                         CurrentCNYVN = currency,
-                        TotalPriceVND = Math.Round(totalPriceVND, 0),
+                        TotalPriceVND = totalPriceVND,
                         SalerId = salerId,
                         DatHangId = datHangId,
                         FeeShipCNToVN = 0,
@@ -563,7 +564,6 @@ namespace NhapHangV2.API.Controllers
                         ShopTempId = orderShopTemp.Id,
 
                     };
-
                     mainOrders.Add(mainOrder);
                 }
 
@@ -633,6 +633,8 @@ namespace NhapHangV2.API.Controllers
             }
             return appDomainResult;
         }
+
+        private static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1); // Ví dụ, giới hạn 1 request đồng thời
         /// <summary>
         /// Đặt hàng qua Extension
         /// </summary>
@@ -642,50 +644,52 @@ namespace NhapHangV2.API.Controllers
         [AppAuthorize(new int[] { CoreContants.AddNew })]
         public override async Task<AppDomainResult> AddItem([FromBody] OrderShopTempRequest itemModel)
         {
-            AppDomainResult appDomainResult = new AppDomainResult();
-            bool success = false;
-            if (ModelState.IsValid)
+            await semaphoreSlim.WaitAsync();
+            try
             {
-                //new
-                //var item = mapper.Map<OrderShopTemp>(itemModel);
-
-                //old
-                var orderTemp = mapper.Map<OrderTemp>(itemModel);
-                var item = new OrderShopTemp();
-                item.ShopId = itemModel.shop_id;
-                item.ShopName = itemModel.shop_name;
-                item.Site = itemModel.site;
-                item.OrderTemps.Add(orderTemp);
-
-                if (item != null)
+                AppDomainResult appDomainResult = new AppDomainResult();
+                bool success = false;
+                if (ModelState.IsValid)
                 {
-                    // Kiểm tra item có tồn tại chưa?
-                    var messageUserCheck = await this.domainService.GetExistItemMessage(item);
-                    if (!string.IsNullOrEmpty(messageUserCheck))
-                        throw new KeyNotFoundException(messageUserCheck);
-                    success = await orderShopTempService.CreateAsync(item);
-                    if (success)
+                    //new
+                    //var item = mapper.Map<OrderShopTemp>(itemModel);
+
+                    //old
+                    var orderTemp = mapper.Map<OrderTemp>(itemModel);
+                    var item = new OrderShopTemp();
+                    item.ShopId = itemModel.shop_id;
+                    item.ShopName = itemModel.shop_name;
+                    item.Site = itemModel.site;
+                    item.OrderTemps.Add(orderTemp);
+
+                    if (item != null)
                     {
-                        //Thông báo thêm vào giỏ hàng thành công
-                        var notificationSetting = await notificationSettingService.GetByIdAsync(20);
-                        var notiTemplateUser = await notificationTemplateService.GetByIdAsync(29);
-                        notiTemplateUser.Content = $"Đã thêm {itemModel.quantity} sản phẩm {itemModel.title_origin} vào giỏ hàng";
-                        await sendNotificationService.SendNotification(notificationSetting, notiTemplateUser, itemModel.title_origin, String.Empty, String.Format(Add_Product_Success),
-                            LoginContext.Instance.CurrentUser.UserId, string.Empty, string.Empty);
-                        appDomainResult.ResultCode = (int)HttpStatusCode.OK;
+                        // Kiểm tra item có tồn tại chưa?
+                        var messageUserCheck = await this.domainService.GetExistItemMessage(item);
+                        if (!string.IsNullOrEmpty(messageUserCheck))
+                            throw new KeyNotFoundException(messageUserCheck);
+                        success = await orderShopTempService.CreateAsync(item);
+                        if (success)
+                        {
+                            appDomainResult.ResultCode = (int)HttpStatusCode.OK;
+                        }
+                        else
+                            throw new Exception("Lỗi trong quá trình xử lý");
+                        appDomainResult.Success = success;
                     }
                     else
-                        throw new Exception("Lỗi trong quá trình xử lý");
-                    appDomainResult.Success = success;
+                        throw new KeyNotFoundException("Item không tồn tại");
                 }
                 else
-                    throw new KeyNotFoundException("Item không tồn tại");
+                {
+                    throw new AppException(ModelState.GetErrorMessage());
+                }
+                return appDomainResult;
             }
-            else
+            finally
             {
-                throw new AppException(ModelState.GetErrorMessage());
+                semaphoreSlim.Release(); // Giải phóng SemaphoreSlim để chấp nhận request mới
             }
-            return appDomainResult;
         }
         /// <summary>
         /// Đặt đơn tương tự
@@ -710,12 +714,6 @@ namespace NhapHangV2.API.Controllers
                     success = await orderShopTempService.CreateAddSameAsync(item);
                     if (success)
                     {
-                        //Thông báo thêm vào giỏ hàng thành công
-                        var notificationSetting = await notificationSettingService.GetByIdAsync(20);
-                        var notiTemplateUser = await notificationTemplateService.GetByIdAsync(29);
-                        notiTemplateUser.Content = $"Đã thêm giỏ hàng tương tự đơn #{request.Id}";
-                        await sendNotificationService.SendNotification(notificationSetting, notiTemplateUser, String.Empty, String.Empty, String.Format(Add_Product_Success),
-                            LoginContext.Instance.CurrentUser.UserId, string.Empty, string.Empty);
                         appDomainResult.ResultCode = (int)HttpStatusCode.OK;
                     }
                     else

@@ -12,6 +12,14 @@ namespace NhapHangV2.Entities
     public class SmallPackage : DomainEntities.AppDomain
     {
         /// <summary>
+        /// Nhân viên xuất kho TQ
+        /// </summary>
+        public string StaffOutTQ { get; set; } = string.Empty;
+        /// <summary>
+        /// Ngày xuất kho TQ
+        /// </summary>
+        public DateTime? DateOutTQ { get; set; }
+        /// <summary>
         /// Khối tính tiền
         /// </summary>
         [Column(TypeName = "decimal(18,5)")]
@@ -405,7 +413,7 @@ namespace NhapHangV2.Entities
 
         [Column(TypeName = "decimal(18,0)")]
         public decimal? PriceWeight { get; set; } = 0;
-        
+
         public DateTime? DateInVNTemp { get; set; }
     }
 }

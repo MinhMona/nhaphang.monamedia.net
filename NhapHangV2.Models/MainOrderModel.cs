@@ -12,6 +12,18 @@ namespace NhapHangV2.Models
 {
     public class MainOrderModel : AppDomainModel
     {
+        public bool? IsEditFeeBuyProPercent { get; set; }
+        public decimal? EditedFeeBuyProPercent { get; set; }
+
+        /// <summary>
+        /// Ngày shop phát hàng
+        /// </summary>
+        public DateTime? DateSendGoods { get; set; }
+
+        /// <summary>
+        /// Ngày đang về VN
+        /// </summary>
+        public DateTime? DateComingVN { get; set; }
 
         #region Danh sách mã đơn hàng
         public List<MainOrderCodeModel> MainOrderCodes { get; set; }
@@ -32,15 +44,7 @@ namespace NhapHangV2.Models
         /// <summary>
         /// Trạng thái đơn hàng
         /// </summary>
-        private int? status;
-        public int? Status
-        {
-            get
-            {
-                return (status == (int)StatusOrderContants.ChuaDatCoc && OrderType == 3 && IsCheckNotiPrice == false) ? 100 : status;
-            }
-            set { status = value; }
-        }
+        public int? Status { get; set; }
 
         /// <summary>
         /// Tên trạng thái đơn hàng
@@ -51,32 +55,30 @@ namespace NhapHangV2.Models
             {
                 switch (Status)
                 {
-                    case (int)StatusOrderContants.ChuaDatCoc:
-                        return "Chưa đặt cọc";
-                    case (int)StatusOrderContants.Huy:
+                    case (int)StatusOrderContants.DonHuy:
                         return "Hủy";
-                    case (int)StatusOrderContants.DaDatCoc:
-                        return "Đã đặt cọc";
-                    case (int)StatusOrderContants.ChoDuyetDon:
-                        return "Chờ duyệt đơn";
-                    case (int)StatusOrderContants.DaDuyetDon:
-                        return "Đã duyệt đơn";
-                    case (int)StatusOrderContants.DaMuaHang:
-                        return "Đã mua hàng";
-                    case (int)StatusOrderContants.DaVeKhoTQ:
-                        return "Đã về kho TQ";
-                    case (int)StatusOrderContants.DaVeKhoVN:
-                        return "Đã về kho VN";
-                    case (int)StatusOrderContants.ChoThanhToan:
-                        return "Chờ thanh toán";
-                    case (int)StatusOrderContants.KhachDaThanhToan:
-                        return "Đã thanh toán";
-                    case (int)StatusOrderContants.DaHoanThanh:
-                        return "Đã hoàn thành";
-                    case (int)StatusOrderContants.DaKhieuNai:
-                        return "Đã khiếu nại";
                     case (int)StatusOrderContants.ChoBaoGia:
                         return "Chờ báo giá";
+                    case (int)StatusOrderContants.DonMoi:
+                        return "Đơn mới";
+                    case (int)StatusOrderContants.DaCoc:
+                        return "Đã đặt cọc";
+                    case (int)StatusOrderContants.DaMuaHang:
+                        return "Đã mua hàng";
+                    case (int)StatusOrderContants.ShopPhatHang:
+                        return "Shop phát hàng";
+                    case (int)StatusOrderContants.VeTQ:
+                        return "Đã về kho TQ";
+                    case (int)StatusOrderContants.DangVeVN:
+                        return "Đang về kho VN";
+                    case (int)StatusOrderContants.VeVN:
+                        return "Đã về kho VN";
+                    case (int)StatusOrderContants.DaThanhToan:
+                        return "Đã thanh toán";
+                    case (int)StatusOrderContants.HoanThanh:
+                        return "Đã hoàn thành";
+                    case (int)StatusOrderContants.KhieuNai:
+                        return "Đã khiếu nại";
                     default:
                         return string.Empty;
                 }
@@ -523,6 +525,11 @@ namespace NhapHangV2.Models
         public DateTime? CancelDate { get; set; }
 
         /// <summary>
+        /// Ngày khiếu nại
+        /// </summary>
+        public DateTime? ComplainDate { get; set; }
+
+        /// <summary>
         /// Ngày dự kiến
         /// </summary>
         public DateTime? ExpectedDate { get; set; }
@@ -763,70 +770,70 @@ namespace NhapHangV2.Models
     /// <summary>
     /// Danh sách mã vận đơn (rút gọn) nhưng không xài (SmallPackage)
     /// </summary>
-    public class BillOfLading
-    {
-        /// <summary>
-        /// Mã vận đơn
-        /// </summary>
-        public string OrderTransactionCode { get; set; }
+    //public class BillOfLading
+    //{
+    //    /// <summary>
+    //    /// Mã vận đơn
+    //    /// </summary>
+    //    public string OrderTransactionCode { get; set; }
 
-        /// <summary>
-        /// Cân nặng (kg)
-        /// </summary>
-        public decimal Weight { get; set; }
+    //    /// <summary>
+    //    /// Cân nặng (kg)
+    //    /// </summary>
+    //    public decimal Weight { get; set; }
 
-        /// <summary>
-        /// Kích thước
-        /// </summary>
-        public string Size { get; set; }
+    //    /// <summary>
+    //    /// Kích thước
+    //    /// </summary>
+    //    public string Size { get; set; }
 
-        /// <summary>
-        /// Cân quy đổi
-        /// </summary>
-        public decimal? WeigthQD { get; set; }
+    //    /// <summary>
+    //    /// Cân quy đổi
+    //    /// </summary>
+    //    public decimal? WeigthQD { get; set; }
 
-        /// <summary>
-        /// Cân tính tiền
-        /// </summary>
-        public decimal? WeigthTT { get; set; }
+    //    /// <summary>
+    //    /// Cân tính tiền
+    //    /// </summary>
+    //    public decimal? WeigthTT { get; set; }
 
-        /// <summary>
-        /// Ghi chú
-        /// </summary>
-        public string Description { get; set; }
+    //    /// <summary>
+    //    /// Ghi chú
+    //    /// </summary>
+    //    public string Description { get; set; }
 
-        /// <summary>
-        /// Trạng thái
-        /// </summary>
-        public int? Status { get; set; }
+    //    /// <summary>
+    //    /// Trạng thái
+    //    /// </summary>
+    //    public int? Status { get; set; }
 
-        /// <summary>
-        /// Tên trạng thái
-        /// </summary>
-        public string StatusName
-        {
-            get
-            {
-                switch (Status)
-                {
-                    case (int)StatusSmallPackage.DaHuy:
-                        return "Đã hủy";
-                    case (int)StatusSmallPackage.MoiDat:
-                        return "Mới đặt";
-                    case (int)StatusSmallPackage.DaVeKhoTQ:
-                        return "Đã về kho TQ";
-                    case (int)StatusSmallPackage.DaVeKhoVN:
-                        return "Đã về kho VN";
-                    case (int)StatusSmallPackage.DaThanhToan:
-                        return "Đã thanh toán";
-                    case (int)StatusSmallPackage.DaGiao:
-                        return "Đã giao";
-                    default:
-                        return string.Empty;
-                }
-            }
-        }
-    }
+    //    /// <summary>
+    //    /// Tên trạng thái
+    //    /// </summary>
+    //    public string StatusName
+    //    {
+    //        get
+    //        {
+    //            switch (Status)
+    //            {
+    //                case (int)StatusSmallPackage.DaHuy:
+    //                    return "Đã hủy";
+    //                case (int)StatusSmallPackage.MoiDat:
+    //                    return "Mới đặt";
+    //                case (int)StatusSmallPackage.DaVeKhoTQ:
+    //                    return "Đã về kho TQ";
+    //                case (int)StatusSmallPackage.DaVeKhoVN:
+    //                    return "Đã về kho VN";
+    //                case (int)StatusSmallPackage.DaThanhToan:
+    //                    return "Đã thanh toán";
+    //                case (int)StatusSmallPackage.DaGiao:
+    //                    return "Đã giao";
+    //                default:
+    //                    return string.Empty;
+    //            }
+    //        }
+    //    }
+    //}
 
     public class TotalStatus
     {
@@ -840,27 +847,21 @@ namespace NhapHangV2.Models
                 {
                     case -1: //Tất cả
                         return "Tất cả";
-                    case (int)StatusOrderContants.ChuaDatCoc:
+                    case (int)StatusOrderContants.DonMoi:
                         return "Đơn mới";
-                    case (int)StatusOrderContants.Huy:
+                    case (int)StatusOrderContants.DonHuy:
                         return "Đơn hàng hủy";
-                    case (int)StatusOrderContants.DaDatCoc:
+                    case (int)StatusOrderContants.DaCoc:
                         return "Đã đặt cọc";
-                    //case (int)StatusOrderContants.ChoDuyetDon:
-                    //    return "Đơn có vấn đề";
-                    //case (int)StatusOrderContants.DaDuyetDon:
-                    //    return "Đã mua hàng";
                     case (int)StatusOrderContants.DaMuaHang:
                         return "Đã đặt hàng";
-                    case (int)StatusOrderContants.DaVeKhoTQ:
+                    case (int)StatusOrderContants.VeTQ:
                         return "Hàng về kho TQ";
-                    case (int)StatusOrderContants.DaVeKhoVN:
+                    case (int)StatusOrderContants.VeVN:
                         return "Hàng về kho VN";
-                    //case (int)StatusOrderContants.ChoThanhToan:
-                    //    return "Đơn công nợ";
-                    case (int)StatusOrderContants.KhachDaThanhToan:
+                    case (int)StatusOrderContants.DaThanhToan:
                         return "Đã thanh toán";
-                    case (int)StatusOrderContants.DaHoanThanh:
+                    case (int)StatusOrderContants.HoanThanh:
                         return "Đã hoàn thành";
                     default:
                         return string.Empty;
@@ -875,27 +876,17 @@ namespace NhapHangV2.Models
                 {
                     case -1: //Tất cả
                         return "Tổng số đơn hàng";
-                    case (int)StatusOrderContants.ChuaDatCoc:
+                    case (int)StatusOrderContants.DonMoi:
                         return "Đơn hàng chưa đặt cọc";
-                    //case (int)StatusOrderContants.Huy:
-                    //    return "";
-                    case (int)StatusOrderContants.DaDatCoc:
+                    case (int)StatusOrderContants.DaCoc:
                         return "Đơn hàng đã đặt cọc";
-                    //case (int)StatusOrderContants.ChoDuyetDon:
-                    //    return "";
-                    //case (int)StatusOrderContants.DaDuyetDon:
-                    //    return "";
                     case (int)StatusOrderContants.DaMuaHang:
                         return "Đơn hàng đã đặt hàng";
-                    case (int)StatusOrderContants.DaVeKhoTQ:
+                    case (int)StatusOrderContants.VeTQ:
                         return "Đơn hàng đã có tại kho TQ";
-                    case (int)StatusOrderContants.DaVeKhoVN:
+                    case (int)StatusOrderContants.VeVN:
                         return "Đơn hàng đã có hàng tại VN";
-                    //case (int)StatusOrderContants.ChoThanhToan:
-                    //    return "";
-                    //case (int)StatusOrderContants.KhachDaThanhToan:
-                    //    return "";
-                    case (int)StatusOrderContants.DaHoanThanh:
+                    case (int)StatusOrderContants.HoanThanh:
                         return "Đơn hàng đã nhận";
                     default:
                         return string.Empty;
@@ -917,32 +908,18 @@ namespace NhapHangV2.Models
                 {
                     case -1: //Tất cả
                         return "Tổng tiền hàng chưa giao";
-                    case (int)StatusOrderContants.ChuaDatCoc:
+                    case (int)StatusOrderContants.DonMoi:
                         if (IsDeposit == true)
                             return "Tổng tiền hàng cần đặt cọc";
                         return "Tổng tiền hàng (đơn hàng cần đặt cọc)";
-                    //case (int)StatusOrderContants.Huy:
-                    //    return "";
-                    //case (int)StatusOrderContants.DaDatCoc:
-                    //    return "";
-                    //case (int)StatusOrderContants.ChoDuyetDon:
-                    //    return "";
-                    //case (int)StatusOrderContants.DaDuyetDon:
-                    //    return "";
                     case (int)StatusOrderContants.DaMuaHang:
                         return "Tổng tiền hàng chờ về kho TQ";
-                    case (int)StatusOrderContants.DaVeKhoTQ:
+                    case (int)StatusOrderContants.VeTQ:
                         return "Tổng tiền hàng đã về kho TQ";
-                    case (int)StatusOrderContants.DaVeKhoVN:
+                    case (int)StatusOrderContants.VeVN:
                         if (IsDeposit == true)
                             return "Tổng tiền cần thanh toán để lấy hàng trong kho";
                         return "Tổng tiền hàng đang ở kho đích";
-                    //case (int)StatusOrderContants.ChoThanhToan:
-                    //    return "";
-                    //case (int)StatusOrderContants.KhachDaThanhToan:
-                    //    return "";
-                    //case (int)StatusOrderContants.DaHoanThanh:
-                    //    return "";
                     default:
                         return string.Empty;
                 }

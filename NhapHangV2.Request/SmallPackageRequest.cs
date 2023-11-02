@@ -12,6 +12,15 @@ namespace NhapHangV2.Request
     public class SmallPackageRequest : AppDomainRequest
     {
         /// <summary>
+        /// Nhân viên xuất kho TQ
+        /// </summary>
+        public string? StaffOutTQ { get; set; }
+        /// <summary>
+        /// Ngày xuất kho TQ
+        /// </summary>
+        public DateTime? DateOutTQ { get; set; }
+
+        /// <summary>
         /// Khối tính tiền
         /// </summary>
         public decimal? VolumePayment { get; set; }

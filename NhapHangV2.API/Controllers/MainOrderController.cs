@@ -70,7 +70,7 @@ namespace NhapHangV2.API.Controllers
         /// </summary>
         [HttpGet("order-staff")]
         [AppAuthorize(new int[] { CoreContants.View })]
-        public async Task<AppDomainResult> GetMainOrderOfOrderStaff([FromQuery]MainOrderToolSearch search)
+        public async Task<AppDomainResult> GetMainOrderOfOrderStaff([FromQuery] MainOrderToolSearch search)
         {
             var order = await mainOrderService.GetPagedListOfOrderStaff(search);
             return new AppDomainResult
@@ -396,7 +396,6 @@ namespace NhapHangV2.API.Controllers
 
                 var userLevel = await userLevelService.GetByIdAsync(users.LevelId ?? 0);
                 decimal cKFeeBuyPro = userLevel == null ? 0 : userLevel.FeeBuyPro ?? 0;
-                //decimal cKFeeWeight = userLevel == null ? 0 : userLevel.FeeWeight ?? 0;
                 decimal lessDeposit = userLevel == null ? 0 : userLevel.LessDeposit ?? 0;
 
                 if (users.Deposit > 0)
@@ -420,17 +419,17 @@ namespace NhapHangV2.API.Controllers
                 if (feeBuyPro != null)
                 {
                     decimal feePercent = feeBuyPro.FeePercent > 0 ? (feeBuyPro.FeePercent ?? 0) : 0;
-                    servicefee = feePercent / 100;
+                    servicefee = feePercent ;
                 }
                 decimal feebpnotdc = 0;
                 decimal feebuypropt = 0;
                 if (users.FeeBuyPro > 0)
                 {
-                    feebpnotdc = priceVND * (users.FeeBuyPro ?? 0) / 100;
+                    servicefee = (users.FeeBuyPro ?? 0);
                     feebuypropt = users.FeeBuyPro ?? 0;
                 }
-                else
-                    feebpnotdc = priceVND * servicefee;
+
+                feebpnotdc = priceVND * servicefee / 100;
                 decimal subfeebp = cKFeeBuyPro > 0 ? (feebpnotdc * cKFeeBuyPro / 100) : 0;
                 decimal feebp = feebpnotdc - subfeebp;
                 //Phí mua hàng tối thiểu
@@ -464,7 +463,7 @@ namespace NhapHangV2.API.Controllers
                 feeInsurance = (model.IsInsurance == true) ? ((priceVND * configurations.InsurancePercent) / 100) : 0;
                 //Tính tổng tiền đơn hàng
                 decimal totalPriceVND = (priceCNY * currency) + feebp + (feeCheckProductPrice ?? 0) + (feeInsurance ?? 0);
-                decimal amountDeposit = lessDeposit > 0 ? (totalPriceVND * lessDeposit / 100) : totalPriceVND;
+                decimal amountDeposit = lessDeposit > 0 ? ((priceCNY * currency) * lessDeposit / 100) : (priceCNY * currency);
 
                 //Dành cho phần Image
                 List<string> filePaths = new List<string>();
@@ -599,6 +598,8 @@ namespace NhapHangV2.API.Controllers
 
                 MainOrder mainOrder = new MainOrder
                 {
+                    EditedFeeBuyProPercent = servicefee,
+
                     UID = users.Id,
                     ShopId = "",
                     ShopName = "",
@@ -635,10 +636,10 @@ namespace NhapHangV2.API.Controllers
                     ReceiverPhone = phone,
                     Note = model.UserNote,
 
-                    Status = 0,
+                    Status = (int)StatusOrderContants.ChoBaoGia,
                     Deposit = 0,
                     CurrentCNYVN = currency,
-                    TotalPriceVND = Math.Round(totalPriceVND, 0),
+                    TotalPriceVND = totalPriceVND,
 
                     SalerId = salerId,
                     DatHangId = datHangId,
@@ -649,8 +650,6 @@ namespace NhapHangV2.API.Controllers
                     ReceivePlace = model.WarehouseVN,
                     ShippingType = model.ShippingType,
                     FromPlace = model.WarehouseTQ,
-
-                    IsCheckNotiPrice = false, //Điểm khác biệt khi đặt hàng qua trang Web khác
 
                     Deleted = false,
                     Active = true,
@@ -934,105 +933,113 @@ namespace NhapHangV2.API.Controllers
             bool success = false;
             if (ModelState.IsValid)
             {
-                if (itemModel.Status == (int)StatusOrderContants.ChoBaoGia)
-                    itemModel.Status = (int)StatusOrderContants.ChuaDatCoc;
-
                 var user = await userService.GetByIdAsync(LoginContext.Instance.CurrentUser.UserId);
                 var item = await this.domainService.GetByIdAsync(itemModel.Id);
                 bool isChangeTQVNWeight = itemModel.IsChangeTQVNWeight != null ? itemModel.IsChangeTQVNWeight.Value : false;
                 bool isChangeFeeWeight = itemModel.IsChangeFeeWeight != null ? itemModel.IsChangeFeeWeight.Value : false;
                 var configurations = await configurationsService.GetSingleAsync();
-
                 if (item != null)
                 {
                     item.HistoryOrderChanges = new List<HistoryOrderChange>();
                     string updateSql = "";
-
                     foreach (var smallPackage in itemModel.SmallPackages)
                     {
                         if (smallPackage.MainOrderCodeId == null || smallPackage.MainOrderCodeId <= 0)
                             throw new AppException("Mã đơn hàng bị trống");
                     }
                     var customer = await userService.GetByIdAsync(item.UID ?? 0);
-
                     string statusNameOrderNew = "";
                     switch (itemModel.Status)
                     {
-                        case (int)StatusOrderContants.ChuaDatCoc:
-                            statusNameOrderNew = "Chưa đặt cọc";
-                            break;
-                        case (int)StatusOrderContants.Huy:
+                        case (int)StatusOrderContants.DonHuy:
                             statusNameOrderNew = "Hủy";
                             break;
-                        case (int)StatusOrderContants.DaDatCoc:
+                        case (int)StatusOrderContants.ChoBaoGia:
+                            statusNameOrderNew = "Chờ báo giá";
+                            break;
+                        case (int)StatusOrderContants.DonMoi:
+                            statusNameOrderNew = "Đơn mới";
+                            break;
+                        case (int)StatusOrderContants.DaCoc:
                             statusNameOrderNew = "Đã đặt cọc";
-                            break;
-                        case (int)StatusOrderContants.ChoDuyetDon:
-                            statusNameOrderNew = "Chờ duyệt đơn";
-                            break;
-                        case (int)StatusOrderContants.DaDuyetDon:
-                            statusNameOrderNew = "Đã duyệt đơn";
                             break;
                         case (int)StatusOrderContants.DaMuaHang:
                             statusNameOrderNew = "Đã mua hàng";
                             break;
-                        case (int)StatusOrderContants.DaVeKhoTQ:
+                        case (int)StatusOrderContants.ShopPhatHang:
+                            statusNameOrderNew = "Shop phát hàng";
+                            break;
+                        case (int)StatusOrderContants.VeTQ:
                             statusNameOrderNew = "Đã về kho TQ";
                             break;
-                        case (int)StatusOrderContants.DaVeKhoVN:
+                        case (int)StatusOrderContants.DangVeVN:
+                            statusNameOrderNew = "Đang về kho VN";
+                            break;
+                        case (int)StatusOrderContants.VeVN:
                             statusNameOrderNew = "Đã về kho VN";
                             break;
-                        case (int)StatusOrderContants.ChoThanhToan:
-                            statusNameOrderNew = "Chờ thanh toán";
+                        case (int)StatusOrderContants.DaThanhToan:
+                            statusNameOrderNew = "Đã thanh toán";
                             break;
-                        case (int)StatusOrderContants.KhachDaThanhToan:
-                            statusNameOrderNew = "Khách đã thanh toán";
-                            break;
-                        case (int)StatusOrderContants.DaHoanThanh:
+                        case (int)StatusOrderContants.HoanThanh:
                             statusNameOrderNew = "Đã hoàn thành";
+                            break;
+                        case (int)StatusOrderContants.KhieuNai:
+                            statusNameOrderNew = "Đã khiếu nại";
+                            break;
+                        default:
+                            break;
+                    }
+                    string statusNameOrderOld = "";
+                    switch (item.Status)
+                    {
+                        case (int)StatusOrderContants.DonHuy:
+                            statusNameOrderOld = "Hủy";
+                            break;
+                        case (int)StatusOrderContants.ChoBaoGia:
+                            statusNameOrderOld = "Chờ báo giá";
+                            break;
+                        case (int)StatusOrderContants.DonMoi:
+                            statusNameOrderOld = "Đơn mới";
+                            break;
+                        case (int)StatusOrderContants.DaCoc:
+                            statusNameOrderOld = "Đã đặt cọc";
+                            break;
+                        case (int)StatusOrderContants.DaMuaHang:
+                            statusNameOrderOld = "Đã mua hàng";
+                            break;
+                        case (int)StatusOrderContants.ShopPhatHang:
+                            statusNameOrderOld = "Shop phát hàng";
+                            break;
+                        case (int)StatusOrderContants.VeTQ:
+                            statusNameOrderOld = "Đã về kho TQ";
+                            break;
+                        case (int)StatusOrderContants.DangVeVN:
+                            statusNameOrderOld = "Đang về kho VN";
+                            break;
+                        case (int)StatusOrderContants.VeVN:
+                            statusNameOrderOld = "Đã về kho VN";
+                            break;
+                        case (int)StatusOrderContants.DaThanhToan:
+                            statusNameOrderOld = "Đã thanh toán";
+                            break;
+                        case (int)StatusOrderContants.HoanThanh:
+                            statusNameOrderOld = "Đã hoàn thành";
+                            break;
+                        case (int)StatusOrderContants.KhieuNai:
+                            statusNameOrderOld = "Đã khiếu nại";
                             break;
                         default:
                             break;
                     }
 
-                    string statusNameOrderOld = "";
-                    switch (item.Status)
+                    //Lịch sử phần trăm phí mua hàng
+                    if ((item.EditedFeeBuyProPercent ?? 0) != (itemModel.EditedFeeBuyProPercent ?? 0))
                     {
-                        case (int)StatusOrderContants.ChuaDatCoc:
-                            statusNameOrderOld = "Chưa đặt cọc";
-                            break;
-                        case (int)StatusOrderContants.Huy:
-                            statusNameOrderOld = "Hủy";
-                            break;
-                        case (int)StatusOrderContants.DaDatCoc:
-                            statusNameOrderOld = "Đã đặt cọc";
-                            break;
-                        case (int)StatusOrderContants.ChoDuyetDon:
-                            statusNameOrderOld = "Chờ duyệt đơn";
-                            break;
-                        case (int)StatusOrderContants.DaDuyetDon:
-                            statusNameOrderOld = "Đã duyệt đơn";
-                            break;
-                        case (int)StatusOrderContants.DaMuaHang:
-                            statusNameOrderOld = "Đã mua hàng";
-                            break;
-                        case (int)StatusOrderContants.DaVeKhoTQ:
-                            statusNameOrderOld = "Đã về kho TQ";
-                            break;
-                        case (int)StatusOrderContants.DaVeKhoVN:
-                            statusNameOrderOld = "Đã về kho VN";
-                            break;
-                        case (int)StatusOrderContants.ChoThanhToan:
-                            statusNameOrderOld = "Chờ thanh toán";
-                            break;
-                        case (int)StatusOrderContants.KhachDaThanhToan:
-                            statusNameOrderOld = "Khách đã thanh toán";
-                            break;
-                        case (int)StatusOrderContants.DaHoanThanh:
-                            statusNameOrderOld = "Đã hoàn thành";
-                            break;
-                        default:
-                            break;
+                        itemModel.IsEditFeeBuyProPercent = true;
+                        string historyContent = $"{user.UserName} đã đổi phần trăm phí mua hàng từ {item.EditedFeeBuyProPercent ?? 0} sang {itemModel.EditedFeeBuyProPercent ?? 0}";
+                        updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
+                            $"VALUES({item.Id},{user.Id},N'{historyContent}',{0},'{DateTime.Now}','{user.UserName}',0,1)";
                     }
 
                     //Lịch sử phí mua hàng
@@ -1040,42 +1047,43 @@ namespace NhapHangV2.API.Controllers
                     {
                         string historyContent = $"{user.UserName} đã đổi phí mua hàng từ {item.FeeBuyPro ?? 0} sang {itemModel.FeeBuyPro ?? 0}";
                         updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                            $"VALUES({item.Id},{user.Id},N'{historyContent}',{11},'{DateTime.Now}','{user.UserName}',0,1)";
+                            $"VALUES({item.Id},{user.Id},N'{historyContent}',{0},'{DateTime.Now}','{user.UserName}',0,1)";
                     }
-
+                    
                     //Trạng thái đơn hàng
                     if (item.Status != itemModel.Status)
                     {
-                        int type = 0;
-                        if (itemModel.Status == (int)StatusOrderContants.DaDatCoc || itemModel.Status == (int)StatusOrderContants.KhachDaThanhToan)
-                            type = (int)TypeHistoryOrderChange.TienDatCoc;
                         string historyContent = String.Format("{0} đã đổi trạng thái của đơn hàng: {1} từ \"{2}\" sang \"{3}\".", user.UserName, item.Id, statusNameOrderOld, statusNameOrderNew);
                         updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                            $"VALUES({item.Id},{user.Id},N'{historyContent}',{type},'{DateTime.Now}','{user.UserName}',0,1)";
+                            $"VALUES({item.Id},{user.Id},N'{historyContent}',{0},'{DateTime.Now}','{user.UserName}',0,1)";
                     }
-
                     //Mã vận đơn
                     foreach (var smallPackage in itemModel.SmallPackages)
                     {
                         var mainOrderCode = await mainOrderCodeService.GetByIdAsync(smallPackage.MainOrderCodeId ?? 0);
-
                         string statusNameNew = "";
                         switch (smallPackage.Status)
                         {
                             case (int)StatusSmallPackage.DaHuy:
                                 statusNameNew = "Đã hủy";
                                 break;
-                            case (int)StatusSmallPackage.DaVeKhoVN:
-                                statusNameNew = "Đã về kho VN";
+                            case (int)StatusSmallPackage.MoiTao:
+                                statusNameNew = "Mới tạo";
                                 break;
-                            case (int)StatusSmallPackage.DaVeKhoTQ:
+                            case (int)StatusSmallPackage.VeKhoTQ:
                                 statusNameNew = "Đã về kho TQ";
                                 break;
-                            case (int)StatusSmallPackage.DaThanhToan:
-                                statusNameNew = "Đã giao cho khách";
+                            case (int)StatusSmallPackage.XuatKhoTQ:
+                                statusNameNew = "Xuất kho TQ";
+                                break;
+                            case (int)StatusSmallPackage.VeKhoVN:
+                                statusNameNew = "Đã về kho VN";
+                                break;
+                            case (int)StatusSmallPackage.DaGiao:
+                                statusNameNew = "Đã giao khách";
                                 break;
                             default:
-                                statusNameNew = "Chưa về kho TQ";
+                                statusNameNew = "Không xác định";
                                 break;
                         }
 
@@ -1086,34 +1094,29 @@ namespace NhapHangV2.API.Controllers
                             string historyContent = String.Format("{0} đã thêm kiện hàng của đơn hàng ID là: {1}, Mã vận đơn: {2}, Mã đơn hàng: {3}, Cân nặng {4} kg, Trạng thái kiện: \"{5}\".",
                                 user.UserName, item.Id, smallPackage.OrderTransactionCode, mainOrderCode == null ? 0 : mainOrderCode.Code, smallPackage.Weight, statusNameNew);
                             updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                                $"VALUES({item.Id},{user.Id},N'{historyContent}',{(int?)TypeHistoryOrderChange.MaVanDon},'{DateTime.Now}','{user.UserName}',0,1)";
+                                $"VALUES({item.Id},{user.Id},N'{historyContent}',{0},'{DateTime.Now}','{user.UserName}',0,1)";
                             continue;
                         }
                         var existsSmallPackage = await smallPackageService.GetByIdAsync(smallPackage.Id);
                         if (existsSmallPackage == null) continue;
-
                         //Đơn cập nhật thì giữ lại UID, CreatedDate, CreatedBy
                         smallPackage.UID = existsSmallPackage.UID ?? 0;
                         smallPackage.Created = existsSmallPackage.Created;
                         smallPackage.CreatedBy = existsSmallPackage.CreatedBy;
                         smallPackage.UserNote = item.Note;
-
                         if (smallPackage.OrderTransactionCode != existsSmallPackage.OrderTransactionCode)
                         {
                             string historyContent = String.Format("{0} đã cập nhật mã vận đơn kiện hàng của đơn hàng ID là: {1}, Mã vận đơn từ: {2}, sang {3}.",
                                 user.UserName, item.Id, existsSmallPackage.OrderTransactionCode, smallPackage.OrderTransactionCode);
                             updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                                $"VALUES({item.Id},{user.Id},N'{historyContent}',{(int?)TypeHistoryOrderChange.MaVanDon},'{DateTime.Now}','{user.UserName}',0,1)";
-
+                                $"VALUES({item.Id},{user.Id},N'{historyContent}',{0},'{DateTime.Now}','{user.UserName}',0,1)";
                         }
-
                         if (smallPackage.Weight != existsSmallPackage.Weight)
                         {
                             string historyContent = String.Format("{0} đã cập nhật cân nặng kiện hàng của đơn hàng ID là: {1}, Cân nặng từ: {2} kg, sang {3} kg.",
                                 user.UserName, item.Id, existsSmallPackage.Weight, smallPackage.Weight);
                             updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                                $"VALUES({item.Id},{user.Id},N'{historyContent}',{(int?)TypeHistoryOrderChange.MaVanDon},'{DateTime.Now}','{user.UserName}',0,1)";
-
+                                $"VALUES({item.Id},{user.Id},N'{historyContent}',{0},'{DateTime.Now}','{user.UserName}',0,1)";
                         }
 
                         if (smallPackage.MainOrderCodeId != existsSmallPackage.MainOrderCodeId)
@@ -1122,7 +1125,7 @@ namespace NhapHangV2.API.Controllers
                             string historyContent = String.Format("{0} đã cập nhật mã đơn hàng kiện hàng của đơn hàng ID là: {1}, Mã vận đơn: {2}, Mã đơn hàng từ: {3}, sang: {4}.",
                                 user.UserName, item.Id, smallPackage.OrderTransactionCode, mainOrderCodeOld == null ? 0 : mainOrderCodeOld.Code, mainOrderCode == null ? 0 : mainOrderCode.Code);
                             updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                                $"VALUES({item.Id},{user.Id},N'{historyContent}',{(int?)TypeHistoryOrderChange.MaVanDon},'{DateTime.Now}','{user.UserName}',0,1)";
+                                $"VALUES({item.Id},{user.Id},N'{historyContent}',{0},'{DateTime.Now}','{user.UserName}',0,1)";
                         }
 
                         if (smallPackage.Status != existsSmallPackage.Status)
@@ -1133,23 +1136,29 @@ namespace NhapHangV2.API.Controllers
                                 case (int)StatusSmallPackage.DaHuy:
                                     statusNameOld = "Đã hủy";
                                     break;
-                                case (int)StatusSmallPackage.DaVeKhoVN:
-                                    statusNameOld = "Đã về kho VN";
+                                case (int)StatusSmallPackage.MoiTao:
+                                    statusNameOld = "Mới tạo";
                                     break;
-                                case (int)StatusSmallPackage.DaVeKhoTQ:
+                                case (int)StatusSmallPackage.VeKhoTQ:
                                     statusNameOld = "Đã về kho TQ";
                                     break;
-                                case (int)StatusSmallPackage.DaThanhToan:
-                                    statusNameOld = "Đã giao cho khách";
+                                case (int)StatusSmallPackage.XuatKhoTQ:
+                                    statusNameOld = "Xuất kho TQ";
+                                    break;
+                                case (int)StatusSmallPackage.VeKhoVN:
+                                    statusNameOld = "Đã về kho VN";
+                                    break;
+                                case (int)StatusSmallPackage.DaGiao:
+                                    statusNameOld = "Đã giao khách";
                                     break;
                                 default:
-                                    statusNameOld = "Chưa về kho TQ";
+                                    statusNameOld = "Không xác định";
                                     break;
                             }
                             string historyContent = String.Format("{0} đã cập nhật trạng thái kiện hàng của đơn hàng ID là: {1}, Mã vận đơn: {2}, Trạng thái kiện từ: \"{3}\", sang: \"{4}\".",
                                 user.UserName, item.Id, smallPackage.OrderTransactionCode, statusNameOld, statusNameNew);
                             updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                                $"VALUES({item.Id},{user.Id},N'{historyContent}',{(int?)TypeHistoryOrderChange.MaVanDon},'{DateTime.Now}','{user.UserName}',0,1)";
+                                $"VALUES({item.Id},{user.Id},N'{historyContent}',{0},'{DateTime.Now}','{user.UserName}',0,1)";
 
                         }
                     }
@@ -1161,8 +1170,7 @@ namespace NhapHangV2.API.Controllers
                             string historyContent = String.Format("{0} đã thêm phụ phí của đơn hàng ID là: {1}, Tên phụ phí {2}, Số tiền: {3}.",
                                 user.UserName, item.Id, feeSupport.SupportName, feeSupport.SupportInfoVND);
                             updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                                $"VALUES({item.Id},{user.Id},N'{historyContent}',{(int?)TypeHistoryOrderChange.MaDonHang},'{DateTime.Now}','{user.UserName}',0,1)";
-
+                                $"VALUES({item.Id},{user.Id},N'{historyContent}',{0},'{DateTime.Now}','{user.UserName}',0,1)";
                             continue;
                         }
 
@@ -1174,7 +1182,7 @@ namespace NhapHangV2.API.Controllers
                             string historyContent = String.Format("{0} đã thay đổi tên phụ phí của đơn hàng ID là: {1}, Từ: {2}, Sang {3}.",
                                 user.UserName, item.Id, existsFeeSupport.SupportName, feeSupport.SupportName);
                             updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                                $"VALUES({item.Id},{user.Id},N'{historyContent}',{(int?)TypeHistoryOrderChange.MaDonHang},'{DateTime.Now}','{user.UserName}',0,1)";
+                                $"VALUES({item.Id},{user.Id},N'{historyContent}',{0},'{DateTime.Now}','{user.UserName}',0,1)";
 
                         }
 
@@ -1183,7 +1191,7 @@ namespace NhapHangV2.API.Controllers
                             string historyContent = String.Format("{0} đã thay đổi tên phụ phí của đơn hàng ID là: {1}, Tên phụ phí: {2}, Số tiền từ: {3}, Sang: {4}.",
                                 user.UserName, item.Id, existsFeeSupport.SupportName, existsFeeSupport.SupportInfoVND, feeSupport.SupportInfoVND);
                             updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                                $"VALUES({item.Id},{user.Id},N'{historyContent}',{(int?)TypeHistoryOrderChange.MaDonHang},'{DateTime.Now}','{user.UserName}',0,1)";
+                                $"VALUES({item.Id},{user.Id},N'{historyContent}',{0},'{DateTime.Now}','{user.UserName}',0,1)";
 
                         }
                     }
@@ -1193,7 +1201,7 @@ namespace NhapHangV2.API.Controllers
                         string historyContent = String.Format("{0} đã đổi số tiền đặt cọc của đơn hàng ID là: {1}, Từ: {2} VND, Sang: {3} VND.",
                             user.UserName, item.Id, item.AmountDeposit, itemModel.AmountDeposit);
                         updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                            $"VALUES({item.Id},{user.Id},N'{historyContent}',{(int?)TypeHistoryOrderChange.PhiGiaoTanNha},'{DateTime.Now}','{user.UserName}',0,1)";
+                            $"VALUES({item.Id},{user.Id},N'{historyContent}',{0},'{DateTime.Now}','{user.UserName}',0,1)";
                     }
 
                     //Tổng số tiền mua thật
@@ -1205,11 +1213,10 @@ namespace NhapHangV2.API.Controllers
                             string historyContentlPriceReal = String.Format("{0} đã đổi phí mua thật (VNĐ) của đơn hàng ID là: {1}, Từ: {2}, Sang: {3}.",
                                 user.UserName, item.Id, item.TotalPriceRealCNY, itemModel.TotalPriceRealCNY);
                             updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                                $"VALUES({item.Id},{user.Id},N'{historyContentlPriceReal}',{(int?)TypeHistoryOrderChange.PhiGiaoTanNha},'{DateTime.Now}','{user.UserName}',0,1)";
+                                $"VALUES({item.Id},{user.Id},N'{historyContentlPriceReal}',{0},'{DateTime.Now}','{user.UserName}',0,1)";
 
                         }
                     }
-
                     //Phí ship TQ
                     itemModel.FeeShipCN = itemModel.FeeShipCNCNY * itemModel.CurrentCNYVN;
                     if (itemModel.FeeShipCN != item.FeeShipCN)
@@ -1217,7 +1224,7 @@ namespace NhapHangV2.API.Controllers
                         string historyContentFeeShipCN = String.Format("{0} đã đổi phí ship Trung Quốc (VNĐ) của đơn hàng ID là: {1}, Từ: {2}, Sang: {3}.",
                             user.UserName, item.Id, item.FeeShipCNCNY, itemModel.FeeShipCNCNY);
                         updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                            $"VALUES({item.Id},{user.Id},N'{historyContentFeeShipCN}',{(int?)TypeHistoryOrderChange.PhiGiaoTanNha},'{DateTime.Now}','{user.UserName}',0,1)";
+                            $"VALUES({item.Id},{user.Id},N'{historyContentFeeShipCN}',{0},'{DateTime.Now}','{user.UserName}',0,1)";
 
                     }
 
@@ -1228,7 +1235,7 @@ namespace NhapHangV2.API.Controllers
                         string historyContentFeeShipCNReal = String.Format("{0} đã đổi phí ship Trung Quốc thật (VNĐ) của đơn hàng ID là: {1}, Từ: {2}, Sang: {3}.",
                             user.UserName, item.Id, item.FeeShipCNRealCNY, itemModel.FeeShipCNRealCNY);
                         updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                            $"VALUES({item.Id},{user.Id},N'{historyContentFeeShipCNReal}',{(int?)TypeHistoryOrderChange.PhiGiaoTanNha},'{DateTime.Now}','{user.UserName}',0,1)";
+                            $"VALUES({item.Id},{user.Id},N'{historyContentFeeShipCNReal}',{0},'{DateTime.Now}','{user.UserName}',0,1)";
 
                     }
 
@@ -1240,12 +1247,10 @@ namespace NhapHangV2.API.Controllers
                     {
                         //Giảm tổng tiền xuống
                         itemModel.TotalPriceVND -= itemModel.IsCheckProductPrice ?? 0;
-
                         string historyContentIsCheckProduct = String.Format("{0} đã bỏ phí kiểm đếm của đơn hàng ID là: {1}, Tổng tiền đơn hàng từ {2} sang {3}",
                         user.UserName, item.Id, totalPriceVNDOld, totalPriceVNDOld - itemModel.IsCheckProductPrice.Value);
                         updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                            $"VALUES({item.Id},{user.Id},N'{historyContentIsCheckProduct}',{(int?)TypeHistoryOrderChange.PhiKiemKe},'{DateTime.Now}','{user.UserName}',0,1)";
-
+                            $"VALUES({item.Id},{user.Id},N'{historyContentIsCheckProduct}',{0},'{DateTime.Now}','{user.UserName}',0,1)";
                         totalPriceVNDOld += itemModel.IsCheckProductPrice ?? 0;
                         itemModel.IsCheckProductPriceCNY = itemModel.IsCheckProductPrice = 0;
                     }
@@ -1267,7 +1272,7 @@ namespace NhapHangV2.API.Controllers
                         string historyContentIsCheckProduct = String.Format("{0} đã thêm phí kiểm đếm của đơn hàng ID là: {1}, Tổng tiền đơn hàng từ {2} sang {3}",
                             user.UserName, item.Id, totalPriceVNDOld, totalPriceVNDOld + feeCheckNewCount);
                         updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                            $"VALUES({item.Id},{user.Id},N'{historyContentIsCheckProduct}',{(int?)TypeHistoryOrderChange.PhiKiemKe},'{DateTime.Now}','{user.UserName}',0,1)";
+                            $"VALUES({item.Id},{user.Id},N'{historyContentIsCheckProduct}',{0},'{DateTime.Now}','{user.UserName}',0,1)";
 
                     }
 
@@ -1420,7 +1425,7 @@ namespace NhapHangV2.API.Controllers
                             $"VALUES({item.Id},{user.Id},N'{historyContentDeposit}',{(int?)TypeHistoryOrderChange.TienDatCoc},'{DateTime.Now}','{user.UserName}',0,1)";
 
                         updateSql += $" INSERT INTO [dbo].[HistoryPayWallet] ([UID] ,[MainOrderId] ,[Amount] ,[Content] ,[MoneyLeft] ,[Type] ,[TradeType] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                            $" VALUES ({customer.Id}, {item.Id}, {rollBackAmount}, N'Hoàn tiền đơn hàng vì số tiền đã trả lớn hơn tổng tiền đơn hàng', {customer.Wallet}, 2,2,'{DateTime.Now}','{user.UserName}',0,1) ";
+                            $" VALUES ({customer.Id}, {item.Id}, {rollBackAmount}, N'Hoàn tiền đơn hàng vì số tiền đã trả lớn hơn tổng tiền đơn hàng', {customer.Wallet}, {(int)HistoryPayWalletContents.HoanTienDaTraMuaHo},2,'{DateTime.Now}','{user.UserName}',0,1) ";
 
                         updateSql += $"UPDATE Users SET Wallet = {customer.Wallet} WHERE Id = {customer.Id}";
 
@@ -1730,9 +1735,10 @@ namespace NhapHangV2.API.Controllers
                 var item = await this.domainService.GetByIdAsync(itemModel.Id);
                 if (item == null)
                     throw new KeyNotFoundException("Item không tồn tại");
-                if (item.IsCheckNotiPrice != itemModel.IsCheckNotiPrice)
+                if (itemModel.Status == (int)StatusOrderContants.DonMoi)
                 {
-                    item.IsCheckNotiPrice = itemModel.IsCheckNotiPrice;
+                    item.IsCheckNotiPrice = true;
+                    item.Status = itemModel.Status;
                     success = await this.mainOrderService.UpdateIsCheckNotiPrice(item);
                 }
                 if (success)
@@ -1901,347 +1907,5 @@ namespace NhapHangV2.API.Controllers
 
         #endregion
 
-        private void UpdateCurrency(MainOrderRequest itemModel, MainOrder item, Users user, string updateSql)
-        {
-            //Thay đổi các phí
-            if (itemModel.CurrentCNYVN != item.CurrentCNYVN)
-            {
-                string historyContentCurrenry = String.Format("{0} đã đổi tỉ giá của đơn hàng ID là: {1}, Từ: {2}, Sang: {3}.",
-                    user.UserName, item.Id, item.CurrentCNYVN, itemModel.CurrentCNYVN);
-                updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                    $"VALUES({item.Id},{user.Id},N'{historyContentCurrenry}',{(int?)TypeHistoryOrderChange.PhiGiaoTanNha},'{DateTime.Now}','{user.UserName}',0,1)";
-
-
-                //Tiền hàng
-                decimal? priceVND = item.PriceCNY * itemModel.CurrentCNYVN;
-                string historyContent = String.Format("{0} đã đổi tiền trên web của đơn hàng ID là: {1}, Từ: {2}, Sang: {3}.",
-                    user.UserName, item.Id, item.PriceVND, priceVND);
-                updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                    $"VALUES({item.Id},{user.Id},N'{historyContent}',{(int?)TypeHistoryOrderChange.PhiGiaoTanNha},'{DateTime.Now}','{user.UserName}',0,1)";
-
-                item.PriceVND = priceVND;
-            }
-
-        }
-
-        private async Task UpdateWareHouseAndShippingType(MainOrderRequest itemModel, MainOrder item, Users user, string updateSql)
-        {
-            //Kho TQ
-            if (itemModel.FromPlace != item.FromPlace)
-            {
-                var warehouseFromOld = await warehouseFromService.GetByIdAsync(item.FromPlace ?? 0);
-                var warehouseFromNew = await warehouseFromService.GetByIdAsync(itemModel.FromPlace ?? 0);
-                string historyContentFromPlace = String.Format("{0} đã đổi kho TQ của đơn hàng ID là: {1}, Từ: {2}, Sang: {3}.", user.UserName, item.Id, warehouseFromOld == null ? "" : warehouseFromOld.Name, warehouseFromNew == null ? "" : warehouseFromNew.Name);
-                updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                    $"VALUES({item.Id},{user.Id},N'{historyContentFromPlace}',{(int?)TypeHistoryOrderChange.TienDatCoc},'{DateTime.Now}','{user.UserName}',0,1)";
-
-            }
-
-            //Nhận hàng tại
-            if (itemModel.ReceivePlace != item.ReceivePlace)
-            {
-                var warehouseOld = await warehouseService.GetByIdAsync(item.ReceivePlace ?? 0);
-                var warehouseNew = await warehouseService.GetByIdAsync(itemModel.ReceivePlace ?? 0);
-                string historyContentReceivePlace = String.Format("{0} đã đổi nơi nhận hàng của đơn hàng ID là: {1}, Từ: {2}, Sang: {3}.", user.UserName, item.Id, warehouseOld == null ? "" : warehouseOld.Name, warehouseNew == null ? "" : warehouseNew.Name);
-                updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                    $"VALUES({item.Id},{user.Id},N'{historyContentReceivePlace}',{(int?)TypeHistoryOrderChange.TienDatCoc},'{DateTime.Now}','{user.UserName}',0,1)";
-
-            }
-
-            //Phương thức vận chuyển
-            if (itemModel.ShippingType != item.ShippingType)
-            {
-                var shippingTypeToWareHouseOld = await shippingTypeToWareHouseService.GetByIdAsync(item.ShippingType ?? 0);
-                var shippingTypeToWareHouseNew = await shippingTypeToWareHouseService.GetByIdAsync(itemModel.ShippingType ?? 0);
-                string historyContentReceivePlace = String.Format("{0} đã đổi phương thức vận chuyển của đơn hàng ID là: {1}, Từ: {2}, Sang: {3}.", user.UserName, item.Id, shippingTypeToWareHouseOld == null ? "" : shippingTypeToWareHouseOld.Name, shippingTypeToWareHouseNew == null ? "" : shippingTypeToWareHouseNew.Name);
-                updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                    $"VALUES({item.Id},{user.Id},N'{historyContentReceivePlace}',{(int?)TypeHistoryOrderChange.TienDatCoc},'{DateTime.Now}','{user.UserName}',0,1)";
-
-            }
-
-        }
-
-        private async Task UpdateSmallPackageWhenUpdateMainOrder(MainOrderRequest itemModel, MainOrder item, Users user, string updateSql)
-        {
-            foreach (var smallPackage in itemModel.SmallPackages)
-            {
-                var mainOrderCode = await mainOrderCodeService.GetByIdAsync(smallPackage.MainOrderCodeId ?? 0);
-
-                string statusNameNew = "";
-                switch (smallPackage.Status)
-                {
-                    case (int)StatusSmallPackage.DaHuy:
-                        statusNameNew = "Đã hủy";
-                        break;
-                    case (int)StatusSmallPackage.DaVeKhoVN:
-                        statusNameNew = "Đã về kho VN";
-                        break;
-                    case (int)StatusSmallPackage.DaVeKhoTQ:
-                        statusNameNew = "Đã về kho TQ";
-                        break;
-                    case (int)StatusSmallPackage.DaThanhToan:
-                        statusNameNew = "Đã giao cho khách";
-                        break;
-                    default:
-                        statusNameNew = "Chưa về kho TQ";
-                        break;
-                }
-
-                if (smallPackage.Id == 0)
-                {
-                    smallPackage.UserNote = item.Note;
-                    smallPackage.OrderTransactionCode = smallPackage.OrderTransactionCode.Replace(" ", "");
-                    string historyContent = String.Format("{0} đã thêm kiện hàng của đơn hàng ID là: {1}, Mã vận đơn: {2}, Mã đơn hàng: {3}, Cân nặng {4} kg, Trạng thái kiện: \"{5}\".",
-                        user.UserName, item.Id, smallPackage.OrderTransactionCode, mainOrderCode == null ? 0 : mainOrderCode.Code, smallPackage.Weight, statusNameNew);
-                    updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                        $"VALUES({item.Id},{user.Id},N'{historyContent}',{(int?)TypeHistoryOrderChange.MaVanDon},'{DateTime.Now}','{user.UserName}',0,1)";
-                    continue;
-                }
-                var existsSmallPackage = await smallPackageService.GetByIdAsync(smallPackage.Id);
-                if (existsSmallPackage == null) continue;
-
-                //Đơn cập nhật thì giữ lại UID, CreatedDate, CreatedBy
-                smallPackage.UID = existsSmallPackage.UID ?? 0;
-                smallPackage.Created = existsSmallPackage.Created;
-                smallPackage.CreatedBy = existsSmallPackage.CreatedBy;
-                smallPackage.UserNote = item.Note;
-
-                if (smallPackage.OrderTransactionCode != existsSmallPackage.OrderTransactionCode)
-                {
-                    string historyContent = String.Format("{0} đã cập nhật mã vận đơn kiện hàng của đơn hàng ID là: {1}, Mã vận đơn từ: {2}, sang {3}.",
-                        user.UserName, item.Id, existsSmallPackage.OrderTransactionCode, smallPackage.OrderTransactionCode);
-                    updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                        $"VALUES({item.Id},{user.Id},N'{historyContent}',{(int?)TypeHistoryOrderChange.MaVanDon},'{DateTime.Now}','{user.UserName}',0,1)";
-
-                }
-
-                if (smallPackage.Weight != existsSmallPackage.Weight)
-                {
-                    string historyContent = String.Format("{0} đã cập nhật cân nặng kiện hàng của đơn hàng ID là: {1}, Cân nặng từ: {2} kg, sang {3} kg.",
-                        user.UserName, item.Id, existsSmallPackage.Weight, smallPackage.Weight);
-                    updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                        $"VALUES({item.Id},{user.Id},N'{historyContent}',{(int?)TypeHistoryOrderChange.MaVanDon},'{DateTime.Now}','{user.UserName}',0,1)";
-
-                }
-
-                if (smallPackage.MainOrderCodeId != existsSmallPackage.MainOrderCodeId)
-                {
-                    var mainOrderCodeOld = await mainOrderCodeService.GetByIdAsync(existsSmallPackage.MainOrderCodeId ?? 0);
-                    string historyContent = String.Format("{0} đã cập nhật mã đơn hàng kiện hàng của đơn hàng ID là: {1}, Mã vận đơn: {2}, Mã đơn hàng từ: {3}, sang: {4}.",
-                        user.UserName, item.Id, smallPackage.OrderTransactionCode, mainOrderCodeOld == null ? 0 : mainOrderCodeOld.Code, mainOrderCode == null ? 0 : mainOrderCode.Code);
-                    updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                        $"VALUES({item.Id},{user.Id},N'{historyContent}',{(int?)TypeHistoryOrderChange.MaVanDon},'{DateTime.Now}','{user.UserName}',0,1)";
-                }
-
-                if (smallPackage.Status != existsSmallPackage.Status)
-                {
-                    string statusNameOld = "";
-                    switch (smallPackage.Status)
-                    {
-                        case (int)StatusSmallPackage.DaHuy:
-                            statusNameOld = "Đã hủy";
-                            break;
-                        case (int)StatusSmallPackage.DaVeKhoVN:
-                            statusNameOld = "Đã về kho VN";
-                            break;
-                        case (int)StatusSmallPackage.DaVeKhoTQ:
-                            statusNameOld = "Đã về kho TQ";
-                            break;
-                        case (int)StatusSmallPackage.DaThanhToan:
-                            statusNameOld = "Đã giao cho khách";
-                            break;
-                        default:
-                            statusNameOld = "Chưa về kho TQ";
-                            break;
-                    }
-                    string historyContent = String.Format("{0} đã cập nhật trạng thái kiện hàng của đơn hàng ID là: {1}, Mã vận đơn: {2}, Trạng thái kiện từ: \"{3}\", sang: \"{4}\".",
-                        user.UserName, item.Id, smallPackage.OrderTransactionCode, statusNameOld, statusNameNew);
-                    updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                        $"VALUES({item.Id},{user.Id},N'{historyContent}',{(int?)TypeHistoryOrderChange.MaVanDon},'{DateTime.Now}','{user.UserName}',0,1)";
-
-                }
-            }
-        }
-
-        private async Task UpdateFeeSupportWhenUpdateMainOrder(MainOrderRequest itemModel, MainOrder item, Users user, string updateSql)
-        {
-            foreach (var feeSupport in itemModel.FeeSupports)
-            {
-                if (feeSupport.Id == 0) //Thêm mới
-                {
-                    string historyContent = String.Format("{0} đã thêm phụ phí của đơn hàng ID là: {1}, Tên phụ phí {2}, Số tiền: {3}.",
-                        user.UserName, item.Id, feeSupport.SupportName, feeSupport.SupportInfoVND);
-                    updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                        $"VALUES({item.Id},{user.Id},N'{historyContent}',{(int?)TypeHistoryOrderChange.MaDonHang},'{DateTime.Now}','{user.UserName}',0,1)";
-
-                    continue;
-                }
-
-                var existsFeeSupport = await feeSupportService.GetByIdAsync(feeSupport.Id);
-                if (existsFeeSupport == null) continue;
-
-                if (feeSupport.SupportName != existsFeeSupport.SupportName)
-                {
-                    string historyContent = String.Format("{0} đã thay đổi tên phụ phí của đơn hàng ID là: {1}, Từ: {2}, Sang {3}.",
-                        user.UserName, item.Id, existsFeeSupport.SupportName, feeSupport.SupportName);
-                    updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                        $"VALUES({item.Id},{user.Id},N'{historyContent}',{(int?)TypeHistoryOrderChange.MaDonHang},'{DateTime.Now}','{user.UserName}',0,1)";
-
-                }
-
-                if (feeSupport.SupportInfoVND != existsFeeSupport.SupportInfoVND)
-                {
-                    string historyContent = String.Format("{0} đã thay đổi tên phụ phí của đơn hàng ID là: {1}, Tên phụ phí: {2}, Số tiền từ: {3}, Sang: {4}.",
-                        user.UserName, item.Id, existsFeeSupport.SupportName, existsFeeSupport.SupportInfoVND, feeSupport.SupportInfoVND);
-                    updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                        $"VALUES({item.Id},{user.Id},N'{historyContent}',{(int?)TypeHistoryOrderChange.MaDonHang},'{DateTime.Now}','{user.UserName}',0,1)";
-
-                }
-            }
-        }
-
-        private async Task UpdateFeeOptionstWhenUpdateMainOrder(MainOrderRequest itemModel, MainOrder item, Users user, decimal totalPriceVNDOld, Configurations configurations, string updateSql)
-        {
-            #region Phí kiểm đếm, phí bảo hiểm, phí đóng gỗ, phí giao hàng nhanh
-            //Phí kiểm đếm
-            if (item.IsCheckProduct.Value == true && (itemModel.IsCheckProduct.Value == false))
-            {
-                //Giảm tổng tiền xuống
-                itemModel.TotalPriceVND -= itemModel.IsCheckProductPrice ?? 0;
-
-                string historyContentIsCheckProduct = String.Format("{0} đã bỏ phí kiểm đếm của đơn hàng ID là: {1}, Tổng tiền đơn hàng từ {2} sang {3}",
-                user.UserName, item.Id, totalPriceVNDOld, totalPriceVNDOld - itemModel.IsCheckProductPrice.Value);
-                updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                    $"VALUES({item.Id},{user.Id},N'{historyContentIsCheckProduct}',{(int?)TypeHistoryOrderChange.PhiKiemKe},'{DateTime.Now}','{user.UserName}',0,1)";
-
-                totalPriceVNDOld += itemModel.IsCheckProductPrice ?? 0;
-                itemModel.IsCheckProductPriceCNY = itemModel.IsCheckProductPrice = 0;
-            }
-            else if (itemModel.IsCheckProduct.Value == true &&
-                (item.IsCheckProduct.Value == false || item.IsCheckProduct == null))
-            {
-                //Thêm phí kiểm đếm
-                decimal? feeCheckNewCount = 0;
-                foreach (var product in itemModel.Orders)
-                {
-                    var feeCheckNew = await feeCheckProductService.GetFeeCheckByPriceAndAmount(product.PriceOrigin.Value, product.Quantity.Value);
-                    feeCheckNewCount += feeCheckNew.Fee.Value * product.Quantity;
-                }
-                itemModel.IsCheckProductPrice = feeCheckNewCount ?? 0;
-                itemModel.IsCheckProductPriceCNY = Math.Round((feeCheckNewCount / itemModel.CurrentCNYVN) ?? 0, 1);
-                //Tính lại tổng tiền
-                itemModel.TotalPriceVND = itemModel.TotalOrderAmount += feeCheckNewCount ?? 0;
-
-                string historyContentIsCheckProduct = String.Format("{0} đã thêm phí kiểm đếm của đơn hàng ID là: {1}, Tổng tiền đơn hàng từ {2} sang {3}",
-                    user.UserName, item.Id, totalPriceVNDOld, totalPriceVNDOld + feeCheckNewCount);
-                updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                    $"VALUES({item.Id},{user.Id},N'{historyContentIsCheckProduct}',{(int?)TypeHistoryOrderChange.PhiKiemKe},'{DateTime.Now}','{user.UserName}',0,1)";
-
-            }
-
-
-            //Phí đóng gỗ
-            if (itemModel.IsPacked.Value == false && item.IsPacked.Value == true) // đã có kiểm đếm mà bỏ ra
-            {
-                //giảm tổng tiền
-                itemModel.TotalPriceVND -= itemModel.IsPackedPrice ?? 0;
-
-                string historyContentIsPacked = String.Format("{0} đã bỏ tiền phí đóng gỗ (VND) của đơn hàng ID là: {1}, Tổng tiền đơn hàng từ {2} sang {3}",
-                user.UserName, item.Id, totalPriceVNDOld, totalPriceVNDOld - itemModel.IsPackedPrice.Value);
-                updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                    $"VALUES({item.Id},{user.Id},N'{historyContentIsPacked}',{(int?)TypeHistoryOrderChange.PhiDongGoi},'{DateTime.Now}','{user.UserName}',0,1)";
-
-
-                totalPriceVNDOld += itemModel.IsPackedPrice ?? 0;
-                itemModel.IsPackedPrice = itemModel.IsPackedPriceCNY = 0;
-            }
-            else if (itemModel.IsPacked.Value == true &&
-                (item.IsPacked.Value == false || item.IsPacked == null)) //chưa có kiểm đếm mà chọn vào
-            {
-                //Tính lại tổng tiền
-                itemModel.TotalPriceVND = itemModel.TotalOrderAmount += itemModel.IsPackedPrice ?? 0;
-                string historyContentIsPacked = String.Format("{0} đã thêm tiền phí đóng gỗ (VND) của đơn hàng ID là: {1}, Tổng tiền đơn hàng từ {2} sang {3}",
-                    user.UserName, item.Id, totalPriceVNDOld, totalPriceVNDOld + itemModel.IsPackedPrice.Value);
-                updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                    $"VALUES({item.Id},{user.Id},N'{historyContentIsPacked}',{(int?)TypeHistoryOrderChange.PhiDongGoi},'{DateTime.Now}','{user.UserName}',0,1)";
-
-            }
-            else //có rồi mà đổi tiền
-            {
-                if (itemModel.IsPackedPrice != item.IsPackedPrice)
-                {
-                    string historyContentIsPacked = String.Format("{0} đã đổi tiền phí đóng gỗ (VNĐ) của đơn hàng ID là: {1}, Từ: {2}, Sang: {3}.",
-                        user.UserName, item.Id, item.IsPackedPrice, itemModel.IsPackedPrice);
-                    updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                        $"VALUES({item.Id},{user.Id},N'{historyContentIsPacked}',{(int?)TypeHistoryOrderChange.PhiDongGoi},'{DateTime.Now}','{user.UserName}',0,1)";
-
-                }
-            }
-
-            //Phí bảo hiểm
-            if (itemModel.IsInsurance.Value == false && item.IsInsurance.Value == true) // đã có kiểm đếm mà bỏ ra
-            {
-                //giảm tổng tiền
-                itemModel.TotalPriceVND -= itemModel.InsuranceMoney ?? 0;
-
-                string historyContentIsInsurance = String.Format("{0} đã bỏ tiền bảo hiểm đơn hàng ID là: {1}, Tổng tiền đơn hàng từ {2} sang {3}",
-                    user.UserName, item.Id, totalPriceVNDOld, totalPriceVNDOld - itemModel.InsuranceMoney.Value);
-                updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                    $"VALUES({item.Id},{user.Id},N'{historyContentIsInsurance}',{(int?)TypeHistoryOrderChange.TienDatCoc},'{DateTime.Now}','{user.UserName}',0,1)";
-
-                totalPriceVNDOld += itemModel.InsuranceMoney ?? 0;
-                itemModel.InsuranceMoney = 0;
-            }
-            else if (itemModel.IsInsurance.Value == true &&
-                (item.IsInsurance.Value == false || item.IsInsurance == null)) //chưa có kiểm đếm mà chọn vào
-            {
-                //Tính lại tổng tiền và tiền bảo hiểm
-                decimal? insuranceFee = Math.Round((itemModel.PriceVND * configurations.InsurancePercent / 100) ?? 0, 1); //Bảo hiểm = Tiền mua hàng * %
-                itemModel.InsuranceMoney = insuranceFee;
-                itemModel.TotalPriceVND = itemModel.TotalOrderAmount += itemModel.InsuranceMoney ?? 0;
-
-                string historyContentIsInsurance = String.Format("{0} đã thêm tiền bảo hiểm đơn hàng ID là: {1},  Tổng tiền đơn hàng từ {2} sang {3}",
-                    user.UserName, item.Id, totalPriceVNDOld, totalPriceVNDOld + insuranceFee);
-                updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                    $"VALUES({item.Id},{user.Id},N'{historyContentIsInsurance}',{(int?)TypeHistoryOrderChange.TienDatCoc},'{DateTime.Now}','{user.UserName}',0,1)";
-            }
-
-            //Phí giao hàng tận nhà
-            if (itemModel.IsFastDelivery.Value == false && item.IsFastDelivery.Value == true) // đã có kiểm đếm mà bỏ ra
-            {
-                //giảm tổng tiền
-                itemModel.TotalPriceVND -= itemModel.IsFastDeliveryPrice ?? 0;
-
-                string historyContentIsInsurance = String.Format("{0} đã bỏ tiền phí ship giao hàng tận nhà của đơn hàng ID là: {1},  Tổng tiền đơn hàng từ {2} sang {3}",
-                    user.UserName, item.Id, totalPriceVNDOld, totalPriceVNDOld - itemModel.IsFastDeliveryPrice.Value);
-                updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                    $"VALUES({item.Id},{user.Id},N'{historyContentIsInsurance}',{(int?)TypeHistoryOrderChange.TienDatCoc},'{DateTime.Now}','{user.UserName}',0,1)";
-
-                totalPriceVNDOld += itemModel.IsFastDeliveryPrice ?? 0;
-                itemModel.IsFastDeliveryPrice = 0;
-            }
-            else if (itemModel.IsFastDelivery.Value == true && item.IsFastDelivery == false) //chưa có kiểm đếm mà chọn vào
-            {
-                //Tính lại tổng tiền
-                itemModel.TotalPriceVND = itemModel.TotalOrderAmount += itemModel.IsFastDeliveryPrice ?? 0;
-                string historyContentIsInsurance = String.Format("{0} đã bỏ tiền phí ship giao hàng tận nhà của đơn hàng ID là: {1},  Tổng tiền đơn hàng từ {2} sang {3}",
-                    user.UserName, item.Id, totalPriceVNDOld, totalPriceVNDOld - itemModel.IsFastDeliveryPrice.Value);
-                updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                    $"VALUES({item.Id},{user.Id},N'{historyContentIsInsurance}',{(int?)TypeHistoryOrderChange.TienDatCoc},'{DateTime.Now}','{user.UserName}',0,1)";
-            }
-            else
-            {
-                if (itemModel.IsFastDeliveryPrice != item.IsFastDeliveryPrice)
-                {
-
-                    string historyContentIsInsurance = String.Format("{0} đã đổi tiền phí ship giao hàng tận nhà của đơn hàng ID là: {1}, Từ: {2}, Sang: {3}.",
-                        user.UserName, item.Id, item.IsFastDeliveryPrice, itemModel.IsFastDeliveryPrice);
-                    updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                        $"VALUES({item.Id},{user.Id},N'{historyContentIsInsurance}',{(int?)TypeHistoryOrderChange.TienDatCoc},'{DateTime.Now}','{user.UserName}',0,1)";
-
-                }
-            }
-            #endregion
-        }
     }
 }

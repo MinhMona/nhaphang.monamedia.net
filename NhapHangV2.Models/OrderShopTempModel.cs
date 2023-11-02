@@ -10,6 +10,7 @@ namespace NhapHangV2.Models
 {
     public class OrderShopTempModel : AppDomainModel
     {
+        public decimal? FeeBuyProPercent { get; set; }
         /// <summary>
         /// ID user
         /// </summary>

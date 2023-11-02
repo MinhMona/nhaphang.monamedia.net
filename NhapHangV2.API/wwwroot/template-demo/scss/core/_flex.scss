@@ -1,0 +1,38 @@
+.dnor {
+    @include flex-wr;
+    margin: 0 -1.5rem;
+    margin-bottom: -1.5rem;
+    &-item {
+        padding: 0 1.5rem;
+        margin-bottom: 1.5rem
+    }
+}
+
+.dsmall {
+    @include flex-wr;
+    margin: 0 -1.2rem;
+    margin-bottom: -2.4rem;
+    &-item {
+        padding: 0 1.2rem;
+        margin-bottom: 2.4rem
+    }
+}
+
+.dmini {
+    @include flex-wr;
+    margin: 0 -0.5rem;
+    margin-bottom: -1rem;
+    &-item {
+        padding: 0 0.5rem;
+        margin-bottom: 1rem;
+    }
+}
+
+.fl {
+    &-list {
+        @include flex-list;
+    }
+    &-item {
+        @include flex-item;
+    }
+}

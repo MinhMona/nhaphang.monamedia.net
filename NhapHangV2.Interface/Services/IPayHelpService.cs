@@ -12,7 +12,7 @@ namespace NhapHangV2.Interface.Services
 {
     public interface IPayHelpService : IDomainService<PayHelp, PayHelpSearch>
     {
-        Task<bool> UpdateStatus(PayHelp model, int status, int statusOld);
+        Task<bool> UpdateStatus(PayHelp model, int status, int statusOld, decimal? totalPriceVNDOld);
         Task<AmountStatistic> GetTotalOrderPriceByUID(int UID);
         Task<bool> UpdateStaff(PayHelp payHelp, int oldSalerId);
     }

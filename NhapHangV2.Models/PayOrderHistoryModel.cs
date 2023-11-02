@@ -22,17 +22,16 @@ namespace NhapHangV2.Models
             {
                 switch (Status)
                 {
-                    case (int)StatusPayOrderHistoryContants.DatCoc2:
-                    case (int)StatusPayOrderHistoryContants.DatCoc3:
+                    case (int)StatusPayOrderHistoryContants.DatCoc:
                         return "Đặt cọc";
                     case (int)StatusPayOrderHistoryContants.ThanhToan:
-                        return "Thanh toán";
-                    case (int)StatusPayOrderHistoryContants.HuyHoanTien:
-                        return "Hoàn trả đơn hàng hủy";
-                    case (int)StatusPayOrderHistoryContants.SanPhamHetHang:
+                        return "Thanh toán đơn hàng";
+                    case (int)StatusPayOrderHistoryContants.HoanTienSanPham:
                         return "Sản phẩm hết hàng";
+                    case (int)StatusPayOrderHistoryContants.HoanTienHuyDon:
+                        return "Hoàn tiền đã trả";
                     default:
-                        return string.Empty;
+                        return String.Empty;
                 }
             }
         }

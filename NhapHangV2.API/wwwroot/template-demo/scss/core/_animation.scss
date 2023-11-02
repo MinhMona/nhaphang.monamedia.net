@@ -1,0 +1,358 @@
+@include keyframes(phoneRing) {
+  0% {
+    transform: rotate(0) scale(1) skew(1deg);
+  }
+  10% {
+    transform: rotate(-25deg) scale(1) skew(1deg);
+  }
+  20% {
+    transform: rotate(25deg) scale(1) skew(1deg);
+  }
+  30% {
+    transform: rotate(-25deg) scale(1) skew(1deg);
+  }
+  40% {
+    transform: rotate(25deg) scale(1) skew(1deg);
+  }
+  50% {
+    transform: rotate(0) scale(1) skew(1deg);
+  }
+  100% {
+    transform: rotate(0) scale(1) skew(1deg);
+  }
+}
+
+// phone ring - end
+@include keyframes(fadeIn) {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@include keyframes(shine) {
+  100% {
+    left: 125%;
+  }
+}
+
+@include keyframes(ZoomIn) {
+  0% {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@include keyframes(Spinner) {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@include keyframes(BTT) {
+  0% {
+    opacity: 0;
+  }
+  33% {
+    opacity: 1;
+  }
+  66% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@include keyframes(fadeInUp) {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 20%, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@include keyframes(halo) {
+  from {
+    transform: translate(-50%, -50%) scale(0);
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@include keyframes(float) {
+  0% {
+    transform: translatey(0px);
+  }
+  50% {
+    transform: translatey(-20px);
+  }
+  100% {
+    transform: translatey(0px);
+  }
+}
+
+@include keyframes(mirror) {
+  100% {
+    transform: translate3d(2000%, 0, 0) rotate(35deg);
+  }
+}
+
+@include keyframes(DownUp) {
+  0% {
+    transform: translatey(0px);
+  }
+  50% {
+    transform: translatey(-10px);
+  }
+  100% {
+    transform: translatey(0px);
+  }
+}
+
+@include keyframes(jelly) {
+  25% {
+    transform: scale(0.9, 1.1);
+  }
+  50% {
+    transform: scale(1.1, 0.9);
+  }
+  75% {
+    transform: scale(0.95, 1.05);
+  }
+}
+
+@include keyframes(jellyTranForm) {
+  25% {
+    transform: translate(-50%, -50%) scale(0.9, 1.1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1, 0.9);
+  }
+  75% {
+    transform: translate(-50%, -50%) scale(0.95, 1.05);
+  }
+}
+
+@include keyframes(jittery) {
+  5%,
+  50% {
+    transform: scale(1);
+  }
+  10% {
+    transform: scale(0.9);
+  }
+  15% {
+    transform: scale(1.05);
+  }
+  20% {
+    transform: scale(1.05) rotate(-5deg);
+  }
+  25% {
+    transform: scale(1.05) rotate(5deg);
+  }
+  30% {
+    transform: scale(1.05) rotate(-3deg);
+  }
+  35% {
+    transform: scale(1.05) rotate(2deg);
+  }
+  40% {
+    transform: scale(1.05) rotate(0);
+  }
+}
+
+@include keyframes(pulse) {
+  0% {
+    transform: scale(1);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@include keyframes(grow) {
+  from {
+    transform: scale(0, 0);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1.5, 1.5);
+    opacity: 0;
+  }
+}
+
+@include keyframes(txt-focus) {
+  0% {
+    -webkit-filter: blur(12px);
+    filter: blur(12px);
+    opacity: 0;
+  }
+  100% {
+    -webkit-filter: blur(0px);
+    filter: blur(0px);
+    opacity: 1;
+  }
+}
+
+@include keyframes(MaskPlay) {
+  from {
+    -webkit-mask-position: 0 0;
+    mask-position: 0 0;
+  }
+  to {
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+  }
+}
+
+@keyframes rotateCenter {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  100% {
+    transform: translate(-50%, -50%) rotate(-360deg);
+  }
+}
+
+@keyframes transformIcon-1 {
+  0% {
+    transform: translate(22vw, 20vw) scale(0);
+  }
+  100% {
+    transform: translate(-22vw, -7vw) scale(7);
+  }
+}
+
+@keyframes transformIcon-2 {
+  0% {
+    transform: translate(17vw, 30vw) scale(0);
+  }
+  100% {
+    transform: translate(-17vw, 5vw) scale(7);
+  }
+}
+
+@keyframes transformIcon-3 {
+  0% {
+    transform: translate(70vw, 45vw) scale(0);
+  }
+  100% {
+    transform: translate(115vw, 53vw) scale(7);
+  }
+}
+
+@keyframes transformIcon-4 {
+  0% {
+    transform: translate(60vw, 23vw) scale(0);
+  }
+  100% {
+    transform: translate(115vw, 18vw) scale(7);
+  }
+}
+
+@keyframes transformIcon-5 {
+  0% {
+    transform: translate(80vw, 35vw) scale(0);
+  }
+  100% {
+    transform: translate(115vw, 45vw) scale(7);
+  }
+}
+
+@keyframes benefits-cirlce {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+@keyframes benefits-cirlce-left {
+  0% {
+    transform: translate(-90%, -50%);
+    opacity: 0;
+  }
+  50% {
+    transform: translate(-70%, -50%);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-90%, -50%);
+    opacity: 0;
+  }
+}
+@keyframes benefits-cirlce-right {
+  0% {
+    transform: translate(90%, -50%);
+    opacity: 0;
+  }
+  50% {
+    transform: translate(70%, -50%);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(90%, -50%);
+    opacity: 0;
+  }
+}
+
+@keyframes cloud-vertical {
+  0% {
+    transform: translateX(6px);
+  }
+  50% {
+    transform: translateX(0px);
+  }
+  100% {
+    transform: translateX(-6px);
+  }
+}
+
+@keyframes circle-rotate {
+  0% {
+    transform: translate(-43%, -62%) scale(0.8);
+  }
+  50% {
+    transform: translate(-43%, -62%) scale(1);
+  }
+  100% {
+    transform: translate(-43%, -62%) scale(0.8);
+  }
+}
+
+@keyframes plane-rotate {
+  0% {
+    transform: translate(-10%, -10%) rotate3d(0, 0, 1, 4deg);
+  }
+  50% {
+    transform: translate(-10%, -10%) rotate3d(0, 0, 1, 2deg);
+  }
+  100% {
+    transform: translate(-10%, -10%) rotate3d(0, 0, 1, -4deg);
+  }
+}
+
