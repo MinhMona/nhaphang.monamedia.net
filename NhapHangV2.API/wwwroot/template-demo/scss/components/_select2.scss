@@ -1,0 +1,104 @@
+.select2-container {
+    height: 4.5rem;
+    background-color: transparent;
+    border-radius: 6px;
+}
+
+.select2.select2-container {
+    width: 100% !important;
+}
+
+.selection {
+    width: 100%;
+}
+
+.select2-container--default .select2-selection--single {
+    border: none;
+    border-radius: 0.8rem;
+    color: $color-white;
+    height: 4.5rem;
+    background-color: transparent;
+    border: 0.1rem solid $color-border-01;
+    @include flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+}
+
+.select2.select2-container .select2-selection--multiple {
+    height: auto;
+    min-height: 34px;
+}
+
+.select2-container .select2-selection--single .select2-selection__rendered {
+    background-color: transparent;
+    border: 1px solid transparent;
+    color: $color-black;
+    @include fz-16;
+    font-weight: 400;
+    display: inline !important;
+    @include lc(1);
+    width: 100%;
+}
+
+.select2.select2-container .select2-selection--multiple .select2-selection__rendered {
+    display: block;
+    padding: 0 4px;
+}
+
+.select2-container .select2-dropdown {
+    background: transparent;
+    border: none;
+}
+
+.select2-container .select2-dropdown .select2-search {
+    padding: 0;
+}
+
+.select2-container .select2-dropdown .select2-search input {
+    outline: none !important;
+    border: none;
+    border-bottom: none !important;
+    padding: 4px 6px !important;
+    background-color: $color-black;
+    color: $color-black;
+}
+
+.select2-container .select2-dropdown .select2-results ul {
+    background: #e6eeed;
+    color: $color-black;
+}
+
+.select2-container .select2-dropdown .select2-results ul .select2-results__option--highlighted[aria-selected] {
+    background-color: $color-pri;
+    font-size: 1.6rem;
+}
+
+.select2-container--default .select2-results__option--selected {
+    background-color: #e6eeed;
+    color: $color-black;
+    font-size: 1.6rem;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 100%;
+    border-color: #000 transparent transparent transparent;
+}
+
+.select2-search.select2-search--dropdown {
+    display: none !important;
+}
+
+.select2-results__option {
+    font-size: 1.6rem;
+}
+
+.select2-results {
+    display: block;
+    border-radius: 6px !important;
+    overflow: hidden;
+}
+
+.select2-container--default.select2-container--open.select2-container--below .select2-selection--single {
+    border-radius: 0.8rem !important;
+}

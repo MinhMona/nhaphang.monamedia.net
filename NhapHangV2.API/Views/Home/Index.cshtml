@@ -101,6 +101,64 @@
             </div>
         </section>
 
+        <section class="sec sec-tool">
+            <div class="container">
+                <div class="sub-title aos-init aos-animate" data-aos="fade-up" data-aos-delay="100">
+                    <div class="order-app-label">Đặt hàng mọi lúc mọi nới</div>
+                </div>
+                <div class="main-title aos-init aos-animate" data-aos-delay="200">
+                    <h2>Hệ thống đặt hàng đa nền tảng</h2>
+                </div>
+                <div class="tool-cont">
+                    <div class="tool-left">
+                        <div class="order-app-img" data-aos="fade-left">
+                            <img src="./demo-nhtq/assets/images/tool-img.png" alt="">
+                        </div>
+                    </div>
+                    <div class="tool-right">
+                        <div class="tool-content">
+                            <div class="tool-btn">
+                                <a href="https://chrome.google.com/webstore/detail/c%C3%B4ng-c%E1%BB%A5-%C4%91%E1%BA%B7t-h%C3%A0ng-l%C3%AA-ph%C6%B0%C6%A1n/dpeabjffiincpbieojjmgkeefgjjlojd" class="item-link d-flex">
+                                        <img class="icon" src="./demo-nhtq/assets/images/icon-chrome.png" alt="">
+                                    <span class="name">Chrome</span>
+                                </a>
+                            </div>
+                            <div class="tool-btn">
+                                <a href="https://chrome.google.com/webstore/detail/c%C3%B4ng-c%E1%BB%A5-%C4%91%E1%BA%B7t-h%C3%A0ng-l%C3%AA-ph%C6%B0%C6%A1n/dpeabjffiincpbieojjmgkeefgjjlojd" class="item-link d-flex">
+                                        <img class="icon" src="./demo-nhtq/assets/images/icon-cococ.png" alt="">
+                              
+                                    <span class="name">CốcCốc</span>
+                                </a>
+                            </div>
+                            <div class="tool-btn">
+                                <a  href="https://chrome.google.com/webstore/detail/c%C3%B4ng-c%E1%BB%A5-%C4%91%E1%BA%B7t-h%C3%A0ng-l%C3%AA-ph%C6%B0%C6%A1n/dpeabjffiincpbieojjmgkeefgjjlojd" class="item-link d-flex">
+      
+                                        <img class="icon" src="./demo-nhtq/assets/images/android.png" alt="">
+                         
+                                    <span class="name">Android</span>
+                                </a>
+                            </div>
+                            <div class="tool-btn">
+                                <a href="https://chrome.google.com/webstore/detail/c%C3%B4ng-c%E1%BB%A5-%C4%91%E1%BA%B7t-h%C3%A0ng-l%C3%AA-ph%C6%B0%C6%A1n/dpeabjffiincpbieojjmgkeefgjjlojd" class="item-link d-flex">
+                              
+                                        <img class="icon" src="./demo-nhtq/assets/images/apple.png" alt="">
+                    
+                                    <span class="name">IOS</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="list-box-tool">
+                        <img class="box-tool-img" data-aos="fade-down" data-aos-easing="linear" data-aos-duration="600" data-aos-delay="1000" src="./demo-nhtq/assets/images/boxse-img-1.png" />
+                        <img class="box-tool-img" data-aos="fade-down" data-aos-easing="linear" data-aos-duration="400" data-aos-delay="1000" src="./demo-nhtq/assets/images/boxse-img-2.png" />
+                        <img class="box-tool-img" data-aos="fade-down" data-aos-easing="linear" data-aos-duration="200" data-aos-delay="1000" src="./demo-nhtq/assets/images/boxse-img-3.png" />
+                        <img class="box-tool-img" data-aos="fade-down" data-aos-easing="linear" data-aos-duration="400" data-aos-delay="1000" src="./demo-nhtq/assets/images/boxse-img-4.png" />
+                        <img class="box-tool-img" data-aos="fade-down" data-aos-easing="linear" data-aos-duration="600" data-aos-delay="1000" src="./demo-nhtq/assets/images/boxse-img-5.png" />
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section class="sec sec-search">
             <img src="./demo-nhtq/assets/images/search-cloud-1.webp"
                  class="sec-search-image sec-search-cloud-1"
@@ -811,8 +869,9 @@
     else if(Model.Type == 2)
     {
         var pageTypeConent = Model.PageTypeContent;
+        var pageTypeList = Model.PageTypeList;
 
-        <section class="detail">
+       @* <section class="detail">
             <div class="container">
                 <div class="breadcumb">
                     <ul class="breadcumb-list">
@@ -909,9 +968,60 @@
                     }
                 </div>
             </div>
+        </section>*@
+
+        <section class="sec-blog">
+            <div class="container">
+                @if (pageTypeConent.Pages.Count > 0)
+                {
+                    <div class="left-contain">
+                        @foreach (var item in pageTypeConent.Pages)
+                        {
+                            <div class="blog-item" onclick="window.location.href='/@item.Code'">
+                             <div class="image" style="background-image: url(@item.IMG.Replace(" ", "%20")); "></div>
+                            <div class="body">
+                                <div class="bottoms">
+                                        <span onclick="window.location.href='/@item.Code'">@pageTypeConent.Name</span>
+                                </div>
+                                <div class="date">
+                                        <span>@(item.Updated != null ? item.Updated.ToString("dd.MM.yyyy"): item.Created.ToString("dd.MM.yyyy"))</span>
+                                </div>
+                                <div class="title">
+                                        @item.Title
+                                </div>
+                                <div class="content">
+                                        @item.Summary
+                                </div>
+                            </div>
+                        </div>   
+                    }
+                </div>
+                }
+                @if (pageTypeList.Count > 0)
+                {
+                    <div class="right-contain">
+                        <div class="title" style="margin-bottom: 1rem;background-color: white;border-radius: 8px;margin-left: -1rem;width: fit-content;padding: 0 10px;">
+                            <i class="far fa-file-alt"></i>
+                            <h2>Danh mục</h2>
+                        </div>
+                        <div class="new-blogs">
+                            @foreach (var item in pageTypeList)
+                            {
+                                <div class="item-new" onclick="window.location.href='/@item.Code'">
+                                    <div class="new-body">
+                                        <div class="title">
+                                            <i class="fa-solid fa-arrow-right"></i>
+                                            @item.Name
+                                        </div>
+                                        @*<div class="date">@item.Created.ToString("dd.MM.yyyy")</div>*@
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
         </section>
-
-
 
     }
     else if(Model.Type == 3)
@@ -919,7 +1029,7 @@
         var pageConent = Model.PageContent;
         var pageTypeConent = Model.PageTypeContent;
 
-        <section class="detail">
+        @*<section class="detail">
             <div class="container">
                 <div class="breadcumb">
                     <ul class="breadcumb-list">
@@ -1021,7 +1131,59 @@
                     }
                 </div>
             </div>
+        </section>*@
+
+
+        <section class="sec-blog detail">
+          <div class="container">
+                <div class="@(pageConent.SideBar?"left-contain":"left-contain full-screen-contain")">
+              <div class="blog-item" onclick="()=>{console.log('blog')}">
+                <div class="body">
+                  <div class="buttons breadcrumb">
+                        <span onclick="window.location.href='/'">Trang chủ</span>
+                        &frasl;
+                        <span onclick="window.location.href='/@pageTypeConent.Code'">@pageTypeConent.Name</span>
+                        &frasl;
+                        <span class="breadcrumb-title">@pageConent.Title</span>
+                  </div>
+                            <div class="title">@pageConent.Title</div>
+                  <div class="date">
+                    <span>@(pageConent.Updated != null ? pageConent.Updated.ToString("dd.MM.yyyy") : pageConent.Created.ToString("dd.MM.yyyy"))</span>
+                    <span class="dot">&#9679;</span>
+                    <span>@pageConent.CreatedBy</span>
+                  </div>
+                  <div>
+                                @Html.Raw(pageConent.PageContent)
+                  </div>
+                </div>
+              </div>
+            </div>
+                @if (pageConent.SideBar)
+                {
+                  <div class="right-contain">
+                        <div class="title" style="margin-bottom: 1rem;background-color: white;border-radius: 8px;margin-left: -1rem;width: fit-content;padding: 0 10px;">
+                    <i class="far fa-file-alt"></i>
+                    <h3>Bài viết gần đây</h3>
+                  </div>
+                  <div class="new-blogs">
+                    @foreach (var item in Model.TopNewsPage.Pages)
+                    {
+                                <div class="item-new" onclick="window.location.href='/@item.Code'">
+                                    <div class="new-img" style="background-image: url(@item.IMG);"></div>
+                      <div class="new-body">
+                        <div class="title">
+                                    @item.Title
+                        </div>
+                        
+                      </div>
+                    </div>
+                    }
+                  </div>
+                </div>
+            }
+          </div>
         </section>
+
     }
     else
     {

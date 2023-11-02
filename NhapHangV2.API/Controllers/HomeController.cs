@@ -60,10 +60,11 @@ namespace NhapHangV2.API.Controllers
             homeModel.Configurations = mapper.Map<ConfigurationsModel>(await configurationsService.GetByIdAsync(1));
             homeModel.MenuList = mapper.Map<IList<MenuModel>>(await menuService.GetAllAsync());
             homeModel.MenuList = await menuService.GetListMenu(homeModel.MenuList);
-            homeModel.StepList = mapper.Map<IList<StepModel>>((await stepService.GetAllAsync()).OrderBy(x=> x.Position));
-            homeModel.ServiceList = mapper.Map<IList<ServiceModel>>((await serviceService.GetAllAsync()).OrderBy(x=> x.Position));
-            homeModel.CustomerBenefitsList = mapper.Map<IList<CustomerBenefitsModel>>((await customerBenefitsService.GetAllAsync()).Where(x=> x.ItemType ==2).OrderBy(x => x.Position).ToList());
-            homeModel.CustomerTalkList = mapper.Map<IList<CustomerTalk>>((await customerTalkService.GetAllAsync()).Where(x=> x.Active).ToList());
+            homeModel.MenuList = homeModel.MenuList.OrderBy(x => x.Position).ToList();
+            homeModel.StepList = mapper.Map<IList<StepModel>>((await stepService.GetAllAsync()).OrderBy(x => x.Position));
+            homeModel.ServiceList = mapper.Map<IList<ServiceModel>>((await serviceService.GetAllAsync()).OrderBy(x => x.Position));
+            homeModel.CustomerBenefitsList = mapper.Map<IList<CustomerBenefitsModel>>((await customerBenefitsService.GetAllAsync()).Where(x => x.ItemType == 2).OrderBy(x => x.Position).ToList());
+            homeModel.CustomerTalkList = mapper.Map<IList<CustomerTalk>>((await customerTalkService.GetAllAsync()).Where(x => x.Active).ToList());
             homeModel.TopNewsPage = mapper.Map<PageTypeModel>(await pageTypeService.GetByCodeAsync("tin-tuc"));
             var token = Request?.Cookies["tokenNHTQ-demo"]?.ToString();
             if (token != null)
@@ -76,7 +77,7 @@ namespace NhapHangV2.API.Controllers
                 homeModel.UserGroupId = Convert.ToInt32(userData["UserGroupId"].ToString());
                 homeModel.UserData = mapper.Map<UserModel>(await userService.GetByIdAsync(homeModel.UserId));
             }
-            homeModel.IsRenderPopup = Convert.ToBoolean((Request?.Cookies["isRender"]?.ToString()?? "true"));
+            homeModel.IsRenderPopup = Convert.ToBoolean((Request?.Cookies["isRender"]?.ToString() ?? "true"));
             return View(homeModel);
         }
 
@@ -99,6 +100,9 @@ namespace NhapHangV2.API.Controllers
             homeModel.Type = 2;
             homeModel.PageTypeContent = mapper.Map<PageTypeModel>(await pageTypeService.GetByCodeAsync(id));
             homeModel.TopNewsPage = mapper.Map<PageTypeModel>(await pageTypeService.GetByCodeAsync("tin-tuc"));
+
+            homeModel.PageTypeList = mapper.Map<IList<PageTypeModel>>(await pageTypeService.GetAllAsync());
+            homeModel.PageTypeList = homeModel.PageTypeList.Where(x=> !x.Deleted && x.Active).ToList();
             if (homeModel.PageTypeContent == null)
             {
                 homeModel.Type = 3;
@@ -155,6 +159,7 @@ namespace NhapHangV2.API.Controllers
             public IList<CustomerTalk> CustomerTalkList { get; set; }
             public PageTypeModel TopNewsPage { get; set; }
             public bool IsRenderPopup { get; set; } 
+            public IList<PageTypeModel> PageTypeList { get; set; }
         }
     }
 }

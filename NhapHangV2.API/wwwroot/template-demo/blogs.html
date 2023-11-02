@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="./css/style.css" />
+  <link rel="stylesheet" href="./css/backdoor.css" />
+  <link rel="icon" type="image/png" href="./assets/images/favicon.png" />
+
+  <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v17.0"
+    nonce="Ek9qOyf8"></script>
+  <title>DEMO NHTQ</title>
+</head>
+
+<body>
+  <header class="hd">
+    <div class="container">
+      <div class="hd-inner">
+        <div class="hd-logo" data-aos="zoom-in-right" data-aos-delay="200">
+          <a href="/" target="_blank">
+            <img src="./assets/images/logo.png" alt="mona-nhtq-logo" />
+          </a>
+        </div>
+        <ul class="hd-controls hd-controls-desktop">
+          <li data-aos="zoom-in-left" data-aos-delay="200" class="hd-controls-item">
+            <img src="./assets/images/icon-yuan.png" class="hd-controls-icon" alt="" />
+            <div class="hd-controls-info">
+              <span class="hd-controls-info-value">1¥ = 3,580</span>
+            </div>
+          </li>
+          <li data-aos="zoom-in-left" data-aos-delay="200" class="hd-controls-item">
+            <img src="./assets/images/icon-phone.png" class="hd-controls-icon" alt="" />
+            <div class="hd-controls-info">
+              <span class="hd-controls-info-value">1900 636 648</span>
+            </div>
+          </li>
+        </ul>
+        <div class="hd-controls-mobile">
+          <button type="button" class="btn">
+            <img src="./assets/images/icon-authen.png" alt="" />
+            <span>Tài khoản</span>
+          </button>
+          <div class="menu-close menuClose" id="menuBar">
+            <div class="menu-close-wrap">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <nav class="hd-nav hd-nav-desktop">
+      <div class="container">
+        <ul class="hd-nav-list">
+          <li data-aos="fade-up" data-aos-delay="100" class="hd-nav-item">
+            <a href="/">Trang chủ</a>
+          </li>
+          <li data-aos="fade-up" data-aos-delay="200" class="hd-nav-item sub-menu">
+            <a href="/">Giới thiệu</a>
+            <ul class="hd-nav-sub-list">
+              <li class="hd-nav-sub-item">
+                <a href="/">Giới thiệu 1</a>
+              </li>
+              <li class="hd-nav-sub-item">
+                <a href="/">Giới thiệu 2</a>
+              </li>
+              <li class="hd-nav-sub-item">
+                <a href="/">Giới thiệu 3</a>
+              </li>
+            </ul>
+          </li>
+          <li data-aos="fade-up" data-aos-delay="300" class="hd-nav-item">
+            <a href="/">Bảng giá</a>
+          </li>
+          <li data-aos="fade-up" data-aos-delay="400" class="hd-nav-item sub-menu">
+            <a href="/">Dịch vụ</a>
+            <ul class="hd-nav-sub-list">
+              <li class="hd-nav-sub-item">
+                <a href="/">Dịch vụ 1</a>
+              </li>
+              <li class="hd-nav-sub-item">
+                <a href="/">Dịch vụ 2</a>
+              </li>
+              <li class="hd-nav-sub-item">
+                <a href="/">Dịch vụ 3</a>
+              </li>
+            </ul>
+          </li>
+          <li data-aos="fade-up" data-aos-delay="500" class="hd-nav-item">
+            <a href="/">Hướng dẫn</a>
+          </li>
+          <li data-aos="fade-up" data-aos-delay="600" class="hd-nav-item">
+            <a href="/">Chính sách</a>
+          </li>
+          <li data-aos="fade-up" data-aos-delay="700" class="hd-nav-item">
+            <a href="/">Tin tức</a>
+          </li>
+          <li data-aos="fade-up" data-aos-delay="800" class="hd-nav-item authen-button login">
+            <!-- thêm class login nếu như đã đăng nhập -->
+
+            <a href="">
+              <button type="button" class="btn button-non-login">
+                <img src="./assets/images/icon-authen.png" alt="" />
+                <span>Tài khoản</span>
+              </button>
+            </a>
+
+            <div class="button-login">
+              <a href="/">
+                <button type="button" class="btn">
+                  <img src="./assets/images/icon-authen.png" alt="" />
+                  <span>SinhVu</span>
+                </button>
+              </a>
+
+              <div class="login-expand">
+                <div class="login-expand-top">
+                  <div class="login-expand-avatar">
+                    <img
+                      src="https://nhaphang.monamedia.net/Upload/Upload/6fb54c9e-3e98-4281-9eae-66550225f7b4-BackgroundWPF.jpg"
+                      alt="" />
+                  </div>
+                  <div class="login-expand-info">
+                    <div class="login-expand-info-top">
+                      <span class="login-expand-info-username">Admin</span>
+                      <span class="login-expand-info-vip">VIP 9</span>
+                    </div>
+
+                    <div class="login-expand-info-bottom">
+                      <span class="login-expand-info-icon"><i class="fas fa-wallet"></i></span>
+                      <span class="login-expand-info-wallet">976,987,000</span>
+                    </div>
+                  </div>
+                </div>
+
+                <ul class="login-expand-list">
+                  <li class="login-expand-item">
+                    <a href="/">
+                      <span class="login-expand-item-icon">
+                        <i class="fas fa-users-cog"></i>
+                      </span>
+                      <span class="login-expand-item-label">Quản trị</span>
+                    </a>
+                  </li>
+                  <li class="login-expand-item">
+                    <a href="/">
+                      <span class="login-expand-item-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                      </span>
+                      <span class="login-expand-item-label">Giỏ hàng</span>
+                    </a>
+                  </li>
+                  <li class="login-expand-item button-logout">
+                    <a href="/">
+                      <span class="login-expand-item-icon">
+                        <i class="fas fa-sign-out-alt"></i>
+                      </span>
+                      <span class="login-expand-item-label">Đăng xuất</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <nav class="hd-nav hd-nav-mobile" id="hd-nav-menu">
+      <div class="container">
+        <ul class="hd-nav-list">
+          <li class="hd-nav-item">
+            <a href="/">Trang chủ</a>
+          </li>
+          <li class="hd-nav-item">
+            <a href="/">Giới thiệu</a>
+          </li>
+          <li class="hd-nav-item">
+            <a href="/">Bảng giá</a>
+          </li>
+          <li class="hd-nav-item">
+            <a href="/">Dịch vụ</a>
+          </li>
+          <li class="hd-nav-item">
+            <a href="/">Hướng dẫn</a>
+          </li>
+          <li class="hd-nav-item">
+            <a href="/">Chính sách</a>
+          </li>
+          <li class="hd-nav-item">
+            <a href="/">Tin tức</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main class="main">
+    <div class="sec-blog">
+      <div class="container">
+        <div class="left-contain">
+          <div class="blog-item" onclick="()=>{console.log('blog')}">
+            <div class="image" style="background-image: url('./assets/images/blogs/blog1.png');"></div>
+            <div class="body">
+              <div class="buttons">
+                <span onclick="()=>{console.log('Hướng dẫn')}">Hướng dẫn</span>
+                <span onclick="()=>{console.log('Tin Tức')}">Tin Tức</span>
+              </div>
+              <div class="date">
+                <span>12.01.2023</span>
+                <span class="dot">&#9679;</span>
+                <span>mona</span>
+              </div>
+              <div class="title">Lorem ipsum dolor sit amet consectetur
+                adipisicing elit.
+                Corrupti fugiat aliquid enim, esse atque ipsum vitae modi et eum? Nihil deleniti nostrum tempora.
+                Facilis
+                impedit voluptas sit earum cumque laborum!</div>
+              <div class="content">Lorem, ipsum dolor sit amet consectetur adipisicing
+                elit.
+                Rerum
+                iusto
+                obcaecati ex
+                sequi ipsum. Assumenda tenetur eum alias voluptates nulla rerum numquam fugit sequi! Rem tenetur
+                quia fuga
+                magni dolor!</div>
+            </div>
+          </div>
+          <div class="blog-item" onclick="()=>{console.log('blog')}">
+            <div class="image" style="background-image: url('./assets/images/blogs/blog1.png');"></div>
+            <div class="body">
+              <div class="buttons">
+                <span onclick="()=>{console.log('Hướng dẫn')}">Hướng dẫn</span>
+                <span onclick="()=>{console.log('Tin Tức')}">Tin Tức</span>
+              </div>
+              <div class="date">
+                <span>12.01.2023</span>
+                <span class="dot">&#9679;</span>
+                <span>mona</span>
+              </div>
+              <div class="title">Lorem ipsum dolor sit amet consectetur
+                adipisicing elit.
+                Corrupti fugiat aliquid enim, esse atque ipsum vitae modi et eum? Nihil deleniti nostrum tempora.
+                Facilis
+                impedit voluptas sit earum cumque laborum!</div>
+              <div class="content">Lorem, ipsum dolor sit amet consectetur adipisicing
+                elit.
+                Rerum
+                iusto
+                obcaecati ex
+                sequi ipsum. Assumenda tenetur eum alias voluptates nulla rerum numquam fugit sequi! Rem tenetur
+                quia fuga
+                magni dolor!</div>
+            </div>
+          </div>
+          <div class="blog-item" onclick="()=>{console.log('blog')}">
+            <div class="image" style="background-image: url('./assets/images/blogs/blog1.png');"></div>
+            <div class="body">
+              <div class="buttons">
+                <span onclick="()=>{console.log('Hướng dẫn')}">Hướng dẫn</span>
+                <span onclick="()=>{console.log('Tin Tức')}">Tin Tức</span>
+              </div>
+              <div class="date">
+                <span>12.01.2023</span>
+                <span class="dot">&#9679;</span>
+                <span>mona</span>
+              </div>
+              <div class="title">Lorem ipsum dolor sit amet consectetur
+                adipisicing elit.
+                Corrupti fugiat aliquid enim, esse atque ipsum vitae modi et eum? Nihil deleniti nostrum tempora.
+                Facilis
+                impedit voluptas sit earum cumque laborum!</div>
+              <div class="content">Lorem, ipsum dolor sit amet consectetur adipisicing
+                elit.
+                Rerum
+                iusto
+                obcaecati ex
+                sequi ipsum. Assumenda tenetur eum alias voluptates nulla rerum numquam fugit sequi! Rem tenetur
+                quia fuga
+                magni dolor!</div>
+            </div>
+          </div>
+          <div class="blog-item" onclick="()=>{console.log('blog')}">
+            <div class="image" style="background-image: url('./assets/images/blogs/blog1.png');"></div>
+            <div class="body">
+              <div class="buttons">
+                <span onclick="()=>{console.log('Hướng dẫn')}">Hướng dẫn</span>
+                <span onclick="()=>{console.log('Tin Tức')}">Tin Tức</span>
+              </div>
+              <div class="date">
+                <span>12.01.2023</span>
+                <span class="dot">&#9679;</span>
+                <span>mona</span>
+              </div>
+              <div class="title">Lorem ipsum dolor sit amet consectetur
+                adipisicing elit.
+                Corrupti fugiat aliquid enim, esse atque ipsum vitae modi et eum? Nihil deleniti nostrum tempora.
+                Facilis
+                impedit voluptas sit earum cumque laborum!</div>
+              <div class="content">Lorem, ipsum dolor sit amet consectetur adipisicing
+                elit.
+                Rerum
+                iusto
+                obcaecati ex
+                sequi ipsum. Assumenda tenetur eum alias voluptates nulla rerum numquam fugit sequi! Rem tenetur
+                quia fuga
+                magni dolor!</div>
+            </div>
+          </div>
+          <div class="blog-item" onclick="()=>{console.log('blog')}">
+            <div class="image" style="background-image: url('./assets/images/blogs/blog1.png');"></div>
+            <div class="body">
+              <div class="buttons">
+                <span onclick="()=>{console.log('Hướng dẫn')}">Hướng dẫn</span>
+                <span onclick="()=>{console.log('Tin Tức')}">Tin Tức</span>
+              </div>
+              <div class="date">
+                <span>12.01.2023</span>
+                <span class="dot">&#9679;</span>
+                <span>mona</span>
+              </div>
+              <div class="title">Lorem ipsum dolor sit amet consectetur
+                adipisicing elit.
+                Corrupti fugiat aliquid enim, esse atque ipsum vitae modi et eum? Nihil deleniti nostrum tempora.
+                Facilis
+                impedit voluptas sit earum cumque laborum!</div>
+              <div class="content">Lorem, ipsum dolor sit amet consectetur adipisicing
+                elit.
+                Rerum
+                iusto
+                obcaecati ex
+                sequi ipsum. Assumenda tenetur eum alias voluptates nulla rerum numquam fugit sequi! Rem tenetur
+                quia fuga
+                magni dolor!</div>
+            </div>
+          </div>
+          <div class="blog-item" onclick="()=>{console.log('blog')}">
+            <div class="image" style="background-image: url('./assets/images/blogs/blog1.png');"></div>
+            <div class="body">
+              <div class="buttons">
+                <span onclick="()=>{console.log('Hướng dẫn')}">Hướng dẫn</span>
+                <span onclick="()=>{console.log('Tin Tức')}">Tin Tức</span>
+              </div>
+              <div class="date">
+                <span>12.01.2023</span>
+                <span class="dot">&#9679;</span>
+                <span>mona</span>
+              </div>
+              <div class="title">Lorem ipsum dolor sit amet consectetur
+                adipisicing elit.
+                Corrupti fugiat aliquid enim, esse atque ipsum vitae modi et eum? Nihil deleniti nostrum tempora.
+                Facilis
+                impedit voluptas sit earum cumque laborum!</div>
+              <div class="content">Lorem, ipsum dolor sit amet consectetur adipisicing
+                elit.
+                Rerum
+                iusto
+                obcaecati ex
+                sequi ipsum. Assumenda tenetur eum alias voluptates nulla rerum numquam fugit sequi! Rem tenetur
+                quia fuga
+                magni dolor!</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="right-contain">
+          <div class="title">
+            <i class="far fa-file-alt"></i>
+            <h3>Bài viết gần đây</h3>
+          </div>
+          <div class="new-blogs">
+            <div class="item-new" onclick="()=>{console.log('item-new')}">
+              <div class="new-img" style="background-image: url(./assets/images/blogs/blog-new.png);"></div>
+              <div class="new-body">
+                <div class="title">
+                  Kinh nghiệm đánh hàng Quảng Châu
+                </div>
+                <div class="date">10/01/2023</div>
+              </div>
+            </div>
+            <div class="item-new" onclick="()=>{console.log('item-new')}">
+              <div class="new-img" style="background-image: url(./assets/images/blogs/blog-new.png);"></div>
+              <div class="new-body">
+                <div class="title">
+                  Kinh nghiệm đánh hàng Quảng Châu
+                </div>
+                <div class="date">10/01/2023</div>
+              </div>
+            </div>
+            <div class="item-new" onclick="()=>{console.log('item-new')}">
+              <div class="new-img" style="background-image: url(./assets/images/blogs/blog-new.png);"></div>
+              <div class="new-body">
+                <div class="title">
+                  Kinh nghiệm đánh hàng Quảng Châu
+                </div>
+                <div class="date">10/01/2023</div>
+              </div>
+            </div>
+            <div class="item-new" onclick="()=>{console.log('item-new')}">
+              <div class="new-img" style="background-image: url(./assets/images/blogs/blog-new.png);"></div>
+              <div class="new-body">
+                <div class="title">
+                  Kinh nghiệm đánh hàng Quảng Châu
+                </div>
+                <div class="date">10/01/2023</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <img src="./assets/images/footer-bg-1.png" alt="" class="footer-bg-1" data-aos="zoom-out" />
+    <img src="./assets/images/footer-bg-2.png" alt="" class="footer-bg-2" data-aos="zoom-out" />
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-top">
+          <img src="./assets/images/footer-logo.png" alt="" class="footer-top-logo" data-aos="zoom-out" />
+        </div>
+        <div class="footer-bottom">
+          <ul class="footer-bottom-list footer-contact">
+            <li class="footer-bottom-item footer-bottom-label" data-aos="zoom-in-down" data-aos-delay="100">
+              Liên hệ
+            </li>
+
+            <li class="footer-bottom-item" data-aos="zoom-in-up" data-aos-delay="100">
+              <span class="footer-bottom-label">Hotline:</span>
+              <span class="footer-bottom-value">
+                <a href="tel:+024.3856.7333">024.3856.7333</a>
+              </span>
+            </li>
+            <li class="footer-bottom-item" data-aos="zoom-in-up" data-aos-delay="300">
+              <span class="footer-bottom-label">Email:</span>
+              <span class="footer-bottom-value">
+                <a href="mailto:admin@hanhnhapsieutoc.com">admin@hanhnhapsieutoc.com</a>
+              </span>
+            </li>
+            <li class="footer-bottom-item" data-aos="zoom-in-up" data-aos-delay="500">
+              <span class="footer-bottom-label">Địa chỉ:</span>
+              <span class="footer-bottom-value">160 Hào Nam, quận Đống Đa, Hà Nội</span>
+            </li>
+          </ul>
+
+          <ul class="footer-bottom-list footer-nganhHang">
+            <li class="footer-bottom-item footer-bottom-label" data-aos="zoom-in-down" data-aos-delay="100">
+              Menu
+            </li>
+            <li class="footer-bottom-item footer-bottom-value" data-aos="zoom-in-up" data-aos-delay="100">
+              <a href="/">Giới thiêu</a>
+            </li>
+            <li class="footer-bottom-item footer-bottom-value" data-aos="zoom-in-up" data-aos-delay="300">
+              <a href="/">Bảng giá</a>
+            </li>
+            <li class="footer-bottom-item footer-bottom-value" data-aos="zoom-in-up" data-aos-delay="500">
+              <a href="/">Dịch vụ</a>
+            </li>
+            <li class="footer-bottom-item footer-bottom-value" data-aos="zoom-in-up" data-aos-delay="700">
+              <a href="/">Hướng dẫn</a>
+            </li>
+            <li class="footer-bottom-item footer-bottom-value" data-aos="zoom-in-up" data-aos-delay="900">
+              <a href="/">Chính sách</a>
+            </li>
+            <li class="footer-bottom-item footer-bottom-value" data-aos="zoom-in-up" data-aos-delay="1100">
+              <a href="/">Tin tức</a>
+            </li>
+          </ul>
+
+          <ul class="footer-bottom-list footer-congTy">
+            <li class="footer-bottom-item footer-bottom-label" data-aos="zoom-in-down" data-aos-delay="100">
+              <a href="/">Công ty</a>
+            </li>
+            <li class="footer-bottom-item footer-bottom-value" data-aos="zoom-in-up" data-aos-delay="100">
+              <a href="/">Về chúng tôi</a>
+            </li>
+            <li class="footer-bottom-item footer-bottom-value" data-aos="zoom-in-up" data-aos-delay="300">
+              <a href="/">Điều khoản</a>
+            </li>
+          </ul>
+
+          <ul class="footer-bottom-list footer-iframe">
+            <li class="footer-bottom-item footer-bottom-label" data-aos="zoom-in-down" data-aos-delay="100">
+              Fanpage
+            </li>
+            <li class="footer-bottom-item footer-bottom-value" data-aos="zoom-in-up">
+              <div class="fb-page" data-href="https://www.facebook.com/mona.nhaphang" data-width="320"
+                data-hide-cover="false" data-show-facepile="false"></div>
+            </li>
+          </ul>
+        </div>
+        <div class="footer-end" data-aos="zoom-in-up">
+          &#64;
+          <span>Thiết kế bởi</span>
+          <span class="footer-end-logo">
+            <img src="./assets/images/footer-end-logo.png" alt="" />
+            <a href="https://mona.software/">MONA.Media / Website</a>
+            <img src="./assets/images/footer-end-link.png" alt="" />
+          </span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="back-to-top backToTop">
+    <div class="triangle"></div>
+    <div class="triangle"></div>
+    <div class="triangle"></div>
+  </div>
+  <div class="main-overlay" id="overlay"></div>
+  <script src="./js/library/jquery/jquery.js"></script>
+  <script src="./js/library/swiper/swiper-bundle.min.js"></script>
+  <script src="./js/library/aos/aos.js"></script>
+  <script src="./js/library/aos/aos.css"></script>
+  <script src="./js/library/select2/select2.min.js"></script>
+  <script src="./js/library/gallery/lightgallery-all.min.js"></script>
+  <script src="./js/library/jquery/jquery-migrate.js"></script>
+  <script src="./js/library/isotope/isotope.pkgd.min.js"></script>
+  <script src="./js/library/datetime/moment.min.js"></script>
+  <script src="./js/library/datetime/daterangepicker.min.js"></script>
+  <script src="./js/library/splitting/splitting.min.js"></script>
+  <script src="./js/main.js" type="module"></script>
+
+  <script>
+    AOS.init({
+      startEvent: "DOMContentLoaded",
+      offset: 0,
+      duration: 1200,
+      easing: "ease",
+      once: false,
+      mirror: true,
+      disable: function () {
+        return $(window).width() <= 768;
+      },
+    });
+  </script>
+</body>
+
+</html>
