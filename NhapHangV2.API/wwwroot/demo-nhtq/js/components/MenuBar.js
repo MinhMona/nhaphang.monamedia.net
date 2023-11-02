@@ -3,9 +3,27 @@ export default function MenuHandler() {
   const overlayElm = document.querySelector("#overlay");
   const menuListElm = document.querySelector("#hd-nav-menu");
   const body = document.querySelector("body");
-  const popup = document.querySelector(".popup");
-  const buttonClose = popup.querySelectorAll("[target-close]");
+    const popup = document.querySelector(".popup");
+    try {
+        const buttonClose = popup.querySelectorAll("[target-close]");
+        if (buttonClose.length) {
+            buttonClose.forEach((btn) => {
+                btn.addEventListener("click", (e) => {
+                    const value = btn.getAttribute("target-close");
 
+                    if (value === "never") {
+                        document.cookie = "isRender=false";
+                    }
+
+                    popup.classList.remove("open");
+                    body.classList.remove("no-scroll");
+                    overlayElm.classList.remove("active");
+                });
+            });
+        }
+    } catch {
+
+    }
   if (barElm) {
     barElm.addEventListener("click", () => {
       body.classList.add("no-scroll");
@@ -30,19 +48,5 @@ export default function MenuHandler() {
     }
   }
 
-  if (buttonClose.length) {
-    buttonClose.forEach((btn) => {
-      btn.addEventListener("click", (e) => {
-        const value = btn.getAttribute("target-close");
-
-        if (value === "never") {
-          document.cookie = "isRender=false";
-        }
-
-        popup.classList.remove("open");
-        body.classList.remove("no-scroll");
-        overlayElm.classList.remove("active");
-      });
-    });
-  }
+  
 }

@@ -1,0 +1,107 @@
+.t-title {
+    @include fz-40;
+}
+
+.t-title-second {
+    @include fz-24;
+}
+
+.t-center {
+    text-align: center;
+}
+
+.fw-1 {
+    font-weight: 100;
+}
+
+.fw-2 {
+    font-weight: 200;
+}
+
+.fw-3 {
+    font-weight: 300;
+}
+
+.fw-5 {
+    font-weight: 500;
+}
+
+.fw-6 {
+    font-weight: 600;
+}
+
+.fw-7 {
+    font-weight: 700;
+}
+
+.fw-8 {
+    font-weight: 800;
+}
+
+.fw-b {
+    font-weight: bold;
+}
+
+.fsi {
+    font-style: italic;
+}
+
+.t-up {
+    text-transform: uppercase;
+}
+
+.t9 {
+    @include fz-9
+}
+
+.t11 {
+    @include fz-11
+}
+
+.t12 {
+    @include fz-12
+}
+
+.t14 {
+    @include fz-14
+}
+
+.t16 {
+    @include fz-16
+}
+
+.t18 {
+    @include fz-18
+}
+
+.t20 {
+    @include fz-20
+}
+
+.t24 {
+    @include fz-24
+}
+
+.t32 {
+    @include fz-32
+}
+
+.t40 {
+    @include fz-40
+}
+
+.t48 {
+    @include fz-48
+}
+
+.t56 {
+    @include fz-56
+}
+
+.t64 {
+    @include fz-64
+}
+
+.t72 {
+    @include fz-72
+}

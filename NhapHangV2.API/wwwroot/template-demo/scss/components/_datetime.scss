@@ -1,0 +1,30 @@
+.dateTime {
+    position: relative;
+    height: 4rem;
+    border: 0.1rem solid $color-pri;
+    z-index: 2;
+}
+
+.dateTimeText {
+    position: absolute;
+    @include full;
+    padding: 0 1.6rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    pointer-events: none;
+    background-color: white;
+    z-index: 2;
+    &.disable {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+.dateTimeInput {
+    padding: 0.8rem 1.6rem;
+    @include reset-input;
+    position: absolute;
+    @include full;
+    z-index: 1;
+}
