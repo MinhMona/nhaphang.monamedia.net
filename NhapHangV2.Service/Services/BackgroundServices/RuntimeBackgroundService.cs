@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -9,13 +10,19 @@ using NhapHangV2.Interface.Services.BackgroundServices;
 
 namespace NhapHangV2.Service.Services.BackgroundServices
 {
-    public class RuntimeBackgroundService: BackgroundService
+    public class RuntimeBackgroundService : BackgroundService
     {
         public IBackgroundTaskQueue TaskQueue { get; }
+        public static IServiceProvider ServiceProvider { get; set; }
+        public static void SetService(IServiceProvider serviceProvider)
+        {
+            ServiceProvider = serviceProvider;
+        }
 
-        public RuntimeBackgroundService(IBackgroundTaskQueue taskQueue)
+        public RuntimeBackgroundService(IBackgroundTaskQueue taskQueue, IServiceProvider serviceProvider)
         {
             TaskQueue = taskQueue;
+            SetService(serviceProvider);
         }
 
         protected async override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -29,7 +36,7 @@ namespace NhapHangV2.Service.Services.BackgroundServices
                 }
                 catch (Exception ex)
                 {
-
+                    Debug.WriteLine("[ex count_stack]" + ex.Message);
                 }
             }
         }

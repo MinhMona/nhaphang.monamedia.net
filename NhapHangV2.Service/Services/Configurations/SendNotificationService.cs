@@ -7,7 +7,9 @@ using NhapHangV2.Extensions;
 using NhapHangV2.Interface.Services;
 using NhapHangV2.Interface.Services.Auth;
 using NhapHangV2.Interface.Services.BackgroundServices;
+using NhapHangV2.Interface.Services.Catalogue;
 using NhapHangV2.Interface.Services.Configuration;
+using NhapHangV2.Service.Services.BackgroundServices;
 using NhapHangV2.Utilities;
 using OneSignal.RestAPIv3.Client;
 using OneSignal.RestAPIv3.Client.Resources;
@@ -31,6 +33,7 @@ namespace NhapHangV2.Service.Services.Configurations
         protected readonly IServiceScopeFactory serviceScopeFactory;
         protected readonly IBackgroundTaskQueue taskQueue;
         protected readonly IServiceProvider serviceProvider;
+        protected INotificationSettingService notificationSettingService;
 
         public SendNotificationService(IServiceProvider serviceProvider, IServiceScopeFactory serviceScopeFactory, IBackgroundTaskQueue taskQueue)
         {
@@ -42,9 +45,10 @@ namespace NhapHangV2.Service.Services.Configurations
         {
             taskQueue.QueueBackgroundWorkItem(async token =>
             {
-                using (var scope = serviceProvider.CreateScope())
+                using (var scope = RuntimeBackgroundService.ServiceProvider.CreateScope())
                 {
                     var scopedServices = scope.ServiceProvider;
+                    notificationSettingService = scopedServices.GetRequiredService<INotificationSettingService>();
                     userInGroupService = scopedServices.GetRequiredService<IUserInGroupService>();
                     userService = scopedServices.GetRequiredService<IUserService>();
                     notificationService = scopedServices.GetRequiredService<INotificationService>();
@@ -53,6 +57,9 @@ namespace NhapHangV2.Service.Services.Configurations
                     configurationsService = scopedServices.GetRequiredService<IConfigurationsService>();
                     var notificationList = new List<Notification>();
                     var notificationEmailList = new List<Notification>();
+
+                    notificationSetting = await notificationSettingService.GetByIdAsync(notificationSetting.Id);
+
                     if (notificationSetting.IsNotifyAdmin && notificationSetting.IsEmailAdmin)
                     {
                         notificationEmailList.AddRange(await createListNotificationEmail(1, notificationSetting, "Admin", contentParams));
@@ -221,23 +228,25 @@ namespace NhapHangV2.Service.Services.Configurations
         {
             try
             {
+
                 var userReceiveEmail = new List<Users>();
                 var confi = await configurationsService.GetSingleAsync();
                 Guid appId = Guid.Parse(confi.OneSignalAppID);
                 string restAPIKey = confi.RestAPIKey;
                 if (notis.Count > 0)
                 {
-                    var playerIds = new List<string>();
                     foreach (var noti in notis)
                     {
+
                         await notificationService.CreateAsync(noti);
                         await hubContext.Clients.Groups(new List<string>
                         {
                             string.Format("UserId_{0}", noti.ToUserId)
                         }).SendNotification(noti);
                         var user = await userService.GetByIdAsync(noti.ToUserId ?? 0);
-                        if (user != null)
+                        if (user != null && !noti.OfEmployee)
                         {
+                            var playerIds = new List<string>();
                             playerIds.Add(user.OneSignalPlayerID);
                             if (user.OneSignalPlayerID != null)
                             {
@@ -257,7 +266,7 @@ namespace NhapHangV2.Service.Services.Configurations
                             string.Format("UserId_{0}", noti.ToUserId)
                         }).SendNotification(noti);
                         var user = await userService.GetByIdAsync(noti.ToUserId ?? 0);
-                        if (user != null)
+                        if (user != null && !noti.OfEmployee)
                         {
                             playerIds.Add(user.OneSignalPlayerID);
                             if (user.OneSignalPlayerID != null)
@@ -293,7 +302,7 @@ namespace NhapHangV2.Service.Services.Configurations
                 };
                 opt.Headings.Add(LanguageCodes.English, heading);
                 opt.Contents.Add(LanguageCodes.English, notification.NotificationContent);
-                opt.Url = $"{confi.WebsiteUrl}/{notification.Url}";
+                //opt.Url = $"{confi.WebsiteUrl}/{notification.Url}";
                 try
                 {
                     await client.Notifications.CreateAsync(opt);

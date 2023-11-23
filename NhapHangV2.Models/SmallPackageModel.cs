@@ -285,15 +285,14 @@ namespace NhapHangV2.Models
                 switch (OrderType)
                 {
                     case (int)TypeOrder.DonHangMuaHo:
-                        return "Đơn hàng mua hộ";
+                        return "Mua hộ";
                     case (int)TypeOrder.DonKyGui:
-                        return "Đơn ký gửi";
+                        return "Ký gửi";
                     case (int)TypeOrder.KhongXacDinh:
-                        return "Chưa xác định";
+                        return "Trôi nổi";
                     default:
                         return string.Empty;
                 }
-
             }
         }
 

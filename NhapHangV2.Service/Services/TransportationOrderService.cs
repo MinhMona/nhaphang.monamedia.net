@@ -210,23 +210,28 @@ namespace NhapHangV2.Service.Services
                     }
                     else
                     {
+                        StatusSmallPackage smallPackageStatus = StatusSmallPackage.MoiTao;
                         switch (item.Status)
                         {
                             case (int)StatusGeneralTransportationOrder.Huy:
                                 if (item.CancelDate == null)
                                     item.CancelDate = DateTime.Now;
+                                smallPackageStatus = StatusSmallPackage.DaHuy;
                                 break;
                             case (int)StatusGeneralTransportationOrder.VeKhoTQ:
                                 if (item.TQDate == null)
                                     item.TQDate = DateTime.Now;
+                                smallPackageStatus = StatusSmallPackage.VeKhoTQ;
                                 break;
                             case (int)StatusGeneralTransportationOrder.DangVeVN:
                                 if (item.ComingVNDate == null)
                                     item.ComingVNDate = DateTime.Now;
+                                smallPackageStatus = StatusSmallPackage.XuatKhoTQ;
                                 break;
                             case (int)StatusGeneralTransportationOrder.VeKhoVN:
                                 if (item.VNDate == null)
                                     item.VNDate = DateTime.Now;
+                                smallPackageStatus = StatusSmallPackage.VeKhoVN;
                                 break;
                             case (int)StatusGeneralTransportationOrder.DaThanhToan:
                                 if (item.PaidDate == null)
@@ -235,6 +240,7 @@ namespace NhapHangV2.Service.Services
                             case (int)StatusGeneralTransportationOrder.DaHoanThanh:
                                 if (item.CompleteDate == null)
                                     item.CompleteDate = DateTime.Now;
+                                smallPackageStatus = StatusSmallPackage.DaGiao;
                                 break;
                             case (int)StatusGeneralTransportationOrder.DaKhieuNai:
                                 if (item.ComplainDate == null)
@@ -249,6 +255,7 @@ namespace NhapHangV2.Service.Services
                             smallPackage.DonGia = item.FeeWeightPerKg;
                             smallPackage.PriceVolume = item.FeePerVolume;
                             smallPackage.OrderTransactionCode = smallPackage.OrderTransactionCode.Replace(" ", "");
+                            smallPackage.Status = (int)smallPackageStatus;
                             unitOfWork.Repository<SmallPackage>().Update(smallPackage);
                         }
                     }

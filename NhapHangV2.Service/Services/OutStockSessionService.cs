@@ -228,6 +228,7 @@ namespace NhapHangV2.Service.Services
                             outStock.TotalWarehouseFee += transportOrder.WarehouseFee;
                             outStockPackage.WarehouseFee = transportOrder.WarehouseFee;
                             outStockPackage.TotalLeftPay = smallPackage.TotalPrice;
+                            outStockPackage.OrderRemaining = transportOrder.TotalPriceVND;
                             totalPaid += transportOrder.TotalPriceVND;
 
                             outStockPackage.SmallPackage = smallPackage;
