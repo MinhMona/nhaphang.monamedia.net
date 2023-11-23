@@ -118,20 +118,20 @@
                     <div class="tool-right">
                         <div class="tool-content">
                             <div class="tool-btn">
-                                <a href="https://chrome.google.com/webstore/detail/c%C3%B4ng-c%E1%BB%A5-%C4%91%E1%BA%B7t-h%C3%A0ng-l%C3%AA-ph%C6%B0%C6%A1n/dpeabjffiincpbieojjmgkeefgjjlojd" class="item-link d-flex">
+                                <a href="@config.ChromeExtensionLink" class="item-link d-flex">
                                         <img class="icon" src="./demo-nhtq/assets/images/icon-chrome.png" alt="">
                                     <span class="name">Chrome</span>
                                 </a>
                             </div>
                             <div class="tool-btn">
-                                <a href="https://chrome.google.com/webstore/detail/c%C3%B4ng-c%E1%BB%A5-%C4%91%E1%BA%B7t-h%C3%A0ng-l%C3%AA-ph%C6%B0%C6%A1n/dpeabjffiincpbieojjmgkeefgjjlojd" class="item-link d-flex">
+                                <a href="@config.ChromeExtensionLink" class="item-link d-flex">
                                         <img class="icon" src="./demo-nhtq/assets/images/icon-cococ.png" alt="">
                               
                                     <span class="name">CốcCốc</span>
                                 </a>
                             </div>
                             <div class="tool-btn">
-                                <a  href="https://chrome.google.com/webstore/detail/c%C3%B4ng-c%E1%BB%A5-%C4%91%E1%BA%B7t-h%C3%A0ng-l%C3%AA-ph%C6%B0%C6%A1n/dpeabjffiincpbieojjmgkeefgjjlojd" class="item-link d-flex">
+                                <a href="@config.ChromeExtensionLink" class="item-link d-flex">
       
                                         <img class="icon" src="./demo-nhtq/assets/images/android.png" alt="">
                          
@@ -139,7 +139,7 @@
                                 </a>
                             </div>
                             <div class="tool-btn">
-                                <a href="https://chrome.google.com/webstore/detail/c%C3%B4ng-c%E1%BB%A5-%C4%91%E1%BA%B7t-h%C3%A0ng-l%C3%AA-ph%C6%B0%C6%A1n/dpeabjffiincpbieojjmgkeefgjjlojd" class="item-link d-flex">
+                                <a href="@config.ChromeExtensionLink" class="item-link d-flex">
                               
                                         <img class="icon" src="./demo-nhtq/assets/images/apple.png" alt="">
                     
@@ -972,9 +972,31 @@
 
         <section class="sec-blog">
             <div class="container">
+                <div class="left-contain">
+                @if (!string.IsNullOrEmpty(pageTypeConent.Description))
+                {
+                        <div class="blog-item full-screen-contain no-hover" onclick="()=>{console.log('blog')}">
+                            <div class="body">
+                                <div class="buttons breadcrumb">
+                                    <span onclick="window.location.href='/'">Trang chủ</span>
+                                    &frasl;
+                                    <span onclick="window.location.href='/@pageTypeConent.Code'">@pageTypeConent.Name</span>
+                                </div>
+                                <div class="title" style="font-size:2.25em;line-height:1.25em;color:var(--dove-gray);" >@pageTypeConent.Title</div>
+                                <div class="date">
+                                    <span>@(pageTypeConent.Updated != null ? pageTypeConent.Updated.ToString("dd.MM.yyyy") : pageTypeConent.Created.ToString("dd.MM.yyyy"))</span>
+                                    <span class="dot">&#9679;</span>
+                                    <span>@pageTypeConent.CreatedBy</span>
+                                </div>
+                                <div class="page-content-show">
+                                    @Html.Raw(pageTypeConent.Description)
+                                </div>
+                            </div>
+                        </div>
+                }
                 @if (pageTypeConent.Pages.Count > 0)
                 {
-                    <div class="left-contain">
+                    
                         @foreach (var item in pageTypeConent.Pages)
                         {
                             <div class="blog-item" onclick="window.location.href='/@item.Code'">
@@ -995,8 +1017,9 @@
                             </div>
                         </div>   
                     }
+                
+                    }
                 </div>
-                }
                 @if (pageTypeList.Count > 0)
                 {
                     <div class="right-contain">
@@ -1136,7 +1159,7 @@
 
         <section class="sec-blog detail">
           <div class="container">
-                <div class="@(pageConent.SideBar?"left-contain":"left-contain full-screen-contain")">
+                <div class="@(pageConent.SideBar?? false?"left-contain":"left-contain full-screen-contain")">
               <div class="blog-item" onclick="()=>{console.log('blog')}">
                 <div class="body">
                   <div class="buttons breadcrumb">
@@ -1152,13 +1175,13 @@
                     <span class="dot">&#9679;</span>
                     <span>@pageConent.CreatedBy</span>
                   </div>
-                  <div>
+                            <div class="page-content-show">
                                 @Html.Raw(pageConent.PageContent)
                   </div>
                 </div>
               </div>
             </div>
-                @if (pageConent.SideBar)
+                @if (pageConent.SideBar?? false)
                 {
                   <div class="right-contain">
                         <div class="title" style="margin-bottom: 1rem;background-color: white;border-radius: 8px;margin-left: -1rem;width: fit-content;padding: 0 10px;">

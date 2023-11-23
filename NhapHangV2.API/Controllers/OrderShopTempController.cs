@@ -634,7 +634,8 @@ namespace NhapHangV2.API.Controllers
             return appDomainResult;
         }
 
-        private static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1); // Ví dụ, giới hạn 1 request đồng thời
+        private static Dictionary<int, SemaphoreSlim> semaphoreSlims = new Dictionary<int, SemaphoreSlim>();
+        //private static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1); // Ví dụ, giới hạn 1 request đồng thời
         /// <summary>
         /// Đặt hàng qua Extension
         /// </summary>
@@ -644,6 +645,16 @@ namespace NhapHangV2.API.Controllers
         [AppAuthorize(new int[] { CoreContants.AddNew })]
         public override async Task<AppDomainResult> AddItem([FromBody] OrderShopTempRequest itemModel)
         {
+            int UID = LoginContext.Instance.CurrentUser.UserId;
+            SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1);
+            if (semaphoreSlims.ContainsKey(UID))
+            {
+                semaphoreSlim = semaphoreSlims[UID];
+            }
+            else
+            {
+                semaphoreSlims.Add(UID, semaphoreSlim);
+            }
             await semaphoreSlim.WaitAsync();
             try
             {

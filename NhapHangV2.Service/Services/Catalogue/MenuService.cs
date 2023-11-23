@@ -63,7 +63,7 @@ namespace NhapHangV2.Service.Services.Catalogue
         {
             for (int i = 0; i < menuList.Count;)
             {
-                if ((menuList[i].Parent == null || Convert.ToInt32(menuList[i].Parent) == 0) && !menuList[i].Deleted)
+                if ((menuList[i].Parent == null || Convert.ToInt32(menuList[i].Parent) == 0) && !menuList[i].Deleted && !menuList[i].Active)
                 {
                     var subMenus = await unitOfWork.Repository<Menu>().GetQueryable().Where(e => e.Parent == menuList[i].Id && !e.Deleted).Select(e => new MenuModel()
                     {

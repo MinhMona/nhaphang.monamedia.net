@@ -52,7 +52,7 @@ namespace NhapHangV2.API.Controllers
             searchService = serviceProvider.GetRequiredService<ISearchService>();
             this.mapper = mapper;
         }
-
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var homeModel = new HomeModel();
@@ -88,15 +88,17 @@ namespace NhapHangV2.API.Controllers
                 Response.Cookies.Delete("tokenNHTQ-demo");
             }
             return RedirectToAction("Index");
-        } 
+        }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}")] 
+        
         public async Task<IActionResult> Index(string id)
         {
             var homeModel = new HomeModel();
             homeModel.Configurations= mapper.Map<ConfigurationsModel>(await configurationsService.GetByIdAsync(1));
             homeModel.MenuList = mapper.Map<IList<MenuModel>>(await menuService.GetAllAsync());
             homeModel.MenuList = await menuService.GetListMenu(homeModel.MenuList);
+            homeModel.MenuList = homeModel.MenuList.OrderBy(x => x.Position).ToList();
             homeModel.Type = 2;
             homeModel.PageTypeContent = mapper.Map<PageTypeModel>(await pageTypeService.GetByCodeAsync(id));
             homeModel.TopNewsPage = mapper.Map<PageTypeModel>(await pageTypeService.GetByCodeAsync("tin-tuc"));
