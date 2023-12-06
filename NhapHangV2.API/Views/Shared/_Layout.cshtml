@@ -265,10 +265,12 @@
                     </li>
                 </ul>
                 <div class="hd-controls-mobile">
+                    <a href="@(Model.Username != null ? "/user/cart/" : "/authen/login")">
                     <button type="button" class="btn">
                         <img src="./demo-nhtq/assets/images/icon-authen.webp" alt="" />
-                        <span>Tài khoản</span>
+                            <span> @(Model.Username != null ? Model.Username : "Đăng nhập")</span>
                     </button>
+                    </a>
                     <div class="menu-close menuClose" id="menuBar">
                         <div class="menu-close-wrap">
                             <span></span>
