@@ -415,7 +415,12 @@ namespace NhapHangV2.BaseAPI.Controllers.Auth
                     UserGroupId = 2,
                     Wallet = 0,
                     WalletCNY = 0,
-                    LevelId = 1
+                    LevelId = 1,
+                    WarehouseFrom = register.WarehouseChinaId,
+                    WarehouseTo = register.WarehouseVietNamId,
+                    ShippingType = register.ShippingMethodId,
+                    Address = register.Address,
+
                 };
                 // Kiểm tra item có tồn tại chưa?
                 var messageUserCheck = await this.userService.GetExistItemMessage(user);

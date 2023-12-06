@@ -60,5 +60,11 @@ namespace NhapHangV2.Request.Auth
         [StringLength(255, ErrorMessage = "Họ và tên của bạn quá dài", MinimumLength = 1)]
         [Required(ErrorMessage = "Vui lòng nhập họ và tên của bạn!")]
         public string? FullName { get; set; }
+
+        public int? WarehouseChinaId { get; set; }
+        public int? WarehouseVietNamId { get; set; }
+        public int? ShippingMethodId { get; set; }
+        public string? Address { get; set; }
+
     }
 }

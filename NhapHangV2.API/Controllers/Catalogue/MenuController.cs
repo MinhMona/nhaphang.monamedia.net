@@ -254,5 +254,31 @@ namespace NhapHangV2.API.Controllers.Catalogue
 
             return appDomainResult;
         }
+
+        /// <summary>
+        /// Lấy thông tin kho
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("warehouse")]
+        public async Task<AppDomainResult> GetWarehouse()
+        {
+            AppDomainResult appDomainResult = new AppDomainResult();
+
+            var item = await configurationsService.GetWarehouse();
+            if (item != null)
+            {
+                appDomainResult = new AppDomainResult()
+                {
+                    Success = true,
+                    Data = item,
+                    ResultCode = (int)HttpStatusCode.OK
+                };
+            }
+            else
+                throw new KeyNotFoundException("Item không tồn tại");
+
+            return appDomainResult;
+        }
     }
 }

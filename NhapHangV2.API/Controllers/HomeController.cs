@@ -97,6 +97,8 @@ namespace NhapHangV2.API.Controllers
             homeModel.Configurations= mapper.Map<ConfigurationsModel>(await configurationsService.GetByIdAsync(1));
             homeModel.MenuList = mapper.Map<IList<MenuModel>>(await menuService.GetAllAsync());
             homeModel.MenuList = await menuService.GetListMenu(homeModel.MenuList);
+            homeModel.MenuList = homeModel.MenuList.OrderBy(x => x.Position).ToList();
+
             homeModel.Type = 2;
             homeModel.PageTypeContent = mapper.Map<PageTypeModel>(await pageTypeService.GetByCodeAsync(id));
             homeModel.TopNewsPage = mapper.Map<PageTypeModel>(await pageTypeService.GetByCodeAsync("tin-tuc"));

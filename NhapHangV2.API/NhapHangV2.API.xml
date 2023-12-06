@@ -356,6 +356,13 @@
             <param name="id"></param>
             <returns></returns>
         </member>
+        <member name="M:NhapHangV2.API.Controllers.Catalogue.MenuController.GetWarehouse">
+            <summary>
+            Lấy thông tin kho
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
         <member name="M:NhapHangV2.API.Controllers.Catalogue.PageTypeController.GetById(System.Int32)">
             <summary>
             Lấy thông tin theo id

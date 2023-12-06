@@ -14,5 +14,6 @@ namespace NhapHangV2.Interface.Services
         Task<Configurations> GetSingleAsync();
         Task<decimal> GetCurrentPayHelp(decimal price);
         Task<decimal> GetCurrency(int? UID);
+        Task<object> GetWarehouse();
     }
 }

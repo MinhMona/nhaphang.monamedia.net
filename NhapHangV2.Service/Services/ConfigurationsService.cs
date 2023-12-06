@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NhapHangV2.Entities;
+using NhapHangV2.Entities.Catalogue;
 using NhapHangV2.Entities.DomainEntities;
 using NhapHangV2.Extensions;
 using NhapHangV2.Interface.Services;
@@ -136,6 +137,20 @@ namespace NhapHangV2.Service.Services
             if (user != null)
                 userCurrency = user.Currency ?? 0;
             return userCurrency > 0 ? userCurrency : configCurrency;
+        }
+
+        public async Task<object> GetWarehouse()
+        {
+            var warehouse = await unitOfWork.Repository<Warehouse>().GetQueryable().Where(x => !x.Deleted && x.Active).OrderByDescending(x => x.Id).ToListAsync();
+            var warehouseFrom = await unitOfWork.Repository<WarehouseFrom>().GetQueryable().Where(x => !x.Deleted && x.Active).OrderByDescending(x => x.Id).ToListAsync();
+            var shippingType = await unitOfWork.Repository<ShippingTypeToWareHouse>().GetQueryable().Where(x => !x.Deleted && x.Active).OrderByDescending(x => x.Id).ToListAsync();
+
+            return new
+            {
+                Warehouse = warehouse,
+                WarehouseFrom = warehouseFrom,
+                ShippingType = shippingType,
+            };
         }
     }
 }

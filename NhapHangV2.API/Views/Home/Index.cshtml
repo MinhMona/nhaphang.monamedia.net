@@ -1,7 +1,8 @@
 ﻿@{
 
     var config = Model.Configurations;
-    if(Model.Type == 1){
+    if (Model.Type == 1)
+    {
         <section class="sec sec-banner">
             <div class="sec-banner-top">
                 <img src="./demo-nhtq/assets/images/banner-mountain-2.webp"
@@ -118,31 +119,31 @@
                     <div class="tool-right">
                         <div class="tool-content">
                             <div class="tool-btn">
-                                <a href="https://chrome.google.com/webstore/detail/c%C3%B4ng-c%E1%BB%A5-%C4%91%E1%BA%B7t-h%C3%A0ng-l%C3%AA-ph%C6%B0%C6%A1n/dpeabjffiincpbieojjmgkeefgjjlojd" class="item-link d-flex">
-                                        <img class="icon" src="./demo-nhtq/assets/images/icon-chrome.png" alt="">
+                                <a target="_blank" href="@config.ChromeExtensionLink" class="item-link d-flex">
+                                    <img class="icon" src="./demo-nhtq/assets/images/icon-chrome.png" alt="">
                                     <span class="name">Chrome</span>
                                 </a>
                             </div>
                             <div class="tool-btn">
-                                <a href="https://chrome.google.com/webstore/detail/c%C3%B4ng-c%E1%BB%A5-%C4%91%E1%BA%B7t-h%C3%A0ng-l%C3%AA-ph%C6%B0%C6%A1n/dpeabjffiincpbieojjmgkeefgjjlojd" class="item-link d-flex">
-                                        <img class="icon" src="./demo-nhtq/assets/images/icon-cococ.png" alt="">
-                              
+                                <a target="_blank" href="@config.CocCocExtensionLink" class="item-link d-flex">
+                                    <img class="icon" src="./demo-nhtq/assets/images/icon-cococ.png" alt="">
+
                                     <span class="name">CốcCốc</span>
                                 </a>
                             </div>
                             <div class="tool-btn">
-                                <a  href="https://chrome.google.com/webstore/detail/c%C3%B4ng-c%E1%BB%A5-%C4%91%E1%BA%B7t-h%C3%A0ng-l%C3%AA-ph%C6%B0%C6%A1n/dpeabjffiincpbieojjmgkeefgjjlojd" class="item-link d-flex">
-      
-                                        <img class="icon" src="./demo-nhtq/assets/images/android.png" alt="">
-                         
+                                <a target="_blank" href="#" class="item-link d-flex">
+
+                                    <img class="icon" src="./demo-nhtq/assets/images/android.png" alt="">
+
                                     <span class="name">Android</span>
                                 </a>
                             </div>
                             <div class="tool-btn">
-                                <a href="https://chrome.google.com/webstore/detail/c%C3%B4ng-c%E1%BB%A5-%C4%91%E1%BA%B7t-h%C3%A0ng-l%C3%AA-ph%C6%B0%C6%A1n/dpeabjffiincpbieojjmgkeefgjjlojd" class="item-link d-flex">
-                              
-                                        <img class="icon" src="./demo-nhtq/assets/images/apple.png" alt="">
-                    
+                                <a target="_blank" href="#" class="item-link d-flex">
+
+                                    <img class="icon" src="./demo-nhtq/assets/images/apple.png" alt="">
+
                                     <span class="name">IOS</span>
                                 </a>
                             </div>
@@ -215,7 +216,7 @@
                         <form action="Home/SearchProduct" class="sec-search-wrapper-form" method="post">
                             <div class="sec-search-wrapper-left">
                                 <div class="sec-search-wrapper-select">
-                                    <div class="sec-search-wrapper-select-show" >
+                                    <div class="sec-search-wrapper-select-show">
                                         <img src="./demo-nhtq/assets/images/1688.webp" id="imgSelectedSite"
                                              alt=""
                                              class="sec-search-wrapper-select-img" />
@@ -253,11 +254,11 @@
                         </form>
                     </div>
 
-                    
+
                 </div>
                 <script>
-                    function SelectSite(site, img){
-                        var siteHidden =  document.getElementById('hdfSite');
+                    function SelectSite(site, img) {
+                        var siteHidden = document.getElementById('hdfSite');
                         siteHidden.setAttribute('value', site);
                         $('#imgSelectedSite').attr('src', img);
                     }
@@ -354,8 +355,11 @@
                 <div class="sec-service-main">
                     <div class="sec-service-left">
                         <ul class="sec-service-list">
-                        @{int timeOut = 0;}
-                        @for(int i =0; i< 3;i++){
+                            @{
+                                int timeOut = 0;
+                            }
+                            @for (int i = 0; i < 3; i++)
+                            {
                                 timeOut += 100;
                                 <li class="sec-service-item"
                                     data-aos="zoom-in-left"
@@ -379,7 +383,7 @@
                     <div class="sec-service-right">
                         <ul class="sec-service-list">
                             @{
-                               timeOut = 200;
+                                timeOut = 200;
                             }
                             @for (int i = 3; i < 6; i++)
                             {
@@ -488,8 +492,11 @@
 
                 <div class="sec-register-wrapper">
                     <div class="sec-register-step">
-                    @{timeOut = 0; int stepCount = 0;}
-                        @foreach (var item in Model.StepList){
+                        @{
+                            timeOut = 0; int stepCount = 0;
+                        }
+                        @foreach (var item in Model.StepList)
+                        {
                             timeOut += 100;
                             stepCount++;
                             <div class="sec-register-step-item">
@@ -508,7 +515,7 @@
                                 </div>
                             </div>
                         }
-                        
+
                         <div class="sec-register-step-line"></div>
                         <div class="sec-register-step-lineactive"></div>
                     </div>
@@ -519,17 +526,18 @@
                              data-aos="zoom-in-right">
                             <div class="swiper-wrapper">
                                 <!-- Slides -->
-                                @foreach(var item in Model.StepList){
-                                <div class="swiper-slide">
-                                    <div class="sec-register-slide-textWrapper-item">
-                                        <h2>@item.Name</h2>
-                                        <p>
-                                            @item.Description
-                                        </p>
+                                @foreach (var item in Model.StepList)
+                                {
+                                    <div class="swiper-slide">
+                                        <div class="sec-register-slide-textWrapper-item">
+                                            <h2>@item.Name</h2>
+                                            <p>
+                                                @item.Description
+                                            </p>
+                                        </div>
                                     </div>
-                                </div>
                                 }
-                                
+
                             </div>
                             <div class="sec-register-slide-textWrapper-navigation">
                                 <div class="sec-register-slide-textWrapper-prev"
@@ -579,7 +587,8 @@
                                  class="sec-evalute-main-left-quote" />
                             <div class="swiper evalute-swiper" data-aos="fade-right">
                                 <div class="swiper-wrapper">
-                                    @foreach (var item in Model.CustomerTalkList){
+                                    @foreach (var item in Model.CustomerTalkList)
+                                    {
                                         <div class="swiper-slide">
                                             <div class="evalute-swiper-slide">
                                                 <h3 class="evalute-swiper-username">@item.Name</h3>
@@ -612,7 +621,7 @@
                                             </div>
                                         </div>
                                     }
-                                    
+
                                 </div>
                                 <div class="swiper-pagination evalute-swiper-pagination"></div>
                             </div>
@@ -622,32 +631,32 @@
                                  data-aos="zoom-in-left">
                                 <div class="sec-evalute-main-right-img active">
                                     <div style="
-                                background-image: url(@Model.CustomerTalkList[0].IMG);
-                          "></div>
+                                    background-image: url(@Model.CustomerTalkList[0].IMG);
+                              "></div>
                                 </div>
                             </div>
                             <div class="sec-evalute-main-right-grid"
                                  data-aos="zoom-in-right">
                                 <div class="sec-evalute-main-right-img">
                                     <div style="
-                                background-image: url(@Model.CustomerTalkList[1].IMG);
-                          "></div>
+                                    background-image: url(@Model.CustomerTalkList[1].IMG);
+                              "></div>
                                 </div>
                             </div>
                             <div class="sec-evalute-main-right-grid"
                                  data-aos="zoom-in-left">
                                 <div class="sec-evalute-main-right-img">
                                     <div style="
-                                background-image: url(@Model.CustomerTalkList[2].IMG);
-                          "></div>
+                                    background-image: url(@Model.CustomerTalkList[2].IMG);
+                              "></div>
                                 </div>
                             </div>
                             <div class="sec-evalute-main-right-grid"
                                  data-aos="zoom-in-right">
                                 <div class="sec-evalute-main-right-img">
                                     <div style="
-                                background-image: url(@Model.CustomerTalkList[3].IMG);
-                          "></div>
+                                    background-image: url(@Model.CustomerTalkList[3].IMG);
+                              "></div>
                                 </div>
                             </div>
                         </div>
@@ -668,33 +677,33 @@
                 </div>
                 <div class="sec-partner-inner">
                     <img src="./demo-nhtq/assets/images/partner-1.webp"
-                    alt=""
-                    data-aos="zoom-out"
-                    data-aos-delay="200" />
+                         alt=""
+                         data-aos="zoom-out"
+                         data-aos-delay="200" />
                     <img src="./demo-nhtq/assets/images/partner-2.webp"
-                    alt=""
-                    data-aos="zoom-out"
-                    data-aos-delay="300" />
+                         alt=""
+                         data-aos="zoom-out"
+                         data-aos-delay="300" />
                     <img src="./demo-nhtq/assets/images/partner-3.webp"
-                    alt=""
-                    data-aos="zoom-out"
-                    data-aos-delay="400" />
+                         alt=""
+                         data-aos="zoom-out"
+                         data-aos-delay="400" />
                     <img src="./demo-nhtq/assets/images/partner-4.webp"
-                    alt=""
-                    data-aos="zoom-out"
-                    data-aos-delay="500" />
+                         alt=""
+                         data-aos="zoom-out"
+                         data-aos-delay="500" />
                     <img src="./demo-nhtq/assets/images/partner-5.webp"
-                    alt=""
-                    data-aos="zoom-out"
-                    data-aos-delay="600" />
+                         alt=""
+                         data-aos="zoom-out"
+                         data-aos-delay="600" />
                     <img src="./demo-nhtq/assets/images/partner-6.webp"
-                    alt=""
-                    data-aos="zoom-out"
-                    data-aos-delay="700" />
+                         alt=""
+                         data-aos="zoom-out"
+                         data-aos-delay="700" />
                     <img src="./demo-nhtq/assets/images/partner-7.webp"
-                    alt=""
-                    data-aos="zoom-out"
-                    data-aos-delay="800" />
+                         alt=""
+                         data-aos="zoom-out"
+                         data-aos-delay="800" />
                 </div>
             </div>
         </section>
@@ -712,8 +721,11 @@
                 <div class="sec-news-inner">
                     <div class="sec-news-inner-list swiper">
                         <div class="swiper-wrapper">
-                        @{timeOut = 0;}
-                            @foreach (var item in Model.TopNewsPage.Pages){
+                            @{
+                                timeOut = 0;
+                            }
+                            @foreach (var item in Model.TopNewsPage.Pages)
+                            {
                                 timeOut += 200;
                                 <div class="swiper-slide">
                                     <a href="/@item.Code">
@@ -735,12 +747,12 @@
                                         </div>
                                     </a>
                                 </div>
-                                @if(timeOut >= 1000)
+                                @if (timeOut >= 1000)
                                 {
                                     break;
                                 }
                             }
-                            
+
                         </div>
 
                         <div class="swiper-pagination sec-news-pagination"
@@ -761,8 +773,8 @@
                 <div class="popup-main" data-aos="fade-up" data-aos-delay="1000" style="display:flex; width:120rem !important;padding:15rem 0 10rem 0;transform: translate(-50%, -20%) !important;">
                     <img src="./demo-nhtq/assets/images/panda-co.webp" style="position:absolute;width:20%;height:fit-content;z-index: 3;left: 49%;top: -5%;filter: drop-shadow(-4px 9px 10px rgba(0, 0, 0, 0.4901960784));" />
                     <img src="./demo-nhtq/assets/images/video-box-2.webp"
-                        alt=""
-                        class="sec-video-box-2" style="height:fit-content;position:absolute;left:2% !important;bottom: 0 !important;" />
+                         alt=""
+                         class="sec-video-box-2" style="height:fit-content;position:absolute;left:2% !important;bottom: 0 !important;" />
                     <div class="popup-title" style="z-index:3;filter: drop-shadow(-4px 4px 4px rgba(0, 0, 0, 0.4901960784)); border-radius:8px;min-width:35%; font-size: 24px;top:20% !important;">
                         @config.NotiPopupTitle
                     </div>
@@ -799,10 +811,10 @@
                     <button style="position:absolute;right: -85%;top: 35%;z-index: 5;width: 100%;bottom:unset;" target-close="never" class="popup-close">
                         <div class="sec-search-experience-cubi" style="width: 15% !important;">
                             <img src="./demo-nhtq/assets/images/search-step-outer.webp"
-                                    alt=""
-                                    class="sec-search-experience-cubi-outer" />
+                                 alt=""
+                                 class="sec-search-experience-cubi-outer" />
                             <img src="./demo-nhtq/assets/images/search-step-inner.webp"
-                                    alt=""
+                                 alt=""
                                  class="sec-search-experience-cubi-inner" style="filter: brightness(0) saturate(100%) invert(50%) sepia(94%) saturate(693%) hue-rotate(349deg) brightness(101%) contrast(92%);" />
                             <div class="sec-search-experience-cubi-main">
                                 <span class="sec-search-experience-cubi-text" style="font-family: 'Roboto';">ĐÓNG KHÔNG HIỆN LẠI</span>
@@ -866,12 +878,12 @@
         </script>
 
     }
-    else if(Model.Type == 2)
+    else if (Model.Type == 2)
     {
         var pageTypeConent = Model.PageTypeContent;
         var pageTypeList = Model.PageTypeList;
 
-       @* <section class="detail">
+        @* <section class="detail">
             <div class="container">
                 <div class="breadcumb">
                     <ul class="breadcumb-list">
@@ -978,24 +990,24 @@
                         @foreach (var item in pageTypeConent.Pages)
                         {
                             <div class="blog-item" onclick="window.location.href='/@item.Code'">
-                             <div class="image" style="background-image: url(@item.IMG.Replace(" ", "%20")); "></div>
-                            <div class="body">
-                                <div class="bottoms">
+                                <div class="image" style="background-image: url(@item.IMG.Replace(" ", "%20")); "></div>
+                                <div class="body">
+                                    <div class="bottoms">
                                         <span onclick="window.location.href='/@item.Code'">@pageTypeConent.Name</span>
-                                </div>
-                                <div class="date">
-                                        <span>@(item.Updated != null ? item.Updated.ToString("dd.MM.yyyy"): item.Created.ToString("dd.MM.yyyy"))</span>
-                                </div>
-                                <div class="title">
+                                    </div>
+                                    <div class="date">
+                                        <span>@(item.Updated != null ? item.Updated.ToString("dd.MM.yyyy") : item.Created.ToString("dd.MM.yyyy"))</span>
+                                    </div>
+                                    <div class="title">
                                         @item.Title
-                                </div>
-                                <div class="content">
+                                    </div>
+                                    <div class="content">
                                         @item.Summary
+                                    </div>
                                 </div>
                             </div>
-                        </div>   
-                    }
-                </div>
+                        }
+                    </div>
                 }
                 @if (pageTypeList.Count > 0)
                 {
@@ -1024,7 +1036,7 @@
         </section>
 
     }
-    else if(Model.Type == 3)
+    else if (Model.Type == 3)
     {
         var pageConent = Model.PageContent;
         var pageTypeConent = Model.PageTypeContent;
@@ -1135,53 +1147,53 @@
 
 
         <section class="sec-blog detail">
-          <div class="container">
+            <div class="container">
                 <div class="@(pageConent.SideBar?"left-contain":"left-contain full-screen-contain")">
-              <div class="blog-item" onclick="()=>{console.log('blog')}">
-                <div class="body">
-                  <div class="buttons breadcrumb">
-                        <span onclick="window.location.href='/'">Trang chủ</span>
-                        &frasl;
-                        <span onclick="window.location.href='/@pageTypeConent.Code'">@pageTypeConent.Name</span>
-                        &frasl;
-                        <span class="breadcrumb-title">@pageConent.Title</span>
-                  </div>
+                    <div class="blog-item" onclick="()=>{console.log('blog')}">
+                        <div class="body">
+                            <div class="buttons breadcrumb">
+                                <span onclick="window.location.href='/'">Trang chủ</span>
+                                &frasl;
+                                <span onclick="window.location.href='/@pageTypeConent.Code'">@pageTypeConent.Name</span>
+                                &frasl;
+                                <span class="breadcrumb-title">@pageConent.Title</span>
+                            </div>
                             <div class="title">@pageConent.Title</div>
-                  <div class="date">
-                    <span>@(pageConent.Updated != null ? pageConent.Updated.ToString("dd.MM.yyyy") : pageConent.Created.ToString("dd.MM.yyyy"))</span>
-                    <span class="dot">&#9679;</span>
-                    <span>@pageConent.CreatedBy</span>
-                  </div>
-                  <div>
+                            <div class="date">
+                                <span>@(pageConent.Updated != null ? pageConent.Updated.ToString("dd.MM.yyyy") : pageConent.Created.ToString("dd.MM.yyyy"))</span>
+                                <span class="dot">&#9679;</span>
+                                <span>@pageConent.CreatedBy</span>
+                            </div>
+                            <div>
                                 @Html.Raw(pageConent.PageContent)
-                  </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-            </div>
                 @if (pageConent.SideBar)
                 {
-                  <div class="right-contain">
+                    <div class="right-contain">
                         <div class="title" style="margin-bottom: 1rem;background-color: white;border-radius: 8px;margin-left: -1rem;width: fit-content;padding: 0 10px;">
-                    <i class="far fa-file-alt"></i>
-                    <h3>Bài viết gần đây</h3>
-                  </div>
-                  <div class="new-blogs">
-                    @foreach (var item in Model.TopNewsPage.Pages)
-                    {
+                            <i class="far fa-file-alt"></i>
+                            <h3>Bài viết gần đây</h3>
+                        </div>
+                        <div class="new-blogs">
+                            @foreach (var item in Model.TopNewsPage.Pages)
+                            {
                                 <div class="item-new" onclick="window.location.href='/@item.Code'">
                                     <div class="new-img" style="background-image: url(@item.IMG);"></div>
-                      <div class="new-body">
-                        <div class="title">
-                                    @item.Title
+                                    <div class="new-body">
+                                        <div class="title">
+                                            @item.Title
+                                        </div>
+
+                                    </div>
+                                </div>
+                            }
                         </div>
-                        
-                      </div>
                     </div>
-                    }
-                  </div>
-                </div>
-            }
-          </div>
+                }
+            </div>
         </section>
 
     }
