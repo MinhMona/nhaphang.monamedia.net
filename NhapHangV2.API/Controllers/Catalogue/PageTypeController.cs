@@ -111,35 +111,6 @@ namespace NhapHangV2.API.Controllers.Catalogue
             bool success = false;
             if (ModelState.IsValid)
             {
-                int imgIndex = -1;
-                do
-                {
-                    imgIndex = itemModel.Description.IndexOf("src=", imgIndex + 1);
-                    if (imgIndex < 0)
-                    {
-                        break;
-                    }
-                    imgIndex += 5;
-                    int imgStartIndex = imgIndex;
-                    imgIndex = itemModel.Description.IndexOf(',', imgIndex);
-                    imgIndex++;
-                    int imgEndIndex = itemModel.Description.IndexOf('"', imgIndex);
-                    try
-                    {
-                        string content = itemModel.Description.Substring(imgIndex, imgEndIndex - imgIndex);
-                        string fileUploadPath = Path.Combine(env.ContentRootPath, CoreContants.UPLOAD_FOLDER_NAME, CoreContants.UPLOAD_FOLDER_NAME);
-                        string path = Path.Combine(fileUploadPath, Guid.NewGuid().ToString() + ".PNG");
-                        FileUtilities.SaveToPath(path, Convert.FromBase64String(content));
-                        var currentLinkSite = $"{Extensions.HttpContext.Current.Request.Scheme}://{Extensions.HttpContext.Current.Request.Host}/{CoreContants.UPLOAD_FOLDER_NAME}/{CoreContants.UPLOAD_FOLDER_NAME}";
-                        var fileUrl = Path.Combine(currentLinkSite, Path.GetFileName(path));
-                        content = itemModel.Description.Substring(imgStartIndex, imgEndIndex - imgStartIndex);
-                        itemModel.Description = itemModel.Description.Replace(content, fileUrl);
-                    }
-                    catch
-                    {
-                        imgIndex++;
-                    }
-                } while (true);
                 itemModel.Code = AppUtilities.RemoveUnicode(itemModel.Name).ToLower().Replace(" ", "-");
                 var item = mapper.Map<PageType>(itemModel);
                 if (item != null)
