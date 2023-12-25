@@ -1148,7 +1148,7 @@
 
         <section class="sec-blog detail">
             <div class="container">
-                <div class="@(pageConent.SideBar?"left-contain":"left-contain full-screen-contain")">
+                <div class="@(pageConent.SideBar == true ?"left-contain":"left-contain full-screen-contain")">
                     <div class="blog-item" onclick="()=>{console.log('blog')}">
                         <div class="body">
                             <div class="buttons breadcrumb">
@@ -1170,7 +1170,7 @@
                         </div>
                     </div>
                 </div>
-                @if (pageConent.SideBar)
+                @if (pageConent.SideBar == true)
                 {
                     <div class="right-contain">
                         <div class="title" style="margin-bottom: 1rem;background-color: white;border-radius: 8px;margin-left: -1rem;width: fit-content;padding: 0 10px;">

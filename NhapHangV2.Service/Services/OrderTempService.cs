@@ -79,12 +79,17 @@ namespace NhapHangV2.Service.Services
             {
                 try
                 {
-                    if (item.Quantity == 0) //Nếu như bị xuống mức 0 thì xóa nó luôn
+                    if (item.Quantity == 0)
+                    {  //Nếu như bị xuống mức 0 thì xóa nó luôn
                         await this.DeleteAsync(item.Id);
+                        await unitOfWork.SaveAsync();
+                        unitOfWork.Repository<OrderTemp>().Detach(item);
+                    }
                     else
                     {
                         await UpdateAsync(new List<OrderTemp> { item });
-
+                        await unitOfWork.SaveAsync();
+                        unitOfWork.Repository<OrderTemp>().Detach(item);
                         //Cập nhật lại số tiền
                         var orderShopTemp = await orderShopTempService.GetByIdAsync(item.OrderShopTempId ?? 0);
                         orderShopTemp = await orderShopTempService.UpdatePrice(orderShopTemp);
