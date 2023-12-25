@@ -16,5 +16,6 @@ namespace NhapHangV2.Interface.Services
         Task<PagedList<OrderShopTemp>> DeleteOrderShopTempAfterDays(PagedList<OrderShopTemp> orderShopTemps);
         Task<OrderShopTemp> CreateWithMainOrderId(int mainOrderId);
         Task<bool> CreateAddSameAsync(OrderShopTemp item);
+        bool DeleteSelectedId(List<int> ids);
     }
 }

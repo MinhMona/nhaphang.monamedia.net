@@ -56,6 +56,30 @@ namespace NhapHangV2.API.Controllers
         }
 
         /// <summary>
+        /// Xóa shop + những sản phẩm của shop trong giỏ hàng đã chọn
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        [HttpDelete("selected")]
+        [AppAuthorize(new int[] { CoreContants.Delete })]
+        public AppDomainResult DeleteSelectedItem(List<int> ids)
+        {
+            AppDomainResult appDomainResult = new AppDomainResult();
+
+            bool success = orderShopTempService.DeleteSelectedId(ids);
+            if (success)
+            {
+                appDomainResult.ResultCode = (int)HttpStatusCode.OK;
+                appDomainResult.Success = success;
+            }
+            else
+                throw new AppException("Lỗi trong quá trình xử lý");
+
+            return appDomainResult;
+        }
+
+
+        /// <summary>
         /// Lấy danh sách item phân trang
         /// Loại thông báo: 0-Yêu cầu nạp,1-Yêu cầu rút, 2-Đơn hàng, 3-Khiếu nại, 4-Tất cả
         /// </summary>

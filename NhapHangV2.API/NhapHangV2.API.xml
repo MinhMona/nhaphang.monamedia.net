@@ -896,6 +896,13 @@
             <param name="baseSearch"></param>
             <returns></returns>
         </member>
+        <member name="M:NhapHangV2.API.Controllers.OrderShopTempController.DeleteSelectedItem(System.Collections.Generic.List{System.Int32})">
+            <summary>
+            Xóa shop + những sản phẩm của shop trong giỏ hàng đã chọn
+            </summary>
+            <param name="ids"></param>
+            <returns></returns>
+        </member>
         <member name="M:NhapHangV2.API.Controllers.OrderShopTempController.Get(NhapHangV2.Entities.Search.OrderShopTempSearch)">
             <summary>
             Lấy danh sách item phân trang

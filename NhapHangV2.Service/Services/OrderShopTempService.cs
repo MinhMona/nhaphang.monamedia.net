@@ -1,16 +1,10 @@
 ﻿using AutoMapper;
-using DocumentFormat.OpenXml.Spreadsheet;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using NhapHangV2.Entities;
-using NhapHangV2.Entities.DomainEntities;
 using NhapHangV2.Entities.Search;
 using NhapHangV2.Extensions;
 using NhapHangV2.Interface.DbContext;
 using NhapHangV2.Interface.Services;
-using NhapHangV2.Interface.Services.Catalogue;
-using NhapHangV2.Interface.Services.Configuration;
 using NhapHangV2.Interface.UnitOfWork;
 using NhapHangV2.Service.Services.DomainServices;
 using NhapHangV2.Utilities;
@@ -18,7 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Users = NhapHangV2.Entities.Users;
 
@@ -36,6 +29,20 @@ namespace NhapHangV2.Service.Services
         protected override string GetStoreProcName()
         {
             return "OrderShopTemp_GetPagingData";
+        }
+
+        public bool DeleteSelectedId(List<int> ids)
+        {
+            if (ids.Count <= 0)
+                throw new AppException("Không có shop được chọn");
+            string query = "";
+            foreach (int id in ids)
+            {
+                query += $"DELETE OrderShopTemp WHERE Id = {id} AND UID = {LoginContext.Instance.CurrentUser.UserId} " +
+                    $" DELETE OrderTemp WHERE OrderShopTempId = {id} AND UID = {LoginContext.Instance.CurrentUser.UserId} ";
+            }
+            int result = unitOfWork.Repository<OrderShopTemp>().ExecuteNonQuery(query);
+            return result > 0;
         }
 
         public override async Task<OrderShopTemp> GetByIdAsync(int id)
