@@ -12,6 +12,7 @@ namespace NhapHangV2.Models
 {
     public class MainOrderModel : AppDomainModel
     {
+        public string ImageOrigin { get; set; }
         public bool? IsEditFeeBuyProPercent { get; set; }
         public decimal? EditedFeeBuyProPercent { get; set; }
 
@@ -459,10 +460,6 @@ namespace NhapHangV2.Models
         public decimal? FeeWeight { get; set; }
         #endregion
 
-        /// <summary>
-        /// Ảnh sản phẩm
-        /// </summary>
-        public string ImageOrigin { get; set; }
 
         /// <summary>
         /// ID Shop

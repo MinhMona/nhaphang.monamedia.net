@@ -12,6 +12,7 @@ namespace NhapHangV2.Entities
 {
     public class MainOrder : DomainEntities.AppDomain
     {
+        public string ImageOrigin { get; set; }
         public bool? IsEditFeeBuyProPercent { get; set; } = false;
         /// <summary>
         /// Phí bảo hiểm (%)
@@ -415,11 +416,7 @@ namespace NhapHangV2.Entities
         [NotMapped]
         public int TotalLink { get; set; } = 0;
 
-        /// <summary>
-        /// Ảnh sản phẩm
-        /// </summary>
-        [NotMapped]
-        public string ImageOrigin { get; set; } = string.Empty;
+       
 
         /// <summary>
         /// Tên kho VN

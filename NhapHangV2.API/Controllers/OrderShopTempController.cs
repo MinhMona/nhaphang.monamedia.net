@@ -329,7 +329,7 @@ namespace NhapHangV2.API.Controllers
                 string email = model.Email;
 
                 List<MainOrder> mainOrders = new List<MainOrder>();
-
+                
                 foreach (var item in model.ShopPayments) //Thanh toán giỏ hàng
                 {
                     var orderShopTemp = await orderShopTempService.GetByIdAsync(item.ShopId);
@@ -361,7 +361,7 @@ namespace NhapHangV2.API.Controllers
                     //decimal priceCNYAllProduct = 0;
 
                     List<Order> orders = new List<Order>();
-
+                    string imageOrigin = orderTemps[0].ImageOrigin;
                     //Chỗ này khác với MainOrder
                     foreach (var jtem in orderTemps)
                     {
@@ -531,6 +531,7 @@ namespace NhapHangV2.API.Controllers
                     MainOrder mainOrder = new MainOrder
                     {
                         EditedFeeBuyProPercent = orderShopTemp.FeeBuyProPercent,
+                        ImageOrigin = imageOrigin,
                         UID = UID,
                         ShopId = shopId,
                         ShopName = shopName,

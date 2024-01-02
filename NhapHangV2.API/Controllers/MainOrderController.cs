@@ -471,7 +471,7 @@ namespace NhapHangV2.API.Controllers
                 List<string> fileUrls = new List<string>();
 
                 List<Order> listOrder = new List<Order>();
-
+                string imageOrigin = model.Products[0].ImageProduct;
                 foreach (var item in model.Products)
                 {
                     decimal productPriceCNY = item.PriceProduct ?? 0; //Cái này để tính nên phải đặt biến cho nó
@@ -599,6 +599,7 @@ namespace NhapHangV2.API.Controllers
                 MainOrder mainOrder = new MainOrder
                 {
                     EditedFeeBuyProPercent = servicefee,
+                    ImageOrigin = imageOrigin,
 
                     UID = users.Id,
                     ShopId = "",
