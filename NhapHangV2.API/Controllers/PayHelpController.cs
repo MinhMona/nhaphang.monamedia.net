@@ -49,6 +49,18 @@ namespace NhapHangV2.API.Controllers
             payHelpDetailService = serviceProvider.GetRequiredService<IPayHelpDetailService>();
         }
 
+        [HttpGet("count-status")]
+        [AppAuthorize(new int[] { CoreContants.View })]
+        public AppDomainResult CountStatus([FromQuery] PayHelpSearch payHelpSearch)
+        {
+            var transportationsInfor = payHelpService.CountStatus(payHelpSearch);
+            return new AppDomainResult
+            {
+                Data = transportationsInfor,
+                ResultCode = (int)HttpStatusCode.OK,
+                Success = true
+            };
+        }
 
         /// <summary>
         /// Cập nhật các trạng thái như Xóa, Thanh toán của User

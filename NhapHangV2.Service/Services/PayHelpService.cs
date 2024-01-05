@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NhapHangV2.Entities;
@@ -31,10 +32,12 @@ namespace NhapHangV2.Service.Services
         protected readonly IUserInGroupService userInGroupService;
         private readonly INotificationSettingService notificationSettingService;
         private readonly ISendNotificationService sendNotificationService;
+        private readonly IServiceProvider serviceProvider;
 
         public PayHelpService(IServiceProvider serviceProvider, IAppUnitOfWork unitOfWork, IMapper mapper, IAppDbContext Context) : base(unitOfWork, mapper)
         {
             this.Context = Context;
+            this.serviceProvider = serviceProvider;
             userService = serviceProvider.GetRequiredService<IUserService>();
             configurationsService = serviceProvider.GetRequiredService<IConfigurationsService>();
             userInGroupService = serviceProvider.GetRequiredService<IUserInGroupService>();
@@ -45,6 +48,31 @@ namespace NhapHangV2.Service.Services
         protected override string GetStoreProcName()
         {
             return "PayHelp_2_GetPagingData";
+        }
+
+        public List<CountStatusData> CountStatus(PayHelpSearch payHelpSearch)
+        {
+            var storeService = serviceProvider.GetRequiredService<IStoreSqlService<CountStatusData>>();
+            List<SqlParameter> sqlParameters = new List<SqlParameter>();
+            sqlParameters.Add(new SqlParameter("@UID", payHelpSearch.UID));
+            sqlParameters.Add(new SqlParameter("@RoleID", payHelpSearch.RoleID));
+            SqlParameter[] parameters = sqlParameters.ToArray();
+            var data = storeService.GetDataFromStore(parameters, "CountPayHelpStatus");
+            var all = data.Sum(x => x.Quantity);
+            data.Add(new() { Status = -1, Quantity = all });
+            if (data.Count != Enum.GetNames(typeof(StatusPayHelp)).Length + 1)
+            {
+                int j = 0;
+                foreach (var item in Enum.GetValues(typeof(StatusPayHelp)))
+                {
+                    if (data[j].Status != (int)item)
+                        data.Add(new() { Status = (int)item, Quantity = 0 });
+                    else
+                        j++;
+                }
+            }
+
+            return data;
         }
 
         public async Task<bool> UpdateStatus(PayHelp model, int status, int statusOld, decimal? totalPriceVNDOld)

@@ -277,4 +277,17 @@ namespace NhapHangV2.Utilities
         /// </summary>
         public decimal AmountCompleted { get; set; }
     }
+
+    public class CountStatusData
+    {
+        /// <summary>
+        /// Trạng thái
+        /// </summary>
+        public int? Status { get; set; }
+
+        /// <summary>
+        /// Số lượng
+        /// </summary>
+        public int? Quantity { get; set; }
+    }
 }
