@@ -70,9 +70,9 @@ namespace NhapHangV2.API.Controllers
                 }
                 if (mainOrderComplain == null && transOrderComplain == null)
                     throw new KeyNotFoundException("Đơn hàng không tồn tại");
-                else if (mainOrderComplain != null)
+                else if (mainOrderComplain.Id > 0)
                     maxAmountRequest = mainOrderComplain.TotalPriceVND;
-                else if (transOrderComplain != null)
+                else if (transOrderComplain.Id > 0)
                     maxAmountRequest = transOrderComplain.TotalPriceVND;
 
                 if (itemModel.Amount > maxAmountRequest)

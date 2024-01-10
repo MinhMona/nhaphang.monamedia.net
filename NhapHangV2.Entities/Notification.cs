@@ -53,5 +53,8 @@ namespace NhapHangV2.Entities
         public string EmailSubject { get; set; }
         [NotMapped]
         public string EmailContent { get; set; }
+
+        [NotMapped]
+        public int Type { get; set; }
     }
 }
