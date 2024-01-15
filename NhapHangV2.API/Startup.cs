@@ -182,6 +182,7 @@ namespace NhapHangV2.API
             {
                 app.UseExceptionHandler("/error-local-development");
             }
+            
             app.UseMiddleware<ErrorHandlerMiddleware>();
             app.UseMiddleware<JwtMiddleware>();
             app.UseStaticFiles(new StaticFileOptions

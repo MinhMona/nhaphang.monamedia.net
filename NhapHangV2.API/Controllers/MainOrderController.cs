@@ -1426,7 +1426,7 @@ namespace NhapHangV2.API.Controllers
                             $"VALUES({item.Id},{user.Id},N'{historyContentDeposit}',{(int?)TypeHistoryOrderChange.TienDatCoc},'{DateTime.Now}','{user.UserName}',0,1)";
 
                         updateSql += $" INSERT INTO [dbo].[HistoryPayWallet] ([UID] ,[MainOrderId] ,[Amount] ,[Content] ,[MoneyLeft] ,[Type] ,[TradeType] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
-                            $" VALUES ({customer.Id}, {item.Id}, {rollBackAmount}, N'Hoàn tiền đơn hàng vì số tiền đã trả lớn hơn tổng tiền đơn hàng', {customer.Wallet}, {(int)HistoryPayWalletContents.HoanTienDaTraMuaHo},2,'{DateTime.Now}','{user.UserName}',0,1) ";
+                            $" VALUES ({customer.Id}, {item.Id}, {rollBackAmount}, N'Hoàn tiền đơn hàng vì số tiền đã trả lớn hơn tổng tiền đơn hàng', {customer.Wallet},2, {(int)HistoryPayWalletContents.HoanTienDaTraMuaHo}, '{DateTime.Now}','{user.UserName}',0,1) ";
 
                         updateSql += $"UPDATE Users SET Wallet = {customer.Wallet} WHERE Id = {customer.Id}";
 
