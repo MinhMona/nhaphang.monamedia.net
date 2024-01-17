@@ -712,17 +712,23 @@ namespace NhapHangV2.Service.Services
                 && e.WarehouseId == item.WareHouseId
                 && e.ShippingTypeToWareHouseId == item.ShippingTypeId
                 && e.IsHelpMoving == true
-                && totalWeight >= e.WeightFrom && totalWeight < e.WeightTo).FirstOrDefaultAsync();
-            if (warehouseFee == null)
-                throw new KeyNotFoundException("Không tìm thấy bảng giá cân nặng");
-            decimal? warehouseFeePrice = warehouseFee == null ? 0 : warehouseFee.Price;
+                && totalWeight > e.WeightFrom && totalWeight <= e.WeightTo).FirstOrDefaultAsync();
+
+            decimal? warehouseFeePrice = 0;
             if (user.FeeTQVNPerWeight > 0)
             {
                 warehouseFeePrice = user.FeeTQVNPerWeight;
             }
+            else
+            {
+                warehouseFeePrice = warehouseFee.Price ?? 0;
+            }
             decimal? feeWeight = 0;
             feeWeight = totalWeight * warehouseFeePrice;
-
+            if (feeWeight == 0 && totalWeight > 0)
+            {
+                throw new KeyNotFoundException("Không tìm thấy bảng giá cân nặng");
+            }
             //Tiền khối
             decimal? totalVolume = smallPackages.Sum(e => e.VolumePayment);
             var volumeFee = await unitOfWork.Repository<VolumeFee>().GetQueryable().FirstOrDefaultAsync(e => !e.Deleted
@@ -731,15 +737,22 @@ namespace NhapHangV2.Service.Services
                 && e.ShippingTypeToWareHouseId == item.ShippingTypeId
                 && e.IsHelpMoving == true
                 && (totalVolume >= e.VolumeFrom && totalVolume < e.VolumeTo));
-            if (volumeFee == null)
-                throw new KeyNotFoundException("Không tìm thấy bảng giá khối");
-            decimal? volumeFeePrice = volumeFee == null ? 0 : volumeFee.Price;
+
+            decimal? volumeFeePrice = 0;
             if (user.FeeTQVNPerVolume > 0)
             {
                 volumeFeePrice = user.FeeTQVNPerVolume;
             }
+            else
+            {
+                volumeFeePrice = volumeFee.Price ?? 0;
+            }
             decimal? feeVolume = 0;
             feeVolume = totalVolume * volumeFeePrice;
+            if (feeVolume == 0 && totalVolume > 0)
+            {
+                throw new KeyNotFoundException("Không tìm thấy bảng giá khối");
+            }
 
             smallPackages.ForEach(e =>
             {
