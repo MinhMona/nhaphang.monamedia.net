@@ -906,7 +906,7 @@ namespace NhapHangV2.Service.Services
                     if (item.Status < (int)StatusOrderContants.ShopPhatHang)
                     {
                         item.Status = (int)StatusOrderContants.ShopPhatHang;
-                        if(item.DateSendGoods != null)
+                        if (item.DateSendGoods != null)
                         {
                             item.DateSendGoods = currentDate;
                         }
@@ -1243,18 +1243,6 @@ namespace NhapHangV2.Service.Services
                 decimal? feeWeight = 0;
                 decimal? feeVolume = 0;
 
-                //Tiền cân nặng
-                var warehouseFee = await unitOfWork.Repository<WarehouseFee>().GetQueryable()
-                    .Where(e => !e.Deleted &&
-                    e.WarehouseFromId == item.FromPlace &&
-                    e.WarehouseId == item.ReceivePlace &&
-                    e.ShippingTypeToWareHouseId == item.ShippingType &&
-                    e.IsHelpMoving == false &&
-                    (payableWeight >= e.WeightFrom && payableWeight < e.WeightTo)).FirstOrDefaultAsync();
-                if (warehouseFee == null)
-                    throw new KeyNotFoundException("Không tìm thấy bảng giá cân nặng");
-                decimal? warehouseFeePrice = warehouseFee == null ? 1 : warehouseFee.Price;
-
                 if (user.FeeTQVNPerWeight > 0)
                 {
                     feeWeight = payableWeight * user.FeeTQVNPerWeight;
@@ -1263,19 +1251,22 @@ namespace NhapHangV2.Service.Services
                 }
                 else
                 {
-                    feeWeight = payableWeight * warehouseFeePrice;
-                    smallPackage.PriceWeight = warehouseFeePrice;
-                    smallPackage.DonGia = warehouseFeePrice;
+                    //Tiền cân nặng
+                    var warehouseFee = await unitOfWork.Repository<WarehouseFee>().GetQueryable()
+                        .Where(e => !e.Deleted &&
+                        e.WarehouseFromId == item.FromPlace &&
+                        e.WarehouseId == item.ReceivePlace &&
+                        e.ShippingTypeToWareHouseId == item.ShippingType &&
+                        e.IsHelpMoving == false &&
+                        (payableWeight > e.WeightFrom && payableWeight <= e.WeightTo)).FirstOrDefaultAsync();
+                    if (warehouseFee == null && payableWeight != 0)
+                        throw new KeyNotFoundException("Không tìm thấy bảng giá cân nặng");
+
+                    feeWeight = payableWeight * (warehouseFee.Price ?? 0);
+                    smallPackage.PriceWeight = (warehouseFee.Price ?? 0);
+                    smallPackage.DonGia = (warehouseFee.Price ?? 0);
                 }
-                //Tiền khối
-                var volumeFee = await unitOfWork.Repository<VolumeFee>().GetQueryable().FirstOrDefaultAsync(e => !e.Deleted
-                    && e.WarehouseFromId == item.FromPlace
-                    && e.WarehouseId == item.ReceivePlace
-                    && e.ShippingTypeToWareHouseId == item.ShippingType
-                    && e.IsHelpMoving == false
-                    && (smallPackageVolume >= e.VolumeFrom && smallPackageVolume < e.VolumeTo));
-                if (volumeFee == null)
-                    throw new KeyNotFoundException("Không tìm thấy bảng giá khối");
+
                 if (user.FeeTQVNPerVolume > 0)
                 {
                     feeVolume = smallPackageVolume * user.FeeTQVNPerVolume;
@@ -1283,8 +1274,18 @@ namespace NhapHangV2.Service.Services
                 }
                 else
                 {
-                    feeVolume = smallPackageVolume * volumeFee.Price;
-                    smallPackage.PriceVolume = volumeFee.Price;
+                    //Tiền khối
+                    var volumeFee = await unitOfWork.Repository<VolumeFee>().GetQueryable().FirstOrDefaultAsync(e => !e.Deleted
+                        && e.WarehouseFromId == item.FromPlace
+                        && e.WarehouseId == item.ReceivePlace
+                        && e.ShippingTypeToWareHouseId == item.ShippingType
+                        && e.IsHelpMoving == false
+                        && (smallPackageVolume >= e.VolumeFrom && smallPackageVolume < e.VolumeTo));
+                    if (volumeFee == null && smallPackageVolume != 0)
+                        throw new KeyNotFoundException("Không tìm thấy bảng giá khối");
+
+                    feeVolume = smallPackageVolume * (volumeFee.Price ?? 0);
+                    smallPackage.PriceVolume = (volumeFee.Price ?? 0);
                 }
                 smallPackage.TotalPrice = feeVolume > feeWeight ? feeVolume : feeWeight;
 

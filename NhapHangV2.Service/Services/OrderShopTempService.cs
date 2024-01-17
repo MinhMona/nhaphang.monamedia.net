@@ -124,7 +124,10 @@ namespace NhapHangV2.Service.Services
 
                     if (orderTemps >= link)
                         throw new AppException("Đã vượt quá số lượng đặt hàng");
-
+                    if (string.IsNullOrEmpty(item.ShopId) || string.IsNullOrEmpty(item.ShopName))
+                    {
+                        throw new AppException("Không lấy được thông tin shop");
+                    }
                     var orderShopTemp = await unitOfWork.Repository<OrderShopTemp>().GetQueryable()
                         .FirstOrDefaultAsync(x => !x.Deleted && x.UID == UID
                         && x.ShopId.Equals(item.ShopId.Trim()));
@@ -216,7 +219,10 @@ namespace NhapHangV2.Service.Services
 
                     if (orderTemps >= link)
                         throw new AppException("Đã vượt quá số lượng đặt hàng");
-
+                    if (string.IsNullOrEmpty(item.ShopId) || string.IsNullOrEmpty(item.ShopName))
+                    {
+                        throw new AppException("Không lấy được thông tin shop");
+                    }
                     var orderShopTemp = await this.GetSingleAsync(x => !x.Deleted && x.UID == UID
                         && x.ShopId.Equals(item.ShopId.Trim())
                         && x.ShopName.Equals(item.ShopName.Trim()));
@@ -462,7 +468,6 @@ namespace NhapHangV2.Service.Services
                 string[] items = StepPrice.Split('|');
                 if (items.Length - 1 > 0)
                 {
-                    decimal checkto = 0;
                     for (int i = 0; i < items.Length - 1; i++)
                     {
                         var item = items[i];
