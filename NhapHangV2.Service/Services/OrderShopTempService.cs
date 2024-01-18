@@ -345,6 +345,7 @@ namespace NhapHangV2.Service.Services
                         {
                             await unitOfWork.Repository<OrderTemp>().CreateAsync(OrderTemp);
                             await unitOfWork.SaveAsync();
+                            unitOfWork.Repository<OrderTemp>().Detach(OrderTemp);
                         }
                         //À cái này để tính bước nhảy của order
                         //UpdatePriceInsert(UID, OrderTemp.StepPrice, OrderTemp.ItemId);
