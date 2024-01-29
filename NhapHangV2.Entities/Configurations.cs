@@ -11,6 +11,8 @@ namespace NhapHangV2.Entities
 {
     public class Configurations : DomainEntities.AppDomain
     {
+        public bool? IsAppAccepted { get; set; } = false;
+
         #region Cấu hình chung
         /// <summary>
         /// Tên Url

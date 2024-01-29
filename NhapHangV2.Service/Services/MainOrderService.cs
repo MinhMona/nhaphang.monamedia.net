@@ -188,7 +188,7 @@ namespace NhapHangV2.Service.Services
             {
                 exists.Status = (int)StatusOrderContants.DonHuy;
                 unitOfWork.Repository<MainOrder>().Update(exists);
-                var notificationSetting = await notificationSettingService.GetByIdAsync((int)NotificationSettingId.TrangThaiMaVanDon);
+                var notificationSetting = await notificationSettingService.GetByIdAsync((int)NotificationSettingId.TrangThaiMuaHo);
                 sendNotificationService.SendNotification(notificationSetting,
                     new List<string>() { LoginContext.Instance.CurrentUser.UserName, exists.Id.ToString(), GetStatusName((int)StatusOrderContants.DonHuy) },
                     new UserNotification() { UserId = exists.UID, SaleId = exists.SalerId, OrdererId = exists.DatHangId });

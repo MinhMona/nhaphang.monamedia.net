@@ -9,6 +9,8 @@ namespace NhapHangV2.Request
 {
     public class ConfigurationsRequest : AppDomainRequest
     {
+        public bool? IsAppAccepted { get; set; }
+
         #region Cấu hình chung
         /// <summary>
         /// Tên Url

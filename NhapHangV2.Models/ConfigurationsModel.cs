@@ -10,6 +10,8 @@ namespace NhapHangV2.Models
 {
     public class ConfigurationsModel : AppDomainModel
     {
+        public bool? IsAppAccepted { get; set; }
+
         #region Cấu hình chung
         /// <summary>
         /// Tên Url
