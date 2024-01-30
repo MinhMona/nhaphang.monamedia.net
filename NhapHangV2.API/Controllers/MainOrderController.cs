@@ -471,7 +471,7 @@ namespace NhapHangV2.API.Controllers
                 List<string> fileUrls = new List<string>();
 
                 List<Order> listOrder = new List<Order>();
-                string imageOrigin = model.Products[0].ImageProduct;
+                string imageOrigin = model.Products[0].ImageProduct.Replace("%2F", "/").Replace("%3A", ":");
                 foreach (var item in model.Products)
                 {
                     decimal productPriceCNY = item.PriceProduct ?? 0; //Cái này để tính nên phải đặt biến cho nó
