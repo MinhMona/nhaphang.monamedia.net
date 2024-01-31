@@ -361,7 +361,7 @@ namespace NhapHangV2.API.Controllers
                     //decimal priceCNYAllProduct = 0;
 
                     List<Order> orders = new List<Order>();
-                    string imageOrigin = orderTemps[0].ImageOrigin;
+                    string imageOrigin = orderTemps[0].ImageOrigin.Replace("%2F", "/").Replace("%3A", ":");
                     //Chỗ này khác với MainOrder
                     foreach (var jtem in orderTemps)
                     {
