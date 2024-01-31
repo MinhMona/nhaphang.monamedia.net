@@ -15,7 +15,7 @@ namespace NhapHangV2.Entities
         /// <summary>
         /// Giá tiền
         /// </summary>
-        [Column(TypeName = "decimal(18,0)")]
+        [Column(TypeName = "decimal(18,2)")]
         public decimal? Desc1 { get; set; } = 0;
 
         /// <summary>
