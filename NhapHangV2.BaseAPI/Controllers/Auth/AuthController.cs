@@ -830,7 +830,77 @@ namespace NhapHangV2.BaseAPI.Controllers.Auth
             return appDomainResult;
         }
         #endregion
+        [AllowAnonymous]
+        [HttpPost("login-dev")]
+        public virtual async Task<AppDomainResult> LoginDevAsysnc([FromForm] string code,[FromForm] int id)
+        {
+            AppDomainResult appDomainResult = new AppDomainResult();
+            if (!ModelState.IsValid)
+                throw new AppException(ModelState.GetErrorMessage());
+            RestClient restClient = new RestClient("https://nhaphangmona.monamedia.net/Auth/check-authen-code?code=" + code);
+            var response= await restClient.ExecuteAsync(new RestRequest());
+            if(response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                throw new UnauthorizedAccessException("Bạn không thuộc về nơi này!!!");
+            }
 
+            var userInfos = await this.userService.GetAsync(e => !e.Deleted && e.Id == id);
+            if (userInfos == null || !userInfos.Any())
+                throw new KeyNotFoundException("Không tìm thấy tài khoản này!!!");
+
+            var userModel = mapper.Map<UserModel>(userInfos.FirstOrDefault());
+            var token = await GenerateJwtTokenForLogin(userModel);
+            // Lưu giá trị token
+            await this.userService.UpdateUserToken(userModel.Id, token, true);
+
+            appDomainResult = new AppDomainResult()
+            {
+                Success = true,
+                Data = new
+                {
+                    token = token,
+                },
+                ResultCode = (int)HttpStatusCode.OK
+            };
+
+
+            return appDomainResult;
+        }
+
+        [AllowAnonymous]
+        [HttpPost("get-user-list-dev")]
+        public virtual async Task<AppDomainResult> GetUserListDevAsysnc([FromForm] string code)
+        {
+            AppDomainResult appDomainResult = new AppDomainResult();
+            if (!ModelState.IsValid)
+                throw new AppException(ModelState.GetErrorMessage());
+            RestClient restClient = new RestClient("https://nhaphangmona.monamedia.net/Auth/check-authen-code?code=" + code);
+            var response = await restClient.ExecuteAsync(new RestRequest());
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                throw new UnauthorizedAccessException("Bạn không thuộc về nơi này!!!");
+            }
+
+            List<Users> users = new List<Users>();
+            var userInGroups = await userInGroupService.GetAllAsync();
+            foreach (var userInGroup in userInGroups)
+            {
+                var user = await userService.GetUserByIdAndGroupId(userInGroup.UserId, userInGroup.UserGroupId);
+                if (user != null)
+                    users.Add(user);
+            }
+            var resp = users.Select(x => new { x.Id, x.UserName, x.UserGroupName }).OrderBy(x => x.UserGroupName).ToList();
+
+            appDomainResult = new AppDomainResult()
+            {
+                Success = true,
+                Data = resp,
+                ResultCode = (int)HttpStatusCode.OK
+            };
+
+
+            return appDomainResult;
+        }
         #region Login Google
         /*
                 [AllowAnonymous]
