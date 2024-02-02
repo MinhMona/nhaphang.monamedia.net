@@ -887,9 +887,12 @@ namespace NhapHangV2.BaseAPI.Controllers.Auth
             {
                 var user = await userService.GetUserByIdAndGroupId(userInGroup.UserId, userInGroup.UserGroupId);
                 if (user != null)
+                {
+                    user.UserGroupId  = userInGroup.UserGroupId;
                     users.Add(user);
+                }
             }
-            var resp = users.Select(x => new { x.Id, x.UserName, x.UserGroupName }).OrderBy(x => x.UserGroupName).ToList();
+            var resp = users.Select(x => new { x.Id, x.UserName, x.UserGroupName, x.UserGroupId }).OrderBy(x => x.UserGroupName).ToList();
 
             appDomainResult = new AppDomainResult()
             {
