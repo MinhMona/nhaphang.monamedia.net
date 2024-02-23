@@ -721,7 +721,7 @@ namespace NhapHangV2.Service.Services
             }
             else
             {
-                warehouseFeePrice = warehouseFee.Price ?? 0;
+                warehouseFeePrice = warehouseFee?.Price ?? 0;
             }
             decimal? feeWeight = 0;
             feeWeight = totalWeight * warehouseFeePrice;
@@ -745,7 +745,7 @@ namespace NhapHangV2.Service.Services
             }
             else
             {
-                volumeFeePrice = volumeFee.Price ?? 0;
+                volumeFeePrice = volumeFee?.Price ?? 0;
             }
             decimal? feeVolume = 0;
             feeVolume = totalVolume * volumeFeePrice;

@@ -1285,8 +1285,8 @@ namespace NhapHangV2.Service.Services
                 }
                 else
                 {
-                    feeVolume = smallPackageVolume * (volumeFee.Price ?? 0);
-                    smallPackage.PriceVolume = (volumeFee.Price ?? 0);
+                    feeVolume = smallPackageVolume * (volumeFee?.Price ?? 0);
+                    smallPackage.PriceVolume = (volumeFee?.Price ?? 0);
                 }
                 if (feeVolume == 0 && smallPackageVolume != 0)
                     throw new KeyNotFoundException("Không tìm thấy bảng giá khối");

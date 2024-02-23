@@ -429,7 +429,8 @@ namespace NhapHangV2.API.Controllers
             AppDomainImportResult appDomainImportResult = new AppDomainImportResult();
             using (HttpClient client = new HttpClient())
             {
-                using Stream streamToReadFrom = await client.GetStreamAsync(request.FileURL);
+                using Stream streamToReadFrom = await client.GetStreamAsync(Request.Scheme+"://"+ Request.Host.ToString()+ request.FileURL);
+                //using Stream streamToReadFrom = await client.GetStreamAsync("https://nhaphang.monamedia.net" + request.FileURL);
                 var webRoot = env.ContentRootPath;
                 string fileToWriteTo = Path.Combine(webRoot, CoreContants.UPLOAD_FOLDER_NAME, CoreContants.TEMP_FOLDER_NAME, "SmallPackageTemp.xlsx");
 
