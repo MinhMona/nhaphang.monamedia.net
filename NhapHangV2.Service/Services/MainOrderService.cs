@@ -564,7 +564,7 @@ namespace NhapHangV2.Service.Services
 
                             mainOrder.Deposit = depositPayment;
                             mainOrder.Status = (int)StatusOrderContants.DaCoc;
-                            if (mainOrder.Deposit == null)
+                            if (mainOrder.DepositDate == null)
                                 mainOrder.DepositDate = currentDate;
                             unitOfWork.Repository<MainOrder>().Update(mainOrder);
 
