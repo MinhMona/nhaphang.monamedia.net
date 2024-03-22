@@ -45,6 +45,7 @@ namespace NhapHangV2.API.Controllers
         public async Task<AppDomainResult> Tracking(string transactionCode) //Giống tracking của SmallpackageController
         {
             AppDomainResult appDomainResult = new AppDomainResult();
+            transactionCode = transactionCode.Trim();
             if (string.IsNullOrEmpty(transactionCode))
                 throw new KeyNotFoundException("Code không tồn tại");
 

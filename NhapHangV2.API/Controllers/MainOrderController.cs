@@ -564,7 +564,7 @@ namespace NhapHangV2.API.Controllers
                     {
                         staffIncomeSaler.UID = sale.Id;
 
-                        int d = sale.Created.Value.Subtract(sale.Created.Value).Days;
+                        int d = DateTime.Now.Subtract(users.Created.Value).Days;
                         if (d > 90)
                         {
                             staffIncomeSaler.TotalPriceReceive = feebp * salePercentAf3M / 100;
@@ -758,6 +758,7 @@ namespace NhapHangV2.API.Controllers
                 decimal salePercent = Convert.ToDecimal(configurations.SalePercent);
                 decimal salePercentAf3M = Convert.ToDecimal(configurations.SalePercentAfter3Month);
                 decimal datHangPercent = Convert.ToDecimal(configurations.DatHangPercent);
+                var customer = await userService.GetByIdAsync(item.UID ?? 0);
 
                 //Saler
                 if (itemModel.SalerId != 0 && itemModel.SalerId != item.SalerId)
@@ -793,7 +794,7 @@ namespace NhapHangV2.API.Controllers
                 {
                     //Tính
                     var saler = await userService.GetByIdAsync(itemModel.SalerId ?? 0);
-                    int d = saler.Created.Value.Subtract(saler.Created.Value).Days;
+                    int d = item.Created.Value.Subtract(customer.Created.Value).Days;
                     if (d > 90)
                     {
                         staffIncomeSaler.TotalPriceReceive = (item.FeeBuyPro ?? 0) * salePercentAf3M / 100;
@@ -1105,10 +1106,10 @@ namespace NhapHangV2.API.Controllers
                         smallPackage.Created = existsSmallPackage.Created;
                         smallPackage.CreatedBy = existsSmallPackage.CreatedBy;
                         smallPackage.UserNote = item.Note;
-                        if (smallPackage.OrderTransactionCode != existsSmallPackage.OrderTransactionCode)
+                        if (smallPackage.OrderTransactionCode.Trim() != existsSmallPackage.OrderTransactionCode.Trim())
                         {
                             string historyContent = String.Format("{0} đã cập nhật mã vận đơn kiện hàng của đơn hàng ID là: {1}, Mã vận đơn từ: {2}, sang {3}.",
-                                user.UserName, item.Id, existsSmallPackage.OrderTransactionCode, smallPackage.OrderTransactionCode);
+                                user.UserName, item.Id, existsSmallPackage.OrderTransactionCode, smallPackage.OrderTransactionCode.Trim());
                             updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
                                 $"VALUES({item.Id},{user.Id},N'{historyContent}',{0},'{DateTime.Now}','{user.UserName}',0,1)";
                         }
@@ -1124,7 +1125,7 @@ namespace NhapHangV2.API.Controllers
                         {
                             var mainOrderCodeOld = await mainOrderCodeService.GetByIdAsync(existsSmallPackage.MainOrderCodeId ?? 0);
                             string historyContent = String.Format("{0} đã cập nhật mã đơn hàng kiện hàng của đơn hàng ID là: {1}, Mã vận đơn: {2}, Mã đơn hàng từ: {3}, sang: {4}.",
-                                user.UserName, item.Id, smallPackage.OrderTransactionCode, mainOrderCodeOld == null ? 0 : mainOrderCodeOld.Code, mainOrderCode == null ? 0 : mainOrderCode.Code);
+                                user.UserName, item.Id, smallPackage.OrderTransactionCode.Trim(), mainOrderCodeOld == null ? 0 : mainOrderCodeOld.Code, mainOrderCode == null ? 0 : mainOrderCode.Code);
                             updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
                                 $"VALUES({item.Id},{user.Id},N'{historyContent}',{0},'{DateTime.Now}','{user.UserName}',0,1)";
                         }
@@ -1157,7 +1158,7 @@ namespace NhapHangV2.API.Controllers
                                     break;
                             }
                             string historyContent = String.Format("{0} đã cập nhật trạng thái kiện hàng của đơn hàng ID là: {1}, Mã vận đơn: {2}, Trạng thái kiện từ: \"{3}\", sang: \"{4}\".",
-                                user.UserName, item.Id, smallPackage.OrderTransactionCode, statusNameOld, statusNameNew);
+                                user.UserName, item.Id, smallPackage.OrderTransactionCode.Trim(), statusNameOld, statusNameNew);
                             updateSql += " INSERT INTO [dbo].[HistoryOrderChange] ([MainOrderId] ,[UID] ,[HistoryContent] ,[Type] ,[Created] ,[CreatedBy] ,[Deleted] ,[Active]) " +
                                 $"VALUES({item.Id},{user.Id},N'{historyContent}',{0},'{DateTime.Now}','{user.UserName}',0,1)";
 
@@ -1476,7 +1477,7 @@ namespace NhapHangV2.API.Controllers
                     {
                         //Tính
                         var saler = await userService.GetByIdAsync(itemModel.SalerId ?? 0);
-                        int d = saler.Created.Value.Subtract(saler.Created.Value).Days;
+                        int d = item.Created.Value.Subtract(customer.Created.Value).Days;
                         if (d > 90)
                         {
                             staffIncomeSaler.TotalPriceReceive = (itemModel.FeeBuyPro ?? 0) * salePercentAf3M / 100;

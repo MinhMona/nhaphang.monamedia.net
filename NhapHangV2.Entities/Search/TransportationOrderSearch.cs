@@ -9,6 +9,7 @@ namespace NhapHangV2.Entities.Search
 {
     public class TransportationOrderSearch : BaseSearch
     {
+        public bool? IsShipRequest { get; set; }
         /// <summary>
         /// ID User
         /// </summary>

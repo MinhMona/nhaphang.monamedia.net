@@ -12,6 +12,9 @@ namespace NhapHangV2.Entities
 {
     public class TransportationOrder : DomainEntities.AppDomain
     {
+        public DateTime? DateShipRequest { get; set; }
+
+        public bool? IsShipRequest { get; set; }
         public int? SmallPackageId { get; set; } = 0;
 
         /// <summary>

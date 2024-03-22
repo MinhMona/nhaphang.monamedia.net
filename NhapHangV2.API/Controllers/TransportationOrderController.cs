@@ -149,7 +149,7 @@ namespace NhapHangV2.API.Controllers
                 if (user.Currency > 0)
                     currency = user.Currency ?? 0;
 
-                List<SmallPackageRequest> listSmallPackages = itemModel.SmallPackages.DistinctBy(x => x.OrderTransactionCode).ToList();
+                List<SmallPackageRequest> listSmallPackages = itemModel.SmallPackages.DistinctBy(x => x.OrderTransactionCode.Trim()).ToList();
                 foreach (var list in listSmallPackages)
                 {
                     TransportationOrder data = new TransportationOrder();
@@ -161,7 +161,7 @@ namespace NhapHangV2.API.Controllers
 
                     data.Status = (int)StatusGeneralTransportationOrder.ChoDuyet;
                     data.Note = list.UserNote;
-                    data.OrderTransactionCode = list.OrderTransactionCode.Replace(" ", "");
+                    data.OrderTransactionCode = list.OrderTransactionCode.Trim().Replace(" ", "");
                     data.IsCheckProduct = list.IsCheckProduct;
                     data.IsInsurance = list.IsInsurance;
                     data.IsPacked = list.IsPacked;

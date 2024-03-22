@@ -896,9 +896,9 @@ namespace NhapHangV2.Service.Services
                     smallPackage.UID = userMainOrder.Id;
                     smallPackage.MainOrderId = item.Id;
 
-                    exists = await unitOfWork.Repository<SmallPackage>().GetQueryable().Where(x => !x.Deleted && x.OrderTransactionCode.Equals(smallPackage.OrderTransactionCode)).FirstOrDefaultAsync();
+                    exists = await unitOfWork.Repository<SmallPackage>().GetQueryable().Where(x => !x.Deleted && x.OrderTransactionCode.Trim().Equals(smallPackage.OrderTransactionCode.Trim())).FirstOrDefaultAsync();
                     if (exists != null)
-                        throw new AppException(string.Format("Mã vận đơn {0} đã tồn tại", smallPackage.OrderTransactionCode));
+                        throw new AppException(string.Format("Mã vận đơn {0} đã tồn tại", smallPackage.OrderTransactionCode.Trim()));
 
                     await unitOfWork.Repository<SmallPackage>().CreateAsync(smallPackage);
                     await unitOfWork.SaveAsync();
@@ -906,7 +906,7 @@ namespace NhapHangV2.Service.Services
                     if (item.Status < (int)StatusOrderContants.ShopPhatHang)
                     {
                         item.Status = (int)StatusOrderContants.ShopPhatHang;
-                        if (item.DateSendGoods != null)
+                        if (item.DateSendGoods == null)
                         {
                             item.DateSendGoods = currentDate;
                         }

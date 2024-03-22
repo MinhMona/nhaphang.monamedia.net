@@ -12,6 +12,9 @@ namespace NhapHangV2.Entities
 {
     public class MainOrder : DomainEntities.AppDomain
     {
+        public DateTime? DateShipRequest { get; set; }
+
+        public bool? IsShipRequest { get; set; }
         public string ImageOrigin { get; set; }
         public bool? IsEditFeeBuyProPercent { get; set; } = false;
         /// <summary>

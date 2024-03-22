@@ -10,6 +10,7 @@ namespace NhapHangV2.Entities.Search
 {
     public class MainOrderSearch : BaseSearch
     {
+        public bool? IsShipRequest { get; set; }
         /// <summary>
         /// Nếu là trang quản lý thì bỏ trống
         /// </summary>

@@ -494,7 +494,7 @@ namespace NhapHangV2.API.Controllers
                         {
                             staffIncomeSaler.UID = sale.Id;
 
-                            int d = sale.Created.Value.Subtract(sale.Created.Value).Days;
+                            int d = DateTime.Now.Subtract(users.Created.Value).Days;
                             if (d > 90)
                             {
                                 staffIncomeSaler.TotalPriceReceive = feebp * salePercentAf3M / 100;

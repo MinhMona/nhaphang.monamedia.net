@@ -93,6 +93,7 @@ namespace NhapHangV2.Extensions
                 {
                     result.ResultCode = (int)HttpStatusCode.Unauthorized;
                     result.ResultMessage = "Unauthorized";
+                    context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                 }
                 await context.Response.WriteAsync(result.ToString());
             }

@@ -36,7 +36,6 @@ namespace NhapHangV2.Entities
         /// <summary>
         /// Nội dung
         /// </summary>
-        [StringLength(100)]
         public string ComplainText { get; set; } = string.Empty;
 
         /// <summary>

@@ -12,6 +12,9 @@ namespace NhapHangV2.Models
 {
     public class TransportationOrderModel : AppDomainModel
     {
+        public DateTime? DateShipRequest { get; set; }
+
+        public bool? IsShipRequest { get; set; }
         /// <summary>
         /// ID User
         /// </summary>

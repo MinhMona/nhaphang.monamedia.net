@@ -169,6 +169,10 @@ namespace NhapHangV2.Models.AutoMapper
             CreateMap<ContactUsRequest, ContactUs>().ReverseMap();
             CreateMap<PagedList<ContactUsModel>, PagedList<ContactUs>>().ReverseMap();
 
+            CreateMap<ShipRequestModel, ShipRequest>().ReverseMap();
+            CreateMap<ShipRequestRequest, ShipRequest>().ReverseMap();
+            CreateMap<PagedList<ShipRequestModel>, PagedList<ShipRequest>>().ReverseMap();
+
             #region Auth
             CreateMap<PermissionModel, Permissions>().ReverseMap();
             //CreateMap<PermissionRequest, Permissions>().ReverseMap();

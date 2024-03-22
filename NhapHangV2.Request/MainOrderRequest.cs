@@ -11,6 +11,9 @@ namespace NhapHangV2.Request
 {
     public class MainOrderRequest : AppDomainRequest
     {
+        public DateTime? DateShipRequest { get; set; }
+
+        public bool? IsShipRequest { get; set; }
         public string? ImageOrigin { get; set; }
         public bool? IsEditFeeBuyProPercent { get; set; }
         public decimal? EditedFeeBuyProPercent { get; set; }

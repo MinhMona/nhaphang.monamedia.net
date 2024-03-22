@@ -139,13 +139,13 @@ namespace NhapHangV2.Service.Services
                     {
                         if (item.ConfirmDate == null)
                             item.ConfirmDate = DateTime.Now;
-                        var smallPackage = unitOfWork.Repository<SmallPackage>().GetQueryable().Where(x => x.OrderTransactionCode.Equals(item.OrderTransactionCode)).FirstOrDefault();
+                        var smallPackage = unitOfWork.Repository<SmallPackage>().GetQueryable().Where(x => x.OrderTransactionCode.Trim().Equals(item.OrderTransactionCode.Trim())).FirstOrDefault();
                         if (smallPackage == null)
                         {
                             smallPackage = new SmallPackage();
                             smallPackage.UID = item.UID;
                             smallPackage.TransportationOrderId = item.Id;
-                            smallPackage.OrderTransactionCode = item.OrderTransactionCode;
+                            smallPackage.OrderTransactionCode = item.OrderTransactionCode.Trim();
                             smallPackage.ProductType = item.Category;
                             smallPackage.BigPackageId = 0;
                             smallPackage.FeeShip = smallPackage.Weight = 0;
@@ -174,7 +174,7 @@ namespace NhapHangV2.Service.Services
                                 {
                                     sm.DonGia = item.FeeWeightPerKg;
                                     sm.PriceVolume = item.FeePerVolume;
-                                    sm.OrderTransactionCode = sm.OrderTransactionCode.Replace(" ", "");
+                                    sm.OrderTransactionCode = sm.OrderTransactionCode.Trim().Replace(" ", "");
                                     unitOfWork.Repository<SmallPackage>().Update(sm);
                                 }
                             }
@@ -254,7 +254,7 @@ namespace NhapHangV2.Service.Services
                         {
                             smallPackage.DonGia = item.FeeWeightPerKg;
                             smallPackage.PriceVolume = item.FeePerVolume;
-                            smallPackage.OrderTransactionCode = smallPackage.OrderTransactionCode.Replace(" ", "");
+                            smallPackage.OrderTransactionCode = smallPackage.OrderTransactionCode.Trim().Replace(" ", "");
                             smallPackage.Status = (int)smallPackageStatus;
                             unitOfWork.Repository<SmallPackage>().Update(smallPackage);
                         }
@@ -308,7 +308,7 @@ namespace NhapHangV2.Service.Services
                     for (int i = 0; i < items.Count; i++)
                     {
                         var item = items[i];
-                        var smallPackage = await unitOfWork.Repository<SmallPackage>().GetQueryable().FirstOrDefaultAsync(x => x.OrderTransactionCode == item.OrderTransactionCode && x.Status != (int)StatusSmallPackage.DaHuy);
+                        var smallPackage = await unitOfWork.Repository<SmallPackage>().GetQueryable().FirstOrDefaultAsync(x => x.OrderTransactionCode.Trim() == item.OrderTransactionCode.Trim() && x.Status != (int)StatusSmallPackage.DaHuy);
                         if (smallPackage != null)
                         {
                             if ((smallPackage?.MainOrderId ?? 0) == 0 && (smallPackage?.TransportationOrderId ?? 0) == 0)

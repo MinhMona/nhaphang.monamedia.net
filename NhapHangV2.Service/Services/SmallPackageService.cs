@@ -79,39 +79,71 @@ namespace NhapHangV2.Service.Services
                 }
             }
         }
-        public void CreateSmallPackageTool(List<SmallPackageToolRequest> requests)
+        public async Task<bool> CreateSmallPackageTool(List<SmallPackageToolRequest> requests)
         {
+            string sql = "";
             try
             {
                 var currentUser = LoginContext.Instance.CurrentUser;
                 var currentDate = DateTime.Now;
-                string sql = "";
                 int i = 0;
                 foreach (var request in requests)
                 {
-                    sql += $"DECLARE @UID{i} INT = (SELECT UID FROM MainOrder WHERE Id = {request.MainOrderId}) " +
-                        $"DECLARE @MVD{i} INT = (SELECT COUNT(Id) FROM SmallPackage WHERE OrderTransactionCode = '{request.OrdertransactionCode}') " +
-                        $"IF(@UID{i} > 0 AND @MVD{i} < 1) " +
-                        $"BEGIN " +
-                        $"INSERT INTO SmallPackage(MainOrderId, UID, OrderTransactionCode, FeeShip, " +
-                        $"Weight,Status,FloatingStatus,FloatingUserName,FloatingUserPhone,IsTemp,IsLost,IsHelpMoving, " +
-                        $"TotalPrice,StaffTQWarehouse,StaffVNWarehouse,StaffVNOutWarehouse,CurrentPlaceId, " +
-                        $"MainOrderCodeId,DonGia,PriceWeight,Created,CreatedBy,Deleted,Active,IsPayment,PriceVolume,VolumePayment) " +
-                        $"VALUES ({request.MainOrderId}, @UID{i}, N'{request.OrdertransactionCode}', 0, " +
-                        $"0,{(int)StatusSmallPackage.MoiTao},0,'','',0,0,0, " +
-                        $"0,'','','',0, " +
-                        $"{request.MainOrderCodeId}, 0,0,'{currentDate}',N'{currentUser.UserName}',0,1,0,0,0) " +
-                        $"INSERT INTO HistoryOrderChange(MainOrderId, UID, HistoryContent,Type,Created,CreatedBy,Deleted,Active) " +
-                        $"VALUES ({request.MainOrderId}, {currentUser.UserId}, N'{currentUser.UserName} đã thêm mã vận đơn {request.OrdertransactionCode} vào đơn hàng #{request.MainOrderId} bằng công cụ',11, '{currentDate}', N'{currentUser.UserName}',0,1) " +
-                        $"END ";
-                    i++;
+                    var mainOrderCode = await unitOfWork.Repository<MainOrderCode>().GetQueryable().FirstOrDefaultAsync(x => !x.Deleted && x.Code == request.MainOrderCode);
+                    if (mainOrderCode != null)
+                    {
+                        sql += $"DECLARE @CountMVDMainOrder{i} INT = (SELECT COUNT(Id) FROM SmallPackage WHERE MainOrderId = '{request.MainOrderId}' AND Deleted = 0) " +
+                            $"DECLARE @UID{i} INT = (SELECT UID FROM MainOrder WHERE Id = {request.MainOrderId} AND Deleted = 0) " +
+                            $"DECLARE @MVD{i} INT = (SELECT COUNT(Id) FROM SmallPackage WHERE OrderTransactionCode = '{request.OrderTransactionCode}' AND Deleted = 0) " +
+                            $"IF(@UID{i} > 0 ) " +
+                            $"BEGIN " +
+                            $"IF (@MVD{i} < 1) " +
+                            $"BEGIN " +
+                            $"INSERT INTO SmallPackage(MainOrderId, UID, OrderTransactionCode, FeeShip, " +
+                            $"Weight,Status,FloatingStatus,FloatingUserName,FloatingUserPhone,IsTemp,IsLost,IsHelpMoving, " +
+                            $"TotalPrice,StaffTQWarehouse,StaffVNWarehouse,StaffVNOutWarehouse,CurrentPlaceId, " +
+                            $"MainOrderCodeId,DonGia,PriceWeight,Created,CreatedBy,Deleted,Active,IsPayment,PriceVolume,VolumePayment) " +
+                            $"VALUES ({request.MainOrderId}, @UID{i}, N'{request.OrderTransactionCode}', 0, " +
+                            $"0,{(int)StatusSmallPackage.MoiTao},0,'','',0,0,0, " +
+                            $"0,'','','',0, " +
+                            $"{mainOrderCode.Id}, 0,0,'{currentDate}',N'{currentUser.UserName}',0,1,0,0,0) " +
+                            $"INSERT INTO HistoryOrderChange(MainOrderId, UID, HistoryContent,Type,Created,CreatedBy,Deleted,Active) " +
+                            $"VALUES ({request.MainOrderId}, {currentUser.UserId}, N'{currentUser.UserName} đã thêm mã vận đơn {request.OrderTransactionCode} vào đơn hàng #{request.MainOrderId} bằng công cụ',11, '{currentDate}', N'{currentUser.UserName}',0,1) " +
+                            $"END " +
+                            $"ELSE " +
+                            $"BEGIN " +
+                            $"DECLARE @MVDID{i} INT = (SELECT Id FROM SmallPackage WHERE OrderTransactionCode = '{request.OrderTransactionCode}' AND Deleted = 0 AND (MainOrderId IS NULL OR MainOrderId = 0) AND (TransportationOrderId IS NULL OR TransportationOrderId = 0)) " +
+                            $"IF(@MVDID{i} > 0) " +
+                            $"BEGIN " +
+                            $"UPDATE SmallPackage SET MainOrderId = {request.MainOrderId}, MainOrderCodeId = {mainOrderCode.Id}, UID = @UID{i} WHERE Id = @MVDID{i} " +
+                            $"INSERT INTO HistoryOrderChange(MainOrderId, UID, HistoryContent,Type,Created,CreatedBy,Deleted,Active) " +
+                            $"VALUES ({request.MainOrderId}, {currentUser.UserId}, N'{currentUser.UserName} đã gán kiện trôi nổi {request.OrderTransactionCode} vào đơn hàng #{request.MainOrderId} bằng công cụ',11, '{currentDate}', N'{currentUser.UserName}',0,1) " +
+                            $"END " +
+                            $"END " +
+                            $"END " +
+                            $"DECLARE @CountMVD{i} INT = (SELECT COUNT(Id) FROM SmallPackage WHERE MainOrderId = '{request.MainOrderId}' AND Deleted = 0) " +
+                            $"IF(@CountMVD{i} = 1 AND @CountMVDMainOrder{i} = 0) " +
+                            $"BEGIN " +
+                            $"UPDATE MainOrder SET Status = {(int)StatusOrderContants.ShopPhatHang}, DateSendGoods = '{currentDate}' WHERE Id = {request.MainOrderId} " +
+                            $"INSERT INTO HistoryOrderChange(MainOrderId, UID, HistoryContent,Type,Created,CreatedBy,Deleted,Active) " +
+                            $"VALUES ({request.MainOrderId}, {currentUser.UserId}, N'{currentUser.UserName} đã đổi trạng thái đơn hàng #{request.MainOrderId} sang Shop phát hàng bằng công cụ',11, '{currentDate}', N'{currentUser.UserName}',0,1) " +
+                            $"END ";
+                        i++;
+                    }
                 }
-                unitOfWork.Repository<SmallPackage>().ExecuteNonQuery(sql);
+                if (!string.IsNullOrEmpty(sql))
+                {
+                    unitOfWork.Repository<SmallPackage>().ExecuteNonQuery(sql);
+                    return true;
+                }
+                else
+                {
+                    throw new AppException("Lệnh truy vấn rỗng");
+                }
             }
             catch
-            (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new AppException($"Lỗi thực thi truy vấn: {sql}");
             }
         }
         protected override string GetStoreProcName()
@@ -779,7 +811,7 @@ namespace NhapHangV2.Service.Services
                                 else
                                 {
                                     if (transportationOrder == null || transportationOrder.Id == 0) break;
-                                    var transportationOrderOld = await unitOfWork.Repository<TransportationOrder>().GetQueryable().FirstOrDefaultAsync(x=>x.Id == transportationOrder.Id);
+                                    var transportationOrderOld = await unitOfWork.Repository<TransportationOrder>().GetQueryable().FirstOrDefaultAsync(x => x.Id == transportationOrder.Id);
                                     if (transportationOrder.Status < (int)StatusGeneralTransportationOrder.VeKhoVN)
                                         transportationOrder.Status = (int)StatusGeneralTransportationOrder.VeKhoVN;
                                     if (transportationOrder.VNDate == null)
@@ -930,13 +962,14 @@ namespace NhapHangV2.Service.Services
                 HashSet<string> checkSet = new HashSet<string>();
                 int updateCount = 0;
                 var historyOrderChanges = new List<HistoryOrderChange>();
+                var historyTransOrderChanges = new List<HistoryOrderChange>();
                 var mainOrders = new List<MainOrder>();
                 var transOrders = new List<TransportationOrder>();
                 foreach (var catalogueMapper in catalogueMappers)
                 {
-                    string orderTransactionCode = catalogueMapper.OrderTransactionCode;
+                    string orderTransactionCode = catalogueMapper.OrderTransactionCode.Trim();
                     decimal weightOld = 0;
-                    var smallPackage = await Queryable.Where(e => !e.Deleted && e.OrderTransactionCode.Equals(orderTransactionCode)).FirstOrDefaultAsync();
+                    var smallPackage = await Queryable.Where(e => !e.Deleted && e.OrderTransactionCode.Trim().Equals(orderTransactionCode)).FirstOrDefaultAsync();
                     if (smallPackage != null)
                     {
                         weightOld = smallPackage.Weight ?? 0;
@@ -945,14 +978,18 @@ namespace NhapHangV2.Service.Services
                         if (type == 2)
                         {
                             smallPackage.Status = (int)StatusSmallPackage.XuatKhoTQ;
+                            if (smallPackage.DateOutTQ == null)
+                                smallPackage.DateOutTQ = currentDate;
+                            smallPackage.StaffOutTQ = currentUser.UserName;
                         }
                         else
                         {
                             smallPackage.Status = (int)StatusSmallPackage.VeKhoTQ;
+                            if (smallPackage.DateInTQWarehouse == null)
+                                smallPackage.DateInTQWarehouse = currentDate;
+                            smallPackage.StaffTQWarehouse = currentUser.UserName;
                         }
-                        smallPackage.DateInTQWarehouse = currentDate;
-                        smallPackage.StaffTQWarehouse = currentUser.UserName;
-                        if (!checkSet.Add(catalogueMapper.OrderTransactionCode))
+                        if (!checkSet.Add(orderTransactionCode))
                         {
                             duplicateCount++;
                         }
@@ -964,7 +1001,7 @@ namespace NhapHangV2.Service.Services
                     //Tạo mã vận đơn mới
                     else if (smallPackage == null)
                     {
-                        if (!checkSet.Add(catalogueMapper.OrderTransactionCode))
+                        if (!checkSet.Add(orderTransactionCode))
                         {
                             duplicateCount++;
                         }
@@ -976,13 +1013,18 @@ namespace NhapHangV2.Service.Services
                         if (type == 2)
                         {
                             smallPackage.Status = (int)StatusSmallPackage.XuatKhoTQ;
+                            if (smallPackage.DateOutTQ == null)
+                                smallPackage.DateOutTQ = currentDate;
+                            smallPackage.StaffOutTQ = currentUser.UserName;
                         }
                         else
                         {
                             smallPackage.Status = (int)StatusSmallPackage.VeKhoTQ;
+                            if (smallPackage.DateInTQWarehouse == null)
+                                smallPackage.DateInTQWarehouse = currentDate;
+                            smallPackage.StaffTQWarehouse = currentUser.UserName;
                         }
-                        smallPackage.DateInTQWarehouse = currentDate;
-                        smallPackage.StaffTQWarehouse = currentUser.UserName;
+
                         await unitOfWork.Repository<SmallPackage>().CreateAsync(smallPackage);
                         await unitOfWork.SaveAsync();
                         unitOfWork.Repository<SmallPackage>().Detach(smallPackage);
@@ -1095,13 +1137,29 @@ namespace NhapHangV2.Service.Services
                         {
                             if (transOrder.ComingVNDate == null)
                                 transOrder.ComingVNDate = currentDate;
-                            transOrder.Status = (int)StatusGeneralTransportationOrder.DangVeVN;
+                            if (transOrder.Status < (int)StatusGeneralTransportationOrder.DangVeVN)
+                                transOrder.Status = (int)StatusGeneralTransportationOrder.DangVeVN;
+                            historyTransOrderChanges.Add(new HistoryOrderChange()
+                            {
+                                TransportationOrderId = transOrder.Id,
+                                UID = currentUser?.UserId,
+                                HistoryContent = String.Format("{0} đã đổi trạng thái của đơn hàng Id là: {1}, là \"Đang về kho VN\"", currentUser.UserName, transOrder.Id),
+                                Type = (int)TypeHistoryOrderChange.MaVanDon
+                            });
                         }
                         else
                         {
                             if (transOrder.TQDate == null)
                                 transOrder.TQDate = currentDate;
-                            transOrder.Status = (int)StatusGeneralTransportationOrder.VeKhoTQ;
+                            if (transOrder.Status < (int)StatusGeneralTransportationOrder.VeKhoTQ)
+                                transOrder.Status = (int)StatusGeneralTransportationOrder.VeKhoTQ;
+                            historyTransOrderChanges.Add(new HistoryOrderChange()
+                            {
+                                TransportationOrderId = transOrder.Id,
+                                UID = currentUser?.UserId,
+                                HistoryContent = String.Format("{0} đã đổi trạng thái của đơn hàng Id là: {1}, là \"Đã về kho TQ\"", currentUser.UserName, transOrder.Id),
+                                Type = (int)TypeHistoryOrderChange.MaVanDon
+                            });
                         }
                         var smallPackageNews = await unitOfWork.Repository<SmallPackage>().GetQueryable().Where(x => !x.Deleted && x.TransportationOrderId == transOrder.Id).ToListAsync();
                         transOrder.SmallPackages = smallPackageNews;
@@ -1109,8 +1167,16 @@ namespace NhapHangV2.Service.Services
                         unitOfWork.Repository<TransportationOrder>().Update(transOrderNew);
                         await unitOfWork.SaveAsync();
                         unitOfWork.Repository<TransportationOrder>().Detach(transOrderNew);
+                        foreach (var smallPackageNew in transOrder.SmallPackages)
+                        {
+                            unitOfWork.Repository<SmallPackage>().Update(smallPackageNew);
+                            await unitOfWork.SaveAsync();
+                            unitOfWork.Repository<SmallPackage>().Detach(smallPackageNew);
+                        }
                     }
                     //Lịch sử ký gửi
+                    if (historyTransOrderChanges.Any())
+                        await unitOfWork.Repository<HistoryOrderChange>().CreateAsync(historyTransOrderChanges);
                 }
                 appDomainImportResult.Data = new
                 {

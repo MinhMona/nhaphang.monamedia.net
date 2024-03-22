@@ -6,6 +6,25 @@ namespace NhapHangV2.Utilities
 {
     public class CoreContants
     {
+        /// <summary>
+        /// Trạng thái yêu cầu giao
+        /// </summary>
+        public enum RequestShipStatus
+        {
+            /// <summary>
+            /// Chưa duyệt
+            /// </summary>
+            Cancel = 0,
+            /// <summary>
+            /// Chưa duyệt
+            /// </summary>
+            UnAccept = 1,
+            /// <summary>
+            /// Đã duyệt
+            /// </summary>
+            Accept = 2
+        }
+
         public const int AddNew = 1;
         public const int Update = 2;
         public const int Delete = 3;
@@ -56,6 +75,8 @@ namespace NhapHangV2.Utilities
             TaoKhieuNai = 22,
             TrangThaiKhieuNai = 23,
             TrangThaiMaVanDon = 24,
+            YeuCauGiaoMoi = 25,
+            TrangThaiYeuCauGiao = 26,
         }
 
         /// <summary>

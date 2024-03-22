@@ -147,6 +147,7 @@ namespace NhapHangV2.API.Controllers
         public async Task<AppDomainResult> Tracking(string transactionCode, bool isAssign)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
+            transactionCode = transactionCode.Trim();
             if (string.IsNullOrEmpty(transactionCode))
                 throw new KeyNotFoundException("Code không tồn tại");
 
@@ -275,9 +276,9 @@ namespace NhapHangV2.API.Controllers
             }
             AppDomainResult appDomainResult = new AppDomainResult();
             bool success = false;
-            var exists = await smallPackageService.GetByOrderTransactionCode(itemModel.OrderTransactionCode);
+            var exists = await smallPackageService.GetByOrderTransactionCode(itemModel.OrderTransactionCode.Trim());
             if (exists != null)
-                throw new AppException(string.Format("Mã vận đơn {0} đã tồn tại", itemModel.OrderTransactionCode));
+                throw new AppException(string.Format("Mã vận đơn {0} đã tồn tại", itemModel.OrderTransactionCode.Trim()));
             var item = mapper.Map<SmallPackage>(itemModel);
             DateTime currentDate = DateTime.Now;
             //Kiểm hàng Trung quốc
@@ -332,9 +333,9 @@ namespace NhapHangV2.API.Controllers
                         //Cập nhật kiện trôi nổi
                         if (item.IsFloating)
                         {
-                            if (item.OrderTransactionCode != itemModel.OrderTransactionCode) // Thay đổi mã vận đơn
+                            if (item.OrderTransactionCode.Trim() != itemModel.OrderTransactionCode.Trim()) // Thay đổi mã vận đơn
                             {
-                                var checkCode = await smallPackageService.GetSingleAsync(e => !e.Deleted && e.OrderTransactionCode.Equals(itemModel.OrderTransactionCode));
+                                var checkCode = await smallPackageService.GetSingleAsync(e => !e.Deleted && e.OrderTransactionCode.Trim().Equals(itemModel.OrderTransactionCode.Trim()));
                                 if (checkCode != null)
                                     throw new AppException("Mã vận đơn đã tồn tại, vui lòng nhập mã vận đơn khác");
                             }

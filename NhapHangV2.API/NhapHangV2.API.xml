@@ -1196,6 +1196,35 @@
             <param name="request"></param>
             <returns></returns>
         </member>
+        <member name="M:NhapHangV2.API.Controllers.ShipRequestController.AddItem(NhapHangV2.Request.ShipRequestRequest)">
+            <summary>
+            Thêm mới item
+            </summary>
+            <param name="itemModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NhapHangV2.API.Controllers.ShipRequestController.ExportExcel(NhapHangV2.Entities.Search.ShipRequestSearch)">
+            <summary>
+            Xuất Excel
+            </summary>
+            <param name="baseSearch"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NhapHangV2.API.Controllers.ShipRequestController.GetTemplateFilePath(System.String)">
+            <summary>
+            Lấy đường dẫn file template
+            </summary>
+            <param name="fileTemplateName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NhapHangV2.API.Controllers.ShipRequestController.GetParameterReport(NhapHangV2.Utilities.PagedList{NhapHangV2.Models.ShipRequestModel},NhapHangV2.Entities.Search.ShipRequestSearch)">
+            <summary>
+            Lấy thông số parameter truyền vào
+            </summary>
+            <param name="pagedList"></param>
+            <param name="baseSearch"></param>
+            <returns></returns>
+        </member>
         <member name="M:NhapHangV2.API.Controllers.SmallPackageController.CreateTool(System.Collections.Generic.List{NhapHangV2.Entities.SmallPackageToolRequest})">
             <summary>
             Create tool
