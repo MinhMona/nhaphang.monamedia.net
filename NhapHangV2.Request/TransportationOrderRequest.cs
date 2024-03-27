@@ -11,7 +11,7 @@ namespace NhapHangV2.Request
 {
     public class TransportationOrderRequest : AppDomainRequest
     {
-
+        public decimal? Currency { get; set; }
         /// <summary>
         /// ID khách hàng
         /// </summary>

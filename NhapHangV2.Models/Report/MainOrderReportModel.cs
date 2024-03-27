@@ -11,6 +11,7 @@ namespace NhapHangV2.Models.Report
 {
     public class MainOrderReportModel : AppDomainReportModel
     {
+        public decimal? Surcharge { get; set; }
         /// <summary>
         /// UserName
         /// </summary>

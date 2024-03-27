@@ -52,6 +52,33 @@ namespace NhapHangV2.API.Controllers
             userInGroupService = serviceProvider.GetRequiredService<IUserInGroupService>();
         }
 
+        /// <summary>
+        /// Cập nhật thông tin item
+        /// </summary>
+        /// <param name="itemModel"></param>
+        /// <returns></returns>
+        [HttpPut("currency")]
+        [AppAuthorize(new int[] { CoreContants.Update })]
+        public async Task<AppDomainResult> UpdateCurrency([FromBody] TransportationOrderRequest itemModel)
+        {
+            AppDomainResult appDomainResult = new AppDomainResult();
+            bool success = false;
+            if (!ModelState.IsValid)
+            {
+                throw new AppException(ModelState.GetErrorMessage());
+            }
+
+            success = await transportationOrderService.UpdateCurrency(itemModel.Id, itemModel.Currency ?? 0);
+            if (success)
+                appDomainResult.ResultCode = (int)HttpStatusCode.OK;
+            else
+                throw new Exception("Lỗi trong quá trình xử lý");
+            appDomainResult.Success = success;
+
+
+            return appDomainResult;
+        }
+
         ///<summary>
         ///Thông tin đơn hàng trang đơn hàng của user
         /// </summary>

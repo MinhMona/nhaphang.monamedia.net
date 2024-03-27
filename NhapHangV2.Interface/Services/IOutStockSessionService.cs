@@ -17,5 +17,7 @@ namespace NhapHangV2.Interface.Services
         Task<bool> UpdateStatus(int id, int status, bool isPaymentWallet);
 
         Task<bool> DeleteNotPayment(OutStockSession item);
+
+        Task<bool> UpdateOutStockStatus(int id, int status);
     }
 }

@@ -11,6 +11,10 @@ namespace NhapHangV2.Models.Report
     public class HistoryPayWalletReportModel : AppDomainReportModel
     {
         /// <summary>
+        /// 1: Trừ, 2: Cộng
+        /// </summary>
+        public int? Type { get; set; } = 0;
+        /// <summary>
         /// Nội dung
         /// </summary>
         public string Content { get; set; }

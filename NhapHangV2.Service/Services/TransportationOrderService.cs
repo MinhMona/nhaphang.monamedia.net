@@ -1061,6 +1061,16 @@ namespace NhapHangV2.Service.Services
         {
             var currentUser = LoginContext.Instance.CurrentUser;
             var historyOrderChanges = new List<HistoryOrderChange>();
+            if (oldItem.Currency != item.Currency)
+            {
+                historyOrderChanges.Add(new HistoryOrderChange()
+                {
+                    TransportationOrderId = item.Id,
+                    UID = currentUser.UserId,
+                    HistoryContent = $"{currentUser.UserName} đã đổi tỷ giá của đơn hàng ID: {item.Id} từ: {string.Format("{0:N0}", oldItem.Currency)}, sang: {string.Format("{0:N0}", item.Currency)}.",
+                    Type = (int?)TypeHistoryOrderChange.MaDonHang
+                });
+            }
             if (oldItem.Status != item.Status)
             {
                 historyOrderChanges.Add(new HistoryOrderChange()
@@ -1218,5 +1228,66 @@ namespace NhapHangV2.Service.Services
             return historyOrderChanges;
         }
 
+        public async Task<bool> UpdateCurrency(int id, decimal currency)
+        {
+            if (currency <= 0)
+                throw new AppException("Tỷ giá không hợp lệ");
+            var transportationOrder = await unitOfWork.Repository<TransportationOrder>().GetQueryable().AsNoTracking().FirstOrDefaultAsync(x => !x.Deleted && x.Id == id);
+            if (transportationOrder == null)
+                throw new AppException("Không tìm thấy đơn hàng");
+            if (transportationOrder.Currency == currency)
+                return true;
+            var currentUser = LoginContext.Instance.CurrentUser;
+            var historyOrderChanges = new List<HistoryOrderChange>();
+            using (var dbContextTransaction = Context.Database.BeginTransaction())
+            {
+                try
+                {
+                    decimal newCOD = Math.Round((currency * transportationOrder.CODFeeTQ) ?? 0, 0);
+                    historyOrderChanges.Add(new HistoryOrderChange()
+                    {
+                        TransportationOrderId = transportationOrder.Id,
+                        UID = currentUser.UserId,
+                        HistoryContent = $"{currentUser.UserName} đã đổi tỷ giá từ: {string.Format("{0:N0}", transportationOrder.Currency)}, sang: {string.Format("{0:N0}", currency)}.",
+                        Type = (int?)TypeHistoryOrderChange.MaDonHang
+                    });
+                    historyOrderChanges.Add(new HistoryOrderChange()
+                    {
+                        TransportationOrderId = transportationOrder.Id,
+                        UID = currentUser.UserId,
+                        HistoryContent = $"{currentUser.UserName} đã đổi phí COD VND từ: {string.Format("{0:N0}", transportationOrder.CODFee)}, sang: {string.Format("{0:N0}", newCOD)}.",
+                        Type = (int?)TypeHistoryOrderChange.MaDonHang
+                    });
+                    decimal newTotalPriceVND = Math.Round((transportationOrder.TotalPriceVND - transportationOrder.CODFee + newCOD) ?? 0, 0);
+                    historyOrderChanges.Add(new HistoryOrderChange()
+                    {
+                        TransportationOrderId = transportationOrder.Id,
+                        UID = currentUser.UserId,
+                        HistoryContent = $"{currentUser.UserName} đã đổi tổng tiền VND từ: {string.Format("{0:N0}", transportationOrder.TotalPriceVND)}, sang: {string.Format("{0:N0}", newTotalPriceVND)}.",
+                        Type = (int?)TypeHistoryOrderChange.MaDonHang
+                    });
+                    transportationOrder.Currency = currency;
+                    transportationOrder.CODFee = newCOD;
+                    transportationOrder.TotalPriceVND = newTotalPriceVND;
+
+                    await unitOfWork.Repository<TransportationOrder>().UpdateFieldsSaveAsync(transportationOrder, new Expression<Func<TransportationOrder, object>>[]
+                    {
+                        x => x.Currency,
+                        x => x.CODFee,
+                        x => x.TotalPriceVND,
+                        x => x.Updated,
+                        x => x.UpdatedBy
+                    });
+                    await unitOfWork.SaveAsync();
+                    await dbContextTransaction.CommitAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    await dbContextTransaction.RollbackAsync();
+                    throw new Exception(ex.Message);
+                }
+            }
+        }
     }
 }

@@ -21,5 +21,7 @@ namespace NhapHangV2.Interface.Services
         TransportationsAmount GetTransportationsAmount(int UID);
         Task<bool> UpdateStaffAsync(int transportationOrderID, int salerID);
         string GetStatusName(int? status);
+        Task<bool> UpdateCurrency(int id, decimal currency);
+
     }
 }

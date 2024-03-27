@@ -10,6 +10,10 @@ namespace NhapHangV2.Request
 {
     public class PayHelpRequest : AppDomainRequest
     {
+        public decimal? TotalPriceVNDGiaGoc { get; set; }
+        public decimal? CurrencyConfig { get; set; }
+        public decimal? Currency { get; set; }
+
         /// <summary>
         /// Ghi chú
         /// </summary>

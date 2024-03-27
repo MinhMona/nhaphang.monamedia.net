@@ -85,7 +85,7 @@ namespace NhapHangV2.Models
                     case 2:
                         return "Thanh toán bằng tiền mặt";
                     default:
-                        return string.Empty;
+                        return "Chưa thanh toán";
                 }
             }
         }

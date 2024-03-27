@@ -81,7 +81,7 @@ namespace NhapHangV2.Entities
         /// Lịch sử thay đổi
         /// </summary>
         [NotMapped]
-        public List<HistoryServices> HistoryServicess { get; set; } = new List<HistoryServices>();
+        public List<HistoryServices> HistoryServices { get; set; } = new List<HistoryServices>();
 
         /// <summary>
         /// Id Saler

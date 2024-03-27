@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NhapHangV2.Extensions;
 using static NhapHangV2.Utilities.CoreContants;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace NhapHangV2.Service.Services
 {
@@ -141,6 +142,7 @@ namespace NhapHangV2.Service.Services
                         if (totalPay == 0)
                         {
                             item.Status = 2;
+                            item.Type = 1;
                         }
                         unitOfWork.Repository<OutStockSession>().Update(item);
                         await unitOfWork.SaveAsync();
@@ -600,6 +602,27 @@ namespace NhapHangV2.Service.Services
 
             await unitOfWork.SaveAsync();
             return true;
+        }
+
+        public async Task<bool> UpdateOutStockStatus(int id, int status)
+        {
+            var outStockSession = await unitOfWork.Repository<OutStockSession>().GetQueryable().AsNoTracking().FirstOrDefaultAsync(x => !x.Deleted && x.Id == id);
+            if (outStockSession == null)
+            {
+                throw new AppException("Không tìm thấy phiên xuất kho");
+            }
+            if(status == 0)
+            {
+                throw new AppException("Trạng thái không hợp lệ");
+            }
+            outStockSession.Status = status;
+            return await unitOfWork.Repository<OutStockSession>().UpdateFieldsSaveAsync(outStockSession, new Expression<Func<OutStockSession, object>>[]
+            {
+                x => x.Status,
+                x => x.Updated,
+                x => x.UpdatedBy
+            });
+
         }
     }
 }

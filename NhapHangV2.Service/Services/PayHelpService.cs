@@ -50,6 +50,67 @@ namespace NhapHangV2.Service.Services
             return "PayHelp_2_GetPagingData";
         }
 
+        public override async Task<bool> UpdateAsync(PayHelp item)
+        {
+            var payhelpOld = await unitOfWork.Repository<PayHelp>().GetQueryable().AsNoTracking().FirstOrDefaultAsync(x => !x.Deleted && x.Id == item.Id);
+            using (var dbContextTransaction = Context.Database.BeginTransaction())
+            {
+                try
+                {
+                    var currentUser = LoginContext.Instance.CurrentUser;
+                    if (item.Currency != payhelpOld.Currency)
+                    {
+                        await unitOfWork.Repository<HistoryServices>().CreateAsync(new HistoryServices
+                        {
+                            PostId = item.Id,
+                            UID = item.UID,
+                            Type = (int)TypeHistoryServices.ThanhToanHo,
+                            Note = $"{currentUser.UserName} đã đổi tỷ giá từ {string.Format("{0:N0}", payhelpOld.Currency)} sang {string.Format("{0:N0}", item.Currency)}"
+                        });
+                    }
+                    if (item.TotalPriceVND != payhelpOld.TotalPriceVND)
+                    {
+                        await unitOfWork.Repository<HistoryServices>().CreateAsync(new HistoryServices
+                        {
+                            PostId = item.Id,
+                            UID = item.UID,
+                            Type = (int)TypeHistoryServices.ThanhToanHo,
+                            Note = $"{currentUser.UserName} đã đổi tổng tiền từ {string.Format("{0:N0}", payhelpOld.TotalPriceVND)} sang {string.Format("{0:N0}", item.TotalPriceVND)}"
+                        });
+                    }
+                    if (item.CurrencyConfig != payhelpOld.CurrencyConfig)
+                    {
+                        await unitOfWork.Repository<HistoryServices>().CreateAsync(new HistoryServices
+                        {
+                            PostId = item.Id,
+                            UID = item.UID,
+                            Type = (int)TypeHistoryServices.ThanhToanHo,
+                            Note = $"{currentUser.UserName} đã đổi tỷ giá hệ thống từ {string.Format("{0:N0}", payhelpOld.CurrencyConfig)} sang {string.Format("{0:N0}", item.CurrencyConfig)}"
+                        });
+                    }
+                    if (item.TotalPriceVNDGiaGoc != payhelpOld.TotalPriceVNDGiaGoc)
+                    {
+                        await unitOfWork.Repository<HistoryServices>().CreateAsync(new HistoryServices
+                        {
+                            PostId = item.Id,
+                            UID = item.UID,
+                            Type = (int)TypeHistoryServices.ThanhToanHo,
+                            Note = $"{currentUser.UserName} đã đổi tổng tiền hệ thống từ {string.Format("{0:N0}", payhelpOld.TotalPriceVND)} sang {string.Format("{0:N0}", item.TotalPriceVND)}"
+                        });
+                    }
+
+                    await base.UpdateAsync(item);
+                    await unitOfWork.SaveAsync();
+                    await dbContextTransaction.CommitAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    await dbContextTransaction.RollbackAsync();
+                    throw new Exception(ex.Message);
+                }
+            }
+        }
         public List<CountStatusData> CountStatus(PayHelpSearch payHelpSearch)
         {
             var storeService = serviceProvider.GetRequiredService<IStoreSqlService<CountStatusData>>();
@@ -84,6 +145,48 @@ namespace NhapHangV2.Service.Services
                     DateTime currentDate = DateTime.Now;
                     var user = LoginContext.Instance.CurrentUser;
                     var userRequest = await userService.GetByIdAsync(model.UID ?? 0);
+                    var payhelpOld = await unitOfWork.Repository<PayHelp>().GetQueryable().AsNoTracking().FirstOrDefaultAsync(x => !x.Deleted && x.Id == model.Id);
+                    if (model.Currency != payhelpOld.Currency)
+                    {
+                        await unitOfWork.Repository<HistoryServices>().CreateAsync(new HistoryServices
+                        {
+                            PostId = model.Id,
+                            UID = model.UID,
+                            Type = (int)TypeHistoryServices.ThanhToanHo,
+                            Note = $"{user.UserName} đã đổi tỷ giá từ {string.Format("{0:N0}", payhelpOld.Currency)} sang {string.Format("{0:N0}", model.Currency)}"
+                        });
+                    }
+                    if (model.TotalPriceVND != payhelpOld.TotalPriceVND)
+                    {
+                        await unitOfWork.Repository<HistoryServices>().CreateAsync(new HistoryServices
+                        {
+                            PostId = model.Id,
+                            UID = model.UID,
+                            Type = (int)TypeHistoryServices.ThanhToanHo,
+                            Note = $"{user.UserName} đã đổi tổng tiền từ {string.Format("{0:N0}", payhelpOld.TotalPriceVND)} sang {string.Format("{0:N0}", model.TotalPriceVND)}"
+                        });
+                    }
+                    if (model.CurrencyConfig != payhelpOld.CurrencyConfig)
+                    {
+                        await unitOfWork.Repository<HistoryServices>().CreateAsync(new HistoryServices
+                        {
+                            PostId = model.Id,
+                            UID = model.UID,
+                            Type = (int)TypeHistoryServices.ThanhToanHo,
+                            Note = $"{user.UserName} đã đổi tỷ giá hệ thống từ {string.Format("{0:N0}", payhelpOld.CurrencyConfig)} sang {string.Format("{0:N0}", model.CurrencyConfig)}"
+                        });
+                    }
+                    if (model.TotalPriceVNDGiaGoc != payhelpOld.TotalPriceVNDGiaGoc)
+                    {
+                        await unitOfWork.Repository<HistoryServices>().CreateAsync(new HistoryServices
+                        {
+                            PostId = model.Id,
+                            UID = model.UID,
+                            Type = (int)TypeHistoryServices.ThanhToanHo,
+                            Note = $"{user.UserName} đã đổi tổng tiền hệ thống từ {string.Format("{0:N0}", payhelpOld.TotalPriceVND)} sang {string.Format("{0:N0}", model.TotalPriceVND)}"
+                        });
+                    }
+
                     model.Updated = DateTime.Now;
                     model.UpdatedBy = user.UserName;
                     string oldStatusText = "";
@@ -369,14 +472,14 @@ namespace NhapHangV2.Service.Services
             var historyServicess = await unitOfWork.Repository<HistoryServices>().GetQueryable().Where(e => !e.Deleted && e.Active && e.PostId == payHelp.Id).OrderByDescending(o => o.Id).ToListAsync();
             if (historyServicess != null)
             {
-                payHelp.HistoryServicess = historyServicess;
-                foreach (var historyService in payHelp.HistoryServicess)
+                foreach (var historyService in payHelp.HistoryServices)
                 {
                     var userHistory = await userService.GetByIdAsync(historyService.UID ?? 0);
                     if (userHistory == null)
                         continue;
                     historyService.UserName = userHistory.UserName;
                 }
+                payHelp.HistoryServices = historyServicess;
             }
 
             var payHelpDetails = await unitOfWork.Repository<PayHelpDetail>().GetQueryable().Where(e => !e.Deleted && e.Active && e.PayHelpId == payHelp.Id).OrderByDescending(o => o.Id).ToListAsync();
@@ -476,6 +579,57 @@ namespace NhapHangV2.Service.Services
                 UID = payHelp.SalerID,
                 TotalPriceReceive = totalPriceRecieve
             };
+        }
+
+        public async Task<bool> UpdateCurrency(int id, decimal? currency)
+        {
+            if (currency <= 0)
+                throw new AppException("Tỷ giá không hợp lệ");
+            var payhelp = await unitOfWork.Repository<PayHelp>().GetQueryable().AsNoTracking().FirstOrDefaultAsync(x => !x.Deleted && x.Id == id);
+            if (payhelp == null)
+                throw new AppException("Không tìm thấy đơn hàng");
+            if (payhelp.Currency == currency)
+                return true;
+            using (var dbContextTransaction = Context.Database.BeginTransaction())
+            {
+                try
+                {
+                    var currentUser = LoginContext.Instance.CurrentUser;
+                    decimal? newTotalPriceVND = Math.Round((currency * payhelp.TotalPrice) ?? 0, 0);
+                    await unitOfWork.Repository<HistoryServices>().CreateAsync(new HistoryServices
+                    {
+                        PostId = payhelp.Id,
+                        UID = payhelp.UID,
+                        Type = (int)TypeHistoryServices.ThanhToanHo,
+                        Note = $"{currentUser.UserName} đã đổi tỷ giá từ {string.Format("{0:N0}", payhelp.Currency)} sang {string.Format("{0:N0}", currency)}"
+                    });
+                    await unitOfWork.Repository<HistoryServices>().CreateAsync(new HistoryServices
+                    {
+                        PostId = payhelp.Id,
+                        UID = payhelp.UID,
+                        Type = (int)TypeHistoryServices.ThanhToanHo,
+                        Note = $"{currentUser.UserName} đã đổi tổng tiền từ {string.Format("{0:N0}", payhelp.TotalPriceVND)} sang {string.Format("{0:N0}", newTotalPriceVND)}"
+                    });
+                    payhelp.TotalPriceVND = newTotalPriceVND;
+                    payhelp.Currency = currency;
+
+                    await unitOfWork.Repository<PayHelp>().UpdateFieldsSaveAsync(payhelp, new Expression<Func<PayHelp, object>>[]
+                    {
+                        x => x.Currency,
+                        x => x.TotalPriceVND,
+                        x => x.Updated,
+                        x => x.UpdatedBy,
+                    });
+                    await unitOfWork.SaveAsync();
+                    await dbContextTransaction.CommitAsync();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    await dbContextTransaction.RollbackAsync();
+                    throw new Exception(ex.Message);
+                }
+            }
         }
     }
 }

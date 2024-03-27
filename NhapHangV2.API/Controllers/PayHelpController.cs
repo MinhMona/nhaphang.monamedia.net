@@ -49,6 +49,29 @@ namespace NhapHangV2.API.Controllers
             payHelpDetailService = serviceProvider.GetRequiredService<IPayHelpDetailService>();
         }
 
+        /// <summary>
+        /// Cập nhật tỷ giá
+        /// </summary>
+        /// <param name="itemModel"></param>
+        /// <returns></returns>
+        [HttpPut("currency")]
+        [AppAuthorize(new int[] { CoreContants.Update })]
+        public async Task<AppDomainResult> UpdateCurrency([FromBody] PayHelpRequest itemModel)
+        {
+            if (!ModelState.IsValid)
+                throw new AppException(ModelState.GetErrorMessage());
+            AppDomainResult appDomainResult = new AppDomainResult();
+            bool success = await payHelpService.UpdateCurrency(itemModel.Id, itemModel.Currency);
+            if (success)
+                appDomainResult.ResultCode = (int)HttpStatusCode.OK;
+            else
+                throw new Exception("Lỗi trong quá trình xử lý");
+            appDomainResult.Success = success;
+
+            return appDomainResult;
+        }
+
+
         [HttpGet("count-status")]
         [AppAuthorize(new int[] { CoreContants.View })]
         public AppDomainResult CountStatus([FromQuery] PayHelpSearch payHelpSearch)
@@ -128,7 +151,11 @@ namespace NhapHangV2.API.Controllers
                 decimal? totalPriceVNDOld = item.TotalPriceVND;
                 item.Note = itemModel.Note;
                 item.SalerID = itemModel.SalerID;
+                item.TotalPriceVND = itemModel.TotalPriceVND;
                 item.TotalPriceVND += ((itemModel.FeeService ?? 0) - (item.FeeService ?? 0));
+                item.Currency = itemModel.Currency;
+                item.CurrencyConfig = itemModel.CurrencyConfig;
+                item.TotalPriceVNDGiaGoc = itemModel.TotalPriceVNDGiaGoc;
                 item.FeeService = itemModel.FeeService;
                 item.PayHelpDetails = mapper.Map<List<PayHelpDetail>>(itemModel.PayHelpDetails);
                 success = await payHelpService.UpdateStatus(item, itemModel.Status ?? 0, item.Status ?? 0, totalPriceVNDOld);

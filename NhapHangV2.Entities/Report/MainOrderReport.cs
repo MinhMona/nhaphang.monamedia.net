@@ -11,6 +11,11 @@ namespace NhapHangV2.Entities.Report
     public class MainOrderReport : AppDomainReport
     {
         /// <summary>
+        /// (Tổng phụ phí)
+        /// </summary>
+        public decimal? Surcharge { get; set; } = 0;
+
+        /// <summary>
         /// UserName
         /// </summary>
         public string UserName { get; set; } = string.Empty;
@@ -161,6 +166,12 @@ namespace NhapHangV2.Entities.Report
         /// </summary>
         [Column(TypeName = "decimal(18,0)")] 
         public decimal? MaxFeeShipCN { get; set; } = 0;
+
+        /// <summary>
+        /// Tổng tiền ship TQ thật
+        /// </summary>
+        [Column(TypeName = "decimal(18,0)")] 
+        public decimal? MaxFeeShipCNReal { get; set; } = 0;
          
         /// <summary>
         /// Tổng tiền TQ - VN

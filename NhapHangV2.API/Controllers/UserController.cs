@@ -72,9 +72,9 @@ namespace NhapHangV2.API.Controllers
                 throw new KeyNotFoundException("id không tồn tại");
             }
             var item = await this.domainService.GetByIdAsync(id);
-            //decimal? totalOrderPrice = 0;
-            //decimal? totalPaidPrice = 0;
-            //decimal? totalUnPaidPrice = 0;
+            decimal? totalOrderPrice = 0;
+            decimal? totalPaidPrice = 0;
+            decimal? totalUnPaidPrice = 0;
 
             //var mainOrders = await mainOrderService.GetTotalOrderPriceByUID(id);
             //totalOrderPrice += mainOrders.TotalOrderPrice ?? 0;

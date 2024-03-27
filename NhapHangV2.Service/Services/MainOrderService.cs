@@ -1471,7 +1471,7 @@ namespace NhapHangV2.Service.Services
             var data = storeService.GetDataFromStore(parameters, "GetNumberOfOrder");
             var all = data.Sum(x => x.Quantity);
             data.Add(new() { Status = -1, Quantity = all });
-            if (data.Count != Enum.GetNames(typeof(StatusOrderContants)).Length)
+            if (data.Count != Enum.GetNames(typeof(StatusOrderContants)).Length + 1)
             {
                 int j = 0;
                 foreach (var item in Enum.GetValues(typeof(StatusOrderContants)))

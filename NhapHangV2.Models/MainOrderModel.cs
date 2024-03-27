@@ -12,6 +12,15 @@ namespace NhapHangV2.Models
 {
     public class MainOrderModel : AppDomainModel
     {
+        public decimal TotalPriceVNDAll { get; set; }
+        public decimal DepositAll { get; set; }
+        public decimal UnDepositAll
+        {
+            get
+            {
+                return TotalPriceVNDAll - DepositAll;
+            }
+        }
         public DateTime? DateShipRequest { get; set; }
 
         public bool? IsShipRequest { get; set; }

@@ -62,6 +62,27 @@ namespace NhapHangV2.API.Controllers
         }
 
         /// <summary>
+        /// Cập nhật các trạng thái
+        /// </summary>
+        /// <param name="itemModel"></param>
+        /// <returns></returns>
+        [HttpPut("status")]
+        public async Task<AppDomainResult> UpdateOutStockStatus([FromBody] OutStockSessionRequest itemModel)
+        {
+            AppDomainResult appDomainResult = new AppDomainResult();
+            bool success = false;
+
+            success = await outStockSessionService.UpdateOutStockStatus(itemModel.Id, itemModel.Status ?? 0);
+            if (success)
+                appDomainResult.ResultCode = (int)HttpStatusCode.OK;
+            else
+                throw new Exception("Lỗi trong quá trình xử lý");
+            appDomainResult.Success = success;
+
+            return appDomainResult;
+        }
+
+        /// <summary>
         /// Ẩn đơn chưa thanh toán
         /// </summary>
         /// <param name="id"></param>

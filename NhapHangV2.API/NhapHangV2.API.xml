@@ -995,6 +995,13 @@
             <param name="itemModel"></param>
             <returns></returns>
         </member>
+        <member name="M:NhapHangV2.API.Controllers.OutStockSessionController.UpdateOutStockStatus(NhapHangV2.Request.OutStockSessionRequest)">
+            <summary>
+            Cập nhật các trạng thái
+            </summary>
+            <param name="itemModel"></param>
+            <returns></returns>
+        </member>
         <member name="M:NhapHangV2.API.Controllers.OutStockSessionController.DeleteNotPayment(System.Int32)">
             <summary>
             Ẩn đơn chưa thanh toán
@@ -1071,6 +1078,13 @@
             Lấy danh sách item phân trang
             </summary>
             <param name="baseSearch"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NhapHangV2.API.Controllers.PayHelpController.UpdateCurrency(NhapHangV2.Request.PayHelpRequest)">
+            <summary>
+            Cập nhật tỷ giá
+            </summary>
+            <param name="itemModel"></param>
             <returns></returns>
         </member>
         <member name="M:NhapHangV2.API.Controllers.PayHelpController.UpdatePayHelp(NhapHangV2.Request.PayHelpRequest)">
@@ -1396,6 +1410,13 @@
             Tracking theo mã vận đơn
             </summary>
             <param name="transactionCode"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NhapHangV2.API.Controllers.TransportationOrderController.UpdateCurrency(NhapHangV2.Request.TransportationOrderRequest)">
+            <summary>
+            Cập nhật thông tin item
+            </summary>
+            <param name="itemModel"></param>
             <returns></returns>
         </member>
         <member name="M:NhapHangV2.API.Controllers.TransportationOrderController.GetTransportationsInfor(NhapHangV2.Entities.Search.TransportationOrderSearch)">
